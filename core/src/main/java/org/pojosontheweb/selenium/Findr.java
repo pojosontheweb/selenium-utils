@@ -1,4 +1,4 @@
-package com.rvkb.webtesting.core;
+package org.pojosontheweb.selenium;
 
 import java.util.*;
 

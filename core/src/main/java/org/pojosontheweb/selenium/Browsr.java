@@ -1,4 +1,4 @@
-package com.rvkb.webtesting.core;
+package org.pojosontheweb.selenium;
 
 public enum Browsr {
 

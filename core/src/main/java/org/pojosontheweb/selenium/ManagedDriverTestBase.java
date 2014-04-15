@@ -1,4 +1,4 @@
-package com.rvkb.webtesting.core;
+package org.pojosontheweb.selenium;
 
 import org.junit.After;
 import org.junit.Before;
