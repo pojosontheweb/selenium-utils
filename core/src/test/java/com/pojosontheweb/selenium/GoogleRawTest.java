@@ -34,12 +34,12 @@ public class GoogleRawTest {
             driver.get("http://www.google.com");
 
             // type in our query
-            new Findr(driver, 2)
+            new Findr(driver)
                     .elem(By.id("gbqfq"))
                     .sendKeys("pojos on the web", Keys.ENTER);
 
             // check the results
-            new Findr(driver, 2)
+            new Findr(driver)
                     .elem(By.id("ires"))
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
