@@ -1,4 +1,4 @@
-package org.pojosontheweb.selenium;
+package com.pojosontheweb.selenium;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;

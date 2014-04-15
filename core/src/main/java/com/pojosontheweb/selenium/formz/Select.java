@@ -1,8 +1,8 @@
-package org.pojosontheweb.selenium.formz;
+package com.pojosontheweb.selenium.formz;
 
 import com.google.common.base.Function;
 import org.openqa.selenium.WebElement;
-import org.pojosontheweb.selenium.Findr;
+import com.pojosontheweb.selenium.Findr;
 
 public class Select {
 

@@ -1,4 +1,4 @@
-package org.pojosontheweb.selenium;
+package com.pojosontheweb.selenium;
 
 import org.junit.After;
 import org.junit.Before;
