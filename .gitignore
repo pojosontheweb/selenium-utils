@@ -1,0 +1,10 @@
+out
+.DS_Store
+.idea
+target
+*.iml
+*.ipr
+*.iws
+classes
+*~
+overlays
