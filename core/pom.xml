@@ -45,6 +45,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
+                        <webtests.browser>${webtests.browser}</webtests.browser>
+                        <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
+                        <webtests.video.dir>${project.build.directory}/webtests-videos</webtests.video.dir>
                         <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
                     </systemPropertyVariables>
                 </configuration>

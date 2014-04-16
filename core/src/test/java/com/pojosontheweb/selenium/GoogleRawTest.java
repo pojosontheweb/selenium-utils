@@ -33,9 +33,6 @@ public class GoogleRawTest {
 
     public static void performTest(WebDriver driver, String videoFileName) {
 
-        ScreenRecordr r = new ScreenRecordr();
-        r.start();
-
         try {
 
             // get google
@@ -59,7 +56,6 @@ public class GoogleRawTest {
 
         } finally {
             driver.close();
-            r.moveVideoFilesTo(new File("/tmp"), videoFileName);
         }
     }
 
