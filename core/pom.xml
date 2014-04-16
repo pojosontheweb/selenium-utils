@@ -29,6 +29,14 @@
             <version>4.11</version>
             <optional>true</optional>
         </dependency>
+
+        <!-- video -->
+        <dependency>
+            <groupId>com.pojosontheweb</groupId>
+            <artifactId>monte-repack</artifactId>
+            <version>0.7.7</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

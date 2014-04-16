@@ -5,6 +5,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 
+import java.io.File;
+
 public class GoogleRawTest {
 
     @Test
@@ -13,7 +15,8 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .chrome()
-                        .build()
+                        .build(),
+                "testChrome"
         );
     }
 
@@ -23,11 +26,16 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .firefox()
-                        .build()
+                        .build(),
+                "testFirefox"
         );
     }
 
-    public static void performTest(WebDriver driver) {
+    public static void performTest(WebDriver driver, String videoFileName) {
+
+        ScreenRecordr r = new ScreenRecordr();
+        r.start();
+
         try {
 
             // get google
@@ -51,6 +59,7 @@ public class GoogleRawTest {
 
         } finally {
             driver.close();
+            r.moveVideoFilesTo(new File("/tmp"), videoFileName);
         }
     }
 

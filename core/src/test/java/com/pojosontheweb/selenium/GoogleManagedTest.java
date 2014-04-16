@@ -12,7 +12,7 @@ public class GoogleManagedTest extends ManagedDriverTestBase {
     @Test
     public void testWithInjectedWebDriver() throws Exception {
         try {
-            GoogleRawTest.performTest(getWebDriver());
+            GoogleRawTest.performTest(getWebDriver(), "testWithInjectedWebDriver");
         } catch(Exception e) {
             File scrFile = ((TakesScreenshot)getWebDriver()).getScreenshotAs(OutputType.FILE);
             FileUtils.copyFile(scrFile, new File("/tmp/testWithInjectedWebDriver.png"));
