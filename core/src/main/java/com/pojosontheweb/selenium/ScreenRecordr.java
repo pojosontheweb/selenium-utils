@@ -111,6 +111,9 @@ public class ScreenRecordr {
                     fileName += "-" + totalCount++;
                 }
                 fileName += ".mov";
+                if (!destDir.exists()) {
+                    destDir.mkdirs();
+                }
                 File vidFile = new File(destDir, fileName);
                 try {
                     Files.copy(f, vidFile);
