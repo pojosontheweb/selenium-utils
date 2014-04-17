@@ -77,7 +77,7 @@ public class ScreenRecordr {
 
     public void stop() {
         try {
-            if (screenRecorder.getState().equals(ScreenRecorder.State.RECORDING)) {
+            if (screenRecorder.getState()!=null && screenRecorder.getState().equals(ScreenRecorder.State.RECORDING)) {
                 System.out.println("SeleniumScreenRecorder : stopping recorder");
                 screenRecorder.stop();
             }
