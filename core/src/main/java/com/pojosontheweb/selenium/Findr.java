@@ -16,7 +16,6 @@ public final class Findr {
     private final Function<SearchContext,WebElement> f;
     private final List<String> path;
     private final int waitTimeout;
-    private final boolean strictMode; // will throw if one tries to return a WebElem from a callback Function
 
     public Findr(WebDriver driver) {
         this(driver,WAIT_TIMEOUT);
@@ -26,20 +25,11 @@ public final class Findr {
         this(driver, waitTimeout, null, Collections.<String>emptyList());
     }
 
-    public static Findr toStrict(Findr f) {
-        return new Findr(f.driver, f.waitTimeout, f.f, f.path, true);
-    }
-
     private Findr(WebDriver driver, int waitTimeout, Function<SearchContext, WebElement> f, List<String> path) {
-        this(driver, waitTimeout, f, path, false);
-    }
-
-    private Findr(WebDriver driver, int waitTimeout, Function<SearchContext, WebElement> f, List<String> path, boolean strictMode) {
         this.driver = driver;
         this.waitTimeout = waitTimeout;
         this.f = f;
         this.path = path;
-        this.strictMode = strictMode;
     }
 
     private <F,T> Function<F,T> wrapAndTrapCatchStaleElementException(final Function<F,T> function) {
@@ -62,17 +52,12 @@ public final class Findr {
             newPath.add(pathElem);
         }
         if (f==null) {
-            return new Findr(driver, waitTimeout, newFunction, newPath, strictMode);
+            return new Findr(driver, waitTimeout, newFunction, newPath);
         } else {
-            return new Findr(driver, waitTimeout, Functions.compose(newFunction, f), newPath, strictMode);
+            return new Findr(driver, waitTimeout, Functions.compose(newFunction, f), newPath);
         }
     }
 
-    /**
-     * Adds an element selector to the path
-     * @param by the locator
-     * @return a new updated Finder
-     */
     public Findr elem(final By by) {
         return compose(
                 new Function<SearchContext, WebElement>() {
@@ -92,11 +77,6 @@ public final class Findr {
         );
     }
 
-    /**
-     * Adds a list selector to the path
-     * @param by the locator
-     * @return a new ListFinder
-     */
     public ListFindr elemList(By by) {
         return new ListFindr(by);
     }
@@ -118,14 +98,6 @@ public final class Findr {
         }
     }
 
-    /**
-     * Call all the selectors in the path. If they all succeed before timeout,
-     * then delegate processing to <code>callback</code>, passing the retrieved WebElement.
-     * @param callback the callback to be invoked when all previous elements have been retrieved
-     * @param <T> the return type of the callback
-     * @return the callback's result if all elements in the chain have been retrieved
-     * @throws TimeoutException if one of the element(s) in the chain could not be retrieved
-     */
     public <T> T eval(final Function<WebElement,T> callback) throws TimeoutException {
         return wrapWebDriverWait(wrapAndTrapCatchStaleElementException(new Function<WebDriver, T>() {
             @Override
@@ -134,19 +106,9 @@ public final class Findr {
                 if (e == null) {
                     return null;
                 }
-                return strictApply(callback, e);
+                return callback.apply(e);
             }
         }));
-    }
-
-    private <R,I> R strictApply(Function<I,R> callback, I arg) {
-        R result = callback.apply(arg);
-        if (strictMode && result instanceof WebElement) {
-            throw new RuntimeException("Suspicious code ! Trying to return a WebElement from a Finder callback.\n" +
-                    "This is considered bad practice as it can lead to StaleElementExceptions. Instead, prefer using the WebElement " +
-                    "inside the callback only.\nCallback : " + callback.toString());
-        }
-        return result;
     }
 
     private static final Function<WebElement,?> IDENTITY_FOR_EVAL = new Function<WebElement, Object>() {
@@ -156,10 +118,6 @@ public final class Findr {
         }
     };
 
-    /**
-     * Evaluates the whole condition chain, and returns if everything went ok. Throws TimeoutException if condition(s) fail.
-     * @throws TimeoutException if one of the conditions in the chain fails.
-     */
     public void eval() throws TimeoutException {
         eval(IDENTITY_FOR_EVAL);
     }
@@ -181,11 +139,6 @@ public final class Findr {
         }
     }
 
-    /**
-     * Adds a predicate for matching a WebElement to the search function
-     * @param predicate the predicate
-     * @return a new updated Finder
-     */
     public Findr where(final Predicate<? super WebElement> predicate) {
         return compose(new Function<SearchContext, WebElement>() {
             @Override
@@ -314,21 +267,10 @@ public final class Findr {
             }
         }
 
-
-        /**
-         * Filter the list of elements using passed predicate
-         * @param predicate a predicate for matching filtered WebElements
-         * @return a new updated ListFinder
-         */
         public ListFindr where(final Predicate<? super WebElement> predicate) {
             return new ListFindr(by, com.google.common.base.Predicates.<WebElement>and(filters, wrapAndTrap(predicate)), waitCount);
         }
 
-        /**
-         * Select an element in a list of elements
-         * @param index the index of the element in the list
-         * @return a new updated Finder
-         */
         public Findr at(final int index) {
             return compose(new Function<SearchContext, WebElement>(){
                 @Override
@@ -366,14 +308,6 @@ public final class Findr {
             return new ListFindr(by, filters, elemCount);
         }
 
-        /**
-         * Call all the selectors in the path. If they all succeed before timeout,
-         * then delegate processing to <code>callback</code>, passing the retrieved list of WebElements.
-         * @param callback the callback to be invoked when all previous elements have been retrieved
-         * @param <T> the return type of the callback
-         * @return the callback's result if all elements in the chain have been retrieved
-         * @throws TimeoutException if one of the element(s) in the chain could not be retrieved
-         */
         public <T> T eval(final Function<List<WebElement>, T> callback) {
             return wrapWebDriverWaitList(wrapAndTrapCatchStaleElementException(new Function<WebDriver, T>() {
                 @Override
@@ -389,7 +323,7 @@ public final class Findr {
                     if (waitCount!=null && elements.size()!=waitCount) {
                         return null;
                     }
-                    return strictApply(callback, filterElements(elements));
+                    return callback.apply(filterElements(elements));
                 }
             }));
         }
@@ -409,6 +343,8 @@ public final class Findr {
     }
 
     // Utility statics
+    // ---------------
+
     public static Predicate<WebElement> attrEquals(final String attrName, final String expectedValue) {
         return new Predicate<WebElement>() {
             @Override

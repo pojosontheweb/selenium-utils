@@ -7,6 +7,9 @@ import org.openqa.selenium.WebElement;
 
 public class Select {
 
+    private Select() {
+    }
+
     public static void selectByVisibleText(Findr selectFindr, final String text) {
         selectFindr.eval(new Function<WebElement, Object>() {
             @Override
