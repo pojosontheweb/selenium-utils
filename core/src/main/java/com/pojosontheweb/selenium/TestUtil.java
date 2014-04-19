@@ -91,6 +91,9 @@ public class TestUtil {
     }
 
     public WebDriver getWebDriver() {
+        if (webDriver==null) {
+            throw new IllegalStateException("webDriver is null, forgot to call setUp() ?");
+        }
         return webDriver;
     }
 }

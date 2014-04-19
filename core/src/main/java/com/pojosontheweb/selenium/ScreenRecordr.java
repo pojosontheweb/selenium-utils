@@ -19,16 +19,6 @@ public class ScreenRecordr {
 
     private ScreenRecorder screenRecorder = null;
 
-    private final File videoDir;
-
-    public ScreenRecordr() {
-        this(new File(System.getProperty("java.io.tmpdir")));
-    }
-
-    public ScreenRecordr(File videoDir) {
-        this.videoDir = videoDir;
-    }
-
     public ScreenRecordr start() {
 
         try {
@@ -87,6 +77,9 @@ public class ScreenRecordr {
     }
 
     public void stop() {
+        if (screenRecorder==null) {
+            return;
+        }
         try {
             if (screenRecorder.getState()!=null && screenRecorder.getState().equals(ScreenRecorder.State.RECORDING)) {
                 System.out.println("SeleniumScreenRecorder : stopping recorder");

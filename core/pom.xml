@@ -11,6 +11,9 @@
     <artifactId>selenium-utils-core</artifactId>
     <packaging>jar</packaging>
     <name>selenium-utils/core</name>
+    <properties>
+        <webtests.browser>firefox</webtests.browser>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
