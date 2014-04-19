@@ -143,4 +143,45 @@ new Findr(driver)
 `Findr` tries to report failures in condition chains by including a String-ified version of the path. Of course, the stack trace of the Timeout exception will tell where the evaluation failed.
 
 There are also variants to `eval()` that accept a `failureMessage` argument.
- 
+
+## Using with Maven
+
+Add the dependency to your pom :
+
+```
+<dependency>
+	<groupId>com.pojosontheweb</groupId>
+    <artifactId>selenium-utils-core</artifactId>
+    <version>LATEST-SNAPSHOT</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Configure surefire :
+
+```
+<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <configuration>
+    	<systemPropertyVariables>
+        	<webtests.browser>${webtests.browser}</webtests.browser>
+            <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
+            <webtests.video.dir>${project.build.directory}/webtests-videos</webtests.video.dir>
+            <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
+        </systemPropertyVariables>
+    </configuration>
+</plugin>
+```
+
+Invoke maven :
+
+```
+$> mvn test
+```
+
+With sys props :
+
+```
+$> mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedriver -Dwebtests.video.enabled=true
+```
