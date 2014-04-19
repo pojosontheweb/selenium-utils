@@ -1,11 +1,11 @@
 package com.pojosontheweb.selenium.formz;
 
 import com.pojosontheweb.selenium.Findr;
-import com.pojosontheweb.selenium.ManagedDriverTestBase;
+import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
-public class SelectTest extends ManagedDriverTestBase {
+public class SelectTest extends ManagedDriverJunit4TestBase {
 
     @Test
     public void testSelect() {

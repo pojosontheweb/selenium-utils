@@ -2,7 +2,7 @@ package com.pojosontheweb.selenium;
 
 import org.junit.Test;
 
-public class GoogleManagedTest extends ManagedDriverTestBase {
+public class GoogleManagedTest extends ManagedDriverJunit4TestBase {
 
     @Test
     public void testWithInjectedWebDriver() throws Exception {
