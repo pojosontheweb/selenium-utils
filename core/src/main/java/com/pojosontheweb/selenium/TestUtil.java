@@ -4,6 +4,11 @@ import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 
+/**
+ * Helper for test cases. Maps on the lifecycle of a typical test case (setUp/test/tearDown)
+ * and handles driver init and video recording.
+ * Easily driven via sys props (the ones of the DriverBuildr and some here for the video).
+ */
 public class TestUtil {
 
     private static final String SYS_PROP_VIDEO_ENABLED = "webtests.video.enabled";
@@ -49,7 +54,7 @@ public class TestUtil {
         System.out.println(sb.toString());
     }
 
-    private ScreenRecordr recordr = videoEnabled ? new ScreenRecordr() : null;
+    private ScreenRecordr recordr = null;
 
     public void removeVideoFiles() {
         if (recordr!=null) {
@@ -69,8 +74,13 @@ public class TestUtil {
     }
 
     public void setUp() {
-        // init web driver before each test in ran
+
+        // init web driver before each test
         webDriver = DriverBuildr.fromSysProps().build();
+
+        // init recorder if needed
+        recordr = videoEnabled ? new ScreenRecordr() : null;
+
         // start video recorder if video is enabled
         if (recordr!=null) {
             log("video is enabled, starting recorder");
