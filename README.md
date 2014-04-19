@@ -92,7 +92,7 @@ It's built on [Monte Media Library](http://www.randelshofer.ch/monte/), and is p
 
 ## Findr
 
-`Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly. It helps stabilizing ajax tests and 
+`Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
 
 The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.
 
