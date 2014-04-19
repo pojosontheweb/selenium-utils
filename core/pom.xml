@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.pojosontheweb</groupId>
             <artifactId>monte-repack</artifactId>
-            <version>0.7.7</version>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

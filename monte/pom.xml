@@ -9,7 +9,6 @@
         <version>LATEST-SNAPSHOT</version>
     </parent>
     <artifactId>monte-repack</artifactId>
-    <version>0.7.7</version>
     <packaging>jar</packaging>
     <name>MonteCC repack</name>
     <repositories>

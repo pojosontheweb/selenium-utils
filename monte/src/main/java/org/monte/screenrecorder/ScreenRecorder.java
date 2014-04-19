@@ -348,11 +348,7 @@ public class ScreenRecorder extends AbstractStateModel {
         }
         this.movieFolder = movieFolder;
         if (this.movieFolder == null) {
-            if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-                this.movieFolder = new File(System.getProperty("user.home") + File.separator + "Videos");
-            } else {
-                this.movieFolder = new File(System.getProperty("user.home") + File.separator + "Movies");
-            }
+            this.movieFolder = new File(System.getProperty("java.io.tmpdir") + File.separator + "screenrecorder");
         }
 
     }

@@ -19,6 +19,16 @@ public class ScreenRecordr {
 
     private ScreenRecorder screenRecorder = null;
 
+    private final File videoDir;
+
+    public ScreenRecordr() {
+        this(new File(System.getProperty("java.io.tmpdir")));
+    }
+
+    public ScreenRecordr(File videoDir) {
+        this.videoDir = videoDir;
+    }
+
     public ScreenRecordr start() {
 
         try {
@@ -33,7 +43,8 @@ public class ScreenRecordr {
                         .getDefaultConfiguration();
 
                 //Create a instance of ScreenRecorder with the required configurations
-                screenRecorder = new ScreenRecorder(gc,
+                screenRecorder = new ScreenRecorder(
+                        gc,
                         new Format(
                                 MediaTypeKey,
                                 FormatKeys.MediaType.FILE,

@@ -8,19 +8,48 @@ import com.google.common.base.Predicate;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+/**
+ * Utility for accessing Selenium DOM safely, wait-style.
+ *
+ * Allows to create chains of conditions and execute those conditions
+ * inside a WebDriverWait, in a transparent fashion.
+ *
+ * Instances are immutable and can be reused safely.
+ */
 public final class Findr {
 
-    private static final int WAIT_TIMEOUT = 10; // secs
+    /** the default wait timeout */
+    private static final int WAIT_TIMEOUT_SECONDS = 10; // secs
 
+    /** ref to the driver */
     private final WebDriver driver;
+
+    /** the composed function */
     private final Function<SearchContext,WebElement> f;
+
+    /**
+     * A list of strings that represent the "path" for this findr,
+     * used to create meaningful failure messages
+     */
     private final List<String> path;
+
+    /**
+     * The wait timeout (in seconds)
+     */
     private final int waitTimeout;
 
+    /**
+     * Create a Findr with passed arguments
+     * @param driver the WebDriver
+     */
     public Findr(WebDriver driver) {
-        this(driver,WAIT_TIMEOUT);
+        this(driver, WAIT_TIMEOUT_SECONDS);
     }
 
+    /**
+     * Create a Findr with passed arguments
+     * @param driver the WebDriver
+     */
     public Findr(WebDriver driver, int waitTimeout) {
         this(driver, waitTimeout, null, Collections.<String>emptyList());
     }
@@ -58,6 +87,11 @@ public final class Findr {
         }
     }
 
+    /**
+     * Adds specified single-element selector to the chain, and return a new Findr.
+     * @param by the selector
+     * @return a new Findr with updated condition chain
+     */
     public Findr elem(final By by) {
         return compose(
                 new Function<SearchContext, WebElement>() {
@@ -77,6 +111,11 @@ public final class Findr {
         );
     }
 
+    /**
+     * Adds specified multiple element selector to the chain, and return a new ListFindr.
+     * @param by the selector
+     * @return a new ListFindr with updated condition chain
+     */
     public ListFindr elemList(By by) {
         return new ListFindr(by);
     }
@@ -98,6 +137,14 @@ public final class Findr {
         }
     }
 
+    /**
+     * Evaluates this Findr, and invokes passed callback if the whole chain succeeds. Throws
+     * a TimeoutException otherwise.
+     * @param callback the callback to invoke (called if the whole chain of conditions succeeded)
+     * @param <T> the return type of the callback
+     * @return the result of the callback
+     * @throws TimeoutException if at least one condition in the chain failed
+     */
     public <T> T eval(final Function<WebElement,T> callback) throws TimeoutException {
         return wrapWebDriverWait(wrapAndTrapCatchStaleElementException(new Function<WebDriver, T>() {
             @Override
@@ -118,10 +165,19 @@ public final class Findr {
         }
     };
 
+    /**
+     * Evaluates this Findr, and blocks until all conditions are satisfied. Throws
+     * a TimeoutException otherwise.
+     */
     public void eval() throws TimeoutException {
         eval(IDENTITY_FOR_EVAL);
     }
 
+    /**
+     * Evaluates this Findr, and blocks until all conditions are satisfied. Throws
+     * a TimeoutException otherwise.
+     * @param failureMessage A message to be included to the timeout exception
+     */
     public void eval(String failureMessage) throws TimeoutException {
         try {
             eval();
@@ -130,8 +186,16 @@ public final class Findr {
         }
     }
 
-
-    public <T> T eval(final Function<WebElement,T> callback, String failureMessage) {
+    /**
+     * Evaluates this Findr, and invokes passed callback if the whole chain succeeds. Throws
+     * a TimeoutException with passed failure message otherwise.
+     * @param callback the callback to invoke (called if the whole chain of conditions succeeded)
+     * @param <T> the return type of the callback
+     * @param failureMessage A message to be included to the timeout exception
+     * @return the result of the callback
+     * @throws TimeoutException if at least one condition in the chain failed
+     */
+    public <T> T eval(final Function<WebElement,T> callback, String failureMessage) throws TimeoutException {
         try {
             return eval(callback);
         } catch (TimeoutException e) {
@@ -139,6 +203,12 @@ public final class Findr {
         }
     }
 
+    /**
+     * Adds a Predicate (condition) to the chain, and return a new Findr
+     * with updated chain.
+     * @param predicate the condition to add
+     * @return a Findr with updated conditions chain
+     */
     public Findr where(final Predicate<? super WebElement> predicate) {
         return compose(new Function<SearchContext, WebElement>() {
             @Override
@@ -163,7 +233,13 @@ public final class Findr {
 
     private static final Predicate<WebElement> TRUE = com.google.common.base.Predicates.alwaysTrue();
 
-    public void sendKeys(final CharSequence... keys) {
+    /**
+     * Shortcut method : evaluates chain, and sends keys to target WebElement of this
+     * Findr.
+     * @param keys the text to send
+     * @throws TimeoutException if at least one condition in the chain failed
+     */
+    public void sendKeys(final CharSequence... keys) throws TimeoutException {
         eval(new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement webElement) {
@@ -178,6 +254,11 @@ public final class Findr {
         });
     }
 
+    /**
+     * Shortcut method : evaluates chain, and clicks target WebElement of this
+     * Findr.
+     * @throws TimeoutException if at least one condition in the chain failed
+     */
     public void click() {
         eval(new Function<WebElement, Object>() {
             @Override
@@ -193,6 +274,11 @@ public final class Findr {
         });
     }
 
+    /**
+     * Shortcut method : evaluates chain, and clears target WebElement of this
+     * Findr.
+     * @throws TimeoutException if at least one condition in the chain failed
+     */
     public void clear() {
         eval(new Function<WebElement, Object>() {
             @Override
@@ -215,6 +301,10 @@ public final class Findr {
         }
     };
 
+    /**
+     * Findr counterpart for element lists. Instances of this class are created and
+     * returned by <code>Findr.elemList()</code>. Allows for index-based and filtering.
+     */
     public class ListFindr {
 
         private final By by;
@@ -267,10 +357,21 @@ public final class Findr {
             }
         }
 
+        /**
+         * Adds a filtering predicate, and returns a new ListFindr with updated chain.
+         * @param predicate the predicate used for filtering the list of elements (applied on each element)
+         * @return a new ListFindr with updated chain
+         */
         public ListFindr where(final Predicate<? super WebElement> predicate) {
             return new ListFindr(by, com.google.common.base.Predicates.<WebElement>and(filters, wrapAndTrap(predicate)), waitCount);
         }
 
+        /**
+         * Index-based access to the list of elements in this ListFindr. Allows
+         * to wait for the n-th elem.
+         * @param index the index of the element to wait for
+         * @return a new Findr with updated chain
+         */
         public Findr at(final int index) {
             return compose(new Function<SearchContext, WebElement>(){
                 @Override
@@ -304,11 +405,24 @@ public final class Findr {
             return filtered;
         }
 
+        /**
+         * Wait for the list findr to mach passed count
+         * @param elemCount the expected count
+         * @return a new ListFindr with updated chain
+         */
         public ListFindr whereElemCount(int elemCount) {
             return new ListFindr(by, filters, elemCount);
         }
 
-        public <T> T eval(final Function<List<WebElement>, T> callback) {
+        /**
+         * Evaluates this ListFindr and invokes passed callback if the whole chain suceeded. Throws
+         * a TimeoutException if the condition chain didn't match.
+         * @param callback the callback to call if the chain succeeds
+         * @param <T> the rturn type of the callback
+         * @return the result of the callback
+         * @throws TimeoutException if at least one condition in the chain failed
+         */
+        public <T> T eval(final Function<List<WebElement>, T> callback) throws TimeoutException {
             return wrapWebDriverWaitList(wrapAndTrapCatchStaleElementException(new Function<WebDriver, T>() {
                 @Override
                 public T apply(WebDriver input) {
@@ -328,11 +442,22 @@ public final class Findr {
             }));
         }
 
-        public void eval() {
+        /**
+         * Evaluates this ListFindr. Throws
+         * a TimeoutException if the condition chain didn't match.
+         * @throws TimeoutException if at least one condition in the chain failed
+         */
+        public void eval() throws TimeoutException {
             eval(IDENTITY_LIST);
         }
 
-        public void eval(String failureMessage) {
+        /**
+         * Evaluates this ListFindr. Throws
+         * a TimeoutException if the condition chain didn't match.
+         * @param failureMessage A message to include in the timeout exception
+         * @throws TimeoutException if at least one condition in the chain failed
+         */
+        public void eval(String failureMessage) throws TimeoutException {
             try {
                 eval(IDENTITY_LIST);
             } catch(TimeoutException e) {
@@ -345,6 +470,12 @@ public final class Findr {
     // Utility statics
     // ---------------
 
+    /**
+     * Create and return a new Predicate that matches an element's attribute value
+     * @param attrName the name of the attribute
+     * @param expectedValue the expected value of the attribute
+     * @return a new Predicate
+     */
     public static Predicate<WebElement> attrEquals(final String attrName, final String expectedValue) {
         return new Predicate<WebElement>() {
             @Override
@@ -360,6 +491,12 @@ public final class Findr {
         };
     }
 
+    /**
+     * Create and return a new Predicate that checks for the presence of a css class
+     * on a an element.
+     * @param className the expected css class
+     * @return a new Predicate
+     */
     public static Predicate<WebElement> hasClass(final String className) {
         return new Predicate<WebElement>() {
             @Override
@@ -376,7 +513,12 @@ public final class Findr {
         };
     }
 
-
+    /**
+     * Create and return a new Predicate that checks for an element's
+     * inner text.
+     * @param expected the expected inner text
+     * @return a new Predicate
+     */
     public static Predicate<WebElement> textEquals(final String expected) {
         return new Predicate<WebElement>() {
             @Override
@@ -392,7 +534,10 @@ public final class Findr {
         };
     }
 
-
+    /**
+     * Create and return a new Predicate that checks if the element is enabled.
+     * @return a new Predicate
+     */
     public static Predicate<WebElement> isEnabled() {
         return new Predicate<WebElement>() {
             @Override
@@ -407,6 +552,10 @@ public final class Findr {
         };
     }
 
+    /**
+     * Create and return a new Predicate that checks if the element is displayed.
+     * @return a new Predicate
+     */
     public static Predicate<WebElement> isDisplayed() {
         return new Predicate<WebElement>() {
             @Override
@@ -421,6 +570,12 @@ public final class Findr {
         };
     }
 
+    /**
+     * Create and return a new Predicate that checks for a css value on the element.
+     * @param propName the css prop name
+     * @param expectedValue the expected css value
+     * @return a new Predicate
+     */
     public static Predicate<WebElement> cssValue(final String propName, final String expectedValue) {
         return new Predicate<WebElement>() {
             @Override
