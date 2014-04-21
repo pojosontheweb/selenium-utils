@@ -28,8 +28,11 @@ public class ManagedDriverJunit4TestBase {
 
         @Override
         protected void succeeded(Description description) {
-            // trash video
-            testUtil.removeVideoFiles();
+            if (testUtil.isFailuresOnly()) {
+                testUtil.removeVideoFiles();
+            } else {
+                testUtil.moveVideoFiles(toTestName(description));
+            }
         }
 
         @Override

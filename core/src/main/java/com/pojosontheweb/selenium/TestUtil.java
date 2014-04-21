@@ -12,11 +12,13 @@ import java.io.File;
 public class TestUtil {
 
     private static final String SYS_PROP_VIDEO_ENABLED = "webtests.video.enabled";
+    private static final String SYS_PROP_VIDEO_FAILED_ONLY = "webtests.video.failures.only";
     private static final String SYS_PROP_VIDEO_DIR = "webtests.video.dir";
 
     private WebDriver webDriver;
     private boolean videoEnabled = isVideoEnabledFromSysProps();
     private String videoDir = getVideoDirFromSysProps();
+    private boolean failuresOnly = isVideoFailuresOnlyFromSysProps();
 
     protected static boolean isVideoEnabledFromSysProps() {
         String videoEnabledProp = System.getProperty(SYS_PROP_VIDEO_ENABLED, "false");
@@ -28,6 +30,10 @@ public class TestUtil {
         return System.getProperty(SYS_PROP_VIDEO_DIR, tmpDir);
     }
 
+    protected static boolean isVideoFailuresOnlyFromSysProps() {
+        String prop = System.getProperty(SYS_PROP_VIDEO_FAILED_ONLY, "true");
+        return "true".equals(prop.toLowerCase());
+    }
 
     public boolean isVideoEnabled() {
         return videoEnabled;
@@ -43,6 +49,14 @@ public class TestUtil {
 
     public void setVideoDir(String videoDir) {
         this.videoDir = videoDir;
+    }
+
+    public boolean isFailuresOnly() {
+        return failuresOnly;
+    }
+
+    public void setFailuresOnly(boolean failuresOnly) {
+        this.failuresOnly = failuresOnly;
     }
 
     public void log(String... args) {

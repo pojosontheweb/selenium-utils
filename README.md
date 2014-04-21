@@ -60,6 +60,12 @@ Here is a list of all supported System Properties :
 		<td>tmp dir</td>
 		<td></td>
 	</tr>
+	<tr>
+		<td>webtests.video.failures.only</td>
+		<td>true,false</td>
+		<td>true</td>
+		<td>keep videos for failures only, or for all tests</td>
+	</tr>
 	</tbody>
 </table>
 
