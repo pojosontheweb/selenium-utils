@@ -7,12 +7,13 @@
         <artifactId>oss-parent</artifactId>
         <version>6</version>
     </parent>
-    <groupId>org.pojosontheweb</groupId>
-    <version>LATEST-SNAPSHOT</version>
+    <groupId>com.pojosontheweb</groupId>
+    <version>1.0</version>
     <artifactId>selenium-utils</artifactId>
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
+        <module>monte</module>
         <module>core</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
