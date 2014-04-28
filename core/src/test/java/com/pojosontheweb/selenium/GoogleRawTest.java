@@ -45,11 +45,12 @@ public class GoogleRawTest {
 
             // check the results
             new Findr(driver)
-                    .elem(By.id("ires"))
+                    .elem(By.id("res"))
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
                     .elem(By.tagName("a"))
-                    .where(Findr.textEquals("POJOs on the Web!: Woko"))
+                    .elem(By.tagName("em"))
+                    .where(Findr.textEquals("POJOs on the Web"))
                     .eval();
 
             System.out.println("OK !");
