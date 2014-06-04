@@ -591,4 +591,24 @@ public final class Findr {
         };
     }
 
+    /**
+     * Create and return a new Predicate that inverses passed predicate.
+     * @param in the predicate to inverse
+     * @return a new Predicate
+     */
+    public static Predicate<WebElement> not(final Predicate<WebElement> in) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement input) {
+                return !in.apply(input);
+            }
+
+            @Override
+            public String toString() {
+                return "not " + in.toString();
+            }
+        };
+    }
+
+
 }
