@@ -535,6 +535,31 @@ public final class Findr {
     }
 
     /**
+     * Create and return a new Predicate checking that an element's
+     * inner text starts with passed text.
+     * @param expectedStartsWith the expected start of text
+     * @return a new Predicate
+     */
+    public static Predicate<WebElement> textStartsWith(final String expectedStartsWith) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement input) {
+                String text = input.getText();
+                if (text==null) {
+                    return false;
+                }
+                return text.startsWith(expectedStartsWith);
+            }
+
+            @Override
+            public String toString() {
+                return "textStartsWith(" + expectedStartsWith + ")";
+
+            }
+        };
+    }
+
+    /**
      * Create and return a new Predicate that checks if the element is enabled.
      * @return a new Predicate
      */
