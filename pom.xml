@@ -9,16 +9,16 @@
         <version>6</version>
     </parent>
     <groupId>com.pojosontheweb</groupId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <artifactId>selenium-utils</artifactId>
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
-        <module>monte</module>
+        <!--module>monte</module-->
         <module>core</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
-    <description>JFacets profile-based framework</description>
+    <description>Utilities for selenium testing</description>
     <licenses>
         <license>
             <name>Apache 2</name>
