@@ -492,6 +492,48 @@ public final class Findr {
     }
 
     /**
+     * Create and return a new Predicate that checks for an attribute start
+     * @param attrName the name of the attribute
+     * @param expectedStartsWith the expected start of the attribute
+     * @return a new Predicate
+     */
+    public static Predicate<WebElement> attrStartsWith(final String attrName, final String expectedStartsWith) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement webElement) {
+                String attrVal = webElement.getAttribute(attrName);
+                return attrVal!=null && attrVal.startsWith(expectedStartsWith);
+            }
+
+            @Override
+            public String toString() {
+                return "attrStartsWith(" + attrName + "," + expectedStartsWith + ")";
+            }
+        };
+    }
+
+    /**
+     * Create and return a new Predicate that checks for an attribute end
+     * @param attrName the name of the attribute
+     * @param expectedEndsWith the expected start of the attribute
+     * @return a new Predicate
+     */
+    public static Predicate<WebElement> attrEndsWith(final String attrName, final String expectedEndsWith) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement webElement) {
+                String attrVal = webElement.getAttribute(attrName);
+                return attrVal!=null && attrVal.endsWith(expectedEndsWith);
+            }
+
+            @Override
+            public String toString() {
+                return "attrEndsWith(" + attrName + "," + expectedEndsWith + ")";
+            }
+        };
+    }
+
+    /**
      * Create and return a new Predicate that checks for the presence of a css class
      * on a an element.
      * @param className the expected css class
@@ -554,6 +596,31 @@ public final class Findr {
             @Override
             public String toString() {
                 return "textStartsWith(" + expectedStartsWith + ")";
+
+            }
+        };
+    }
+
+    /**
+     * Create and return a new Predicate checking that an element's
+     * inner text ends with passed text.
+     * @param expectedEndsWith the expected start of text
+     * @return a new Predicate
+     */
+    public static Predicate<WebElement> textEndsWith(final String expectedEndsWith) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement input) {
+                String text = input.getText();
+                if (text==null) {
+                    return false;
+                }
+                return text.endsWith(expectedEndsWith);
+            }
+
+            @Override
+            public String toString() {
+                return "textEndsWith(" + expectedEndsWith + ")";
 
             }
         };
