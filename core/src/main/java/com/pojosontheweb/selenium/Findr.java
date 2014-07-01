@@ -235,7 +235,8 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and sends keys to target WebElement of this
-     * Findr.
+     * Findr. If sendKeys throws an exception, then the whole chain is evaluated again, until
+     * no exception is thrown, or timeout.
      * @param keys the text to send
      * @throws TimeoutException if at least one condition in the chain failed
      */
@@ -243,7 +244,12 @@ public final class Findr {
         eval(new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement webElement) {
-                webElement.sendKeys(keys);
+                try {
+                    webElement.sendKeys(keys);
+                } catch(Exception e) {
+                    // sendKeys throws, try again !
+                    return false;
+                }
                 return true;
             }
 
@@ -256,14 +262,20 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and clicks target WebElement of this
-     * Findr.
+     * Findr. If the click throws an exception, then the whole chain is evaluated again, until
+     * no exception is thrown, or timeout.
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void click() {
         eval(new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement webElement) {
-                webElement.click();
+                try {
+                    webElement.click();
+                } catch(Exception e) {
+                    // click threw : try again !
+                    return false;
+                }
                 return true;
             }
 
@@ -276,14 +288,19 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and clears target WebElement of this
-     * Findr.
+     * Findr. If clear throws an exception, then the whole chain is evaluated again, until
+     * no exception is thrown, or timeout.
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void clear() {
         eval(new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement webElement) {
-                webElement.clear();
+                try {
+                    webElement.clear();
+                } catch(Exception e) {
+                    return false;
+                }
                 return true;
             }
 
