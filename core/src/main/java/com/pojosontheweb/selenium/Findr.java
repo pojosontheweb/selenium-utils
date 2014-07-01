@@ -91,13 +91,19 @@ public final class Findr {
         this.path = path;
     }
 
-    private <F,T> Function<F,T> wrapAndTrapCatchStaleElementException(final Function<F,T> function) {
+    private <F,T> Function<F,T> wrapAndTrapCatchSeleniumException(final Function<F, T> function) {
         return new Function<F,T>() {
             @Override
             public T apply(F input) {
                 try {
                     return function.apply(input);
                 } catch(StaleElementReferenceException e) {
+                    // stale -> retry
+                    return null;
+                } catch(TimeoutException e) {
+                    // special case for nested Findrs : if the
+                    // composed function time-outs, we don't want
+                    // to stop the outer one...
                     return null;
                 }
             }
@@ -105,7 +111,7 @@ public final class Findr {
     }
 
     private Findr compose(Function<SearchContext,WebElement> function, String pathElem) {
-        Function<SearchContext,WebElement> newFunction = wrapAndTrapCatchStaleElementException(function);
+        Function<SearchContext,WebElement> newFunction = wrapAndTrapCatchSeleniumException(function);
         ArrayList<String> newPath = new ArrayList<String>(path);
         if (pathElem!=null) {
             newPath.add(pathElem);
@@ -176,7 +182,7 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public <T> T eval(final Function<WebElement,T> callback) throws TimeoutException {
-        return wrapWebDriverWait(wrapAndTrapCatchStaleElementException(new Function<WebDriver, T>() {
+        return wrapWebDriverWait(wrapAndTrapCatchSeleniumException(new Function<WebDriver, T>() {
             @Override
             public T apply(WebDriver input) {
                 WebElement e = f.apply(input);
@@ -470,10 +476,10 @@ public final class Findr {
          * @throws TimeoutException if at least one condition in the chain failed
          */
         public <T> T eval(final Function<List<WebElement>, T> callback) throws TimeoutException {
-            return wrapWebDriverWaitList(wrapAndTrapCatchStaleElementException(new Function<WebDriver, T>() {
+            return wrapWebDriverWaitList(wrapAndTrapCatchSeleniumException(new Function<WebDriver, T>() {
                 @Override
                 public T apply(WebDriver input) {
-                    SearchContext c = f==null ? input : f.apply(input);
+                    SearchContext c = f == null ? input : f.apply(input);
                     if (c == null) {
                         return null;
                     }
@@ -481,7 +487,7 @@ public final class Findr {
                     if (elements == null) {
                         return null;
                     }
-                    if (waitCount!=null && elements.size()!=waitCount) {
+                    if (waitCount != null && elements.size() != waitCount) {
                         return null;
                     }
                     return callback.apply(filterElements(elements));
