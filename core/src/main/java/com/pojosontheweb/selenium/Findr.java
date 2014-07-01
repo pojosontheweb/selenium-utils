@@ -49,9 +49,39 @@ public final class Findr {
     /**
      * Create a Findr with passed arguments
      * @param driver the WebDriver
+     * @param waitTimeout the wait timeout in seconds
      */
     public Findr(WebDriver driver, int waitTimeout) {
         this(driver, waitTimeout, null, Collections.<String>emptyList());
+    }
+
+    /**
+     * Helper for "nested" Findrs. Allows to use a <code>WebElement</code> as the
+     * root of a new Findr.
+     * @param driver The WebDriver
+     * @param webElement the WebElement to use as root
+     * @return a new Findr that has the specified WebElement as its root
+     */
+    public static Findr fromWebElement(WebDriver driver, final WebElement webElement) {
+        return fromWebElement(driver, webElement, WAIT_TIMEOUT_SECONDS);
+    }
+
+    /**
+     * Helper for "nested" Findrs. Allows to use a <code>WebElement</code> as the
+     * root of a new Findr.
+     * @param driver The WebDriver
+     * @param webElement the WebElement to use as root
+     * @param waitTimeout the wait timeout in seconds
+     * @return a new Findr that has the specified WebElement as its root
+     */
+    public static Findr fromWebElement(WebDriver driver, final WebElement webElement, int waitTimeout) {
+        Findr f = new Findr(driver, waitTimeout);
+        return f.compose(new Function<SearchContext, WebElement>() {
+            @Override
+            public WebElement apply(SearchContext input) {
+                return webElement;
+            }
+        }, "fromWebElement(" + webElement + ")");
     }
 
     private Findr(WebDriver driver, int waitTimeout, Function<SearchContext, WebElement> f, List<String> path) {

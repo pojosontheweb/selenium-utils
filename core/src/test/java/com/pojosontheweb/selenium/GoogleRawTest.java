@@ -1,9 +1,11 @@
 package com.pojosontheweb.selenium;
 
+import com.google.common.base.Function;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.io.File;
 
@@ -31,7 +33,7 @@ public class GoogleRawTest {
         );
     }
 
-    public static void performTest(WebDriver driver, String videoFileName) {
+    public static void performTest(final WebDriver driver, String videoFileName) {
 
         try {
 
@@ -54,6 +56,23 @@ public class GoogleRawTest {
                     .eval();
 
             System.out.println("OK !");
+
+            // a basic nested finder test
+            new Findr(driver)
+                    .elem(By.id("res"))
+                    .eval(new Function<WebElement, Object>() {
+                        @Override
+                        public Object apply(WebElement input) {
+                            Findr.fromWebElement(driver, input, 2)
+                                    .elemList(By.cssSelector("h3.r"))
+                                    .at(0)
+                                    .elem(By.tagName("a"))
+                                    .elem(By.tagName("em"))
+                                    .where(Findr.textEquals("POJOs on the Web"))
+                                    .eval();
+                            return true;
+                        }
+                    });
 
         } finally {
             driver.close();
