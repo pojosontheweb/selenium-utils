@@ -49,9 +49,39 @@ public final class Findr {
     /**
      * Create a Findr with passed arguments
      * @param driver the WebDriver
+     * @param waitTimeout the wait timeout in seconds
      */
     public Findr(WebDriver driver, int waitTimeout) {
         this(driver, waitTimeout, null, Collections.<String>emptyList());
+    }
+
+    /**
+     * Helper for "nested" Findrs. Allows to use a <code>WebElement</code> as the
+     * root of a new Findr.
+     * @param driver The WebDriver
+     * @param webElement the WebElement to use as root
+     * @return a new Findr that has the specified WebElement as its root
+     */
+    public static Findr fromWebElement(WebDriver driver, final WebElement webElement) {
+        return fromWebElement(driver, webElement, WAIT_TIMEOUT_SECONDS);
+    }
+
+    /**
+     * Helper for "nested" Findrs. Allows to use a <code>WebElement</code> as the
+     * root of a new Findr.
+     * @param driver The WebDriver
+     * @param webElement the WebElement to use as root
+     * @param waitTimeout the wait timeout in seconds
+     * @return a new Findr that has the specified WebElement as its root
+     */
+    public static Findr fromWebElement(WebDriver driver, final WebElement webElement, int waitTimeout) {
+        Findr f = new Findr(driver, waitTimeout);
+        return f.compose(new Function<SearchContext, WebElement>() {
+            @Override
+            public WebElement apply(SearchContext input) {
+                return webElement;
+            }
+        }, "fromWebElement(" + webElement + ")");
     }
 
     private Findr(WebDriver driver, int waitTimeout, Function<SearchContext, WebElement> f, List<String> path) {
@@ -235,7 +265,8 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and sends keys to target WebElement of this
-     * Findr.
+     * Findr. If sendKeys throws an exception, then the whole chain is evaluated again, until
+     * no exception is thrown, or timeout.
      * @param keys the text to send
      * @throws TimeoutException if at least one condition in the chain failed
      */
@@ -243,7 +274,12 @@ public final class Findr {
         eval(new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement webElement) {
-                webElement.sendKeys(keys);
+                try {
+                    webElement.sendKeys(keys);
+                } catch(Exception e) {
+                    // sendKeys throws, try again !
+                    return false;
+                }
                 return true;
             }
 
@@ -256,14 +292,20 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and clicks target WebElement of this
-     * Findr.
+     * Findr. If the click throws an exception, then the whole chain is evaluated again, until
+     * no exception is thrown, or timeout.
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void click() {
         eval(new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement webElement) {
-                webElement.click();
+                try {
+                    webElement.click();
+                } catch(Exception e) {
+                    // click threw : try again !
+                    return false;
+                }
                 return true;
             }
 
@@ -276,14 +318,19 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and clears target WebElement of this
-     * Findr.
+     * Findr. If clear throws an exception, then the whole chain is evaluated again, until
+     * no exception is thrown, or timeout.
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void clear() {
         eval(new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement webElement) {
-                webElement.clear();
+                try {
+                    webElement.clear();
+                } catch(Exception e) {
+                    return false;
+                }
                 return true;
             }
 
