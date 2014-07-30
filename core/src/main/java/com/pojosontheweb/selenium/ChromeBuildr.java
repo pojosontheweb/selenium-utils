@@ -28,8 +28,9 @@ public class ChromeBuildr {
             }
         }
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("test-type");
         if (locale!=null) {
-            options.addArguments("--lang=" + locale);
+            options.addArguments("lang=" + locale);
         }
         return new ChromeDriver(options);
     }
