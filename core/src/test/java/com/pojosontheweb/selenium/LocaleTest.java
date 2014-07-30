@@ -7,7 +7,6 @@ import org.openqa.selenium.WebDriver;
 
 public class LocaleTest {
 
-    @Ignore
     @Test
     public void testChrome() {
         performTest(
@@ -51,7 +50,6 @@ public class LocaleTest {
         performTest(DriverBuildr.fromSysProps().build(), "Google-Suche");
     }
 
-    @Ignore
     @Test
     public void testSysPropsChrome() {
         System.setProperty("webtests.browser", "chrome");
