@@ -28,7 +28,6 @@ public class FirefoxBuildr {
         return this;
     }
 
-
     public WebDriver build() {
         if (profile==null) {
             File tmpDir = new File(System.getProperty("java.io.tmpdir"), "wt-ffprofile");

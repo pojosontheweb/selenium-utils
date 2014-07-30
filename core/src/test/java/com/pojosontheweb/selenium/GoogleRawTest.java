@@ -17,8 +17,7 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .chrome()
-                        .build(),
-                "testChrome"
+                        .build()
         );
     }
 
@@ -28,12 +27,11 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .firefox()
-                        .build(),
-                "testFirefox"
+                        .build()
         );
     }
 
-    public static void performTest(final WebDriver driver, String videoFileName) {
+    public static void performTest(final WebDriver driver) {
 
         try {
 
