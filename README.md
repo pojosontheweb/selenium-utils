@@ -43,6 +43,12 @@ Here is a list of all supported System Properties :
 		<td></td>
 	</tr>
 	<tr>
+		<td>webtests.locale</td>
+		<td>en, fr, ...</td>
+		<td></td>
+		<td>the locale for the tests (browser language)</td>
+	</tr>
+	<tr>
 		<td>webdriver.chrome.driver</td>
 		<td>path to driver exe</td>
 		<td></td>

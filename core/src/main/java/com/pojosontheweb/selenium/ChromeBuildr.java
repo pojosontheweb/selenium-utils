@@ -2,12 +2,14 @@ package com.pojosontheweb.selenium;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
 
 public class ChromeBuildr {
 
     private File driverPath;
+    private String locale;
 
     public static final String CHROMEDRIVER_PATH_SYSPROP_NAME = "webdriver.chrome.driver";
 
@@ -25,11 +27,25 @@ public class ChromeBuildr {
                         "by calling the builder or by setting the " + CHROMEDRIVER_PATH_SYSPROP_NAME + " System Property");
             }
         }
-        return new ChromeDriver();
+        ChromeOptions options = new ChromeOptions();
+        if (locale!=null) {
+            options.addArguments("--lang=" + locale);
+        }
+        return new ChromeDriver(options);
     }
 
     public ChromeBuildr setDriverPath(File driverPath) {
         this.driverPath = driverPath;
+        return this;
+    }
+
+    /**
+     * Set the driver locale
+     * @param locale two letters to represent the locale, or two letters + country
+     * @return this
+     */
+    public ChromeBuildr setLocale(String locale) {
+        this.locale = locale;
         return this;
     }
 }
