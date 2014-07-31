@@ -7,8 +7,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.io.File;
-
 public class GoogleRawTest {
 
     @Test
@@ -17,8 +15,7 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .chrome()
-                        .build(),
-                "testChrome"
+                        .build()
         );
     }
 
@@ -28,12 +25,11 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .firefox()
-                        .build(),
-                "testFirefox"
+                        .build()
         );
     }
 
-    public static void performTest(final WebDriver driver, String videoFileName) {
+    public static void performTest(final WebDriver driver) {
 
         try {
 
@@ -44,6 +40,10 @@ public class GoogleRawTest {
             new Findr(driver)
                     .elem(By.id("gbqfq"))
                     .sendKeys("pojos on the web", Keys.ENTER);
+            new Findr(driver)
+                    .elem(By.cssSelector(".gb_e.gb_pb"))
+                    .elem(By.cssSelector("button.gbqfb"))
+                    .click();
 
             // check the results
             new Findr(driver)
@@ -75,7 +75,7 @@ public class GoogleRawTest {
                     });
 
         } finally {
-            driver.close();
+            driver.quit();
         }
     }
 

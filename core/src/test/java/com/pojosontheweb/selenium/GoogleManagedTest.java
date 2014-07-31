@@ -6,7 +6,7 @@ public class GoogleManagedTest extends ManagedDriverJunit4TestBase {
 
     @Test
     public void testWithInjectedWebDriver() throws Exception {
-        GoogleRawTest.performTest(getWebDriver(), "testWithInjectedWebDriver");
+        GoogleRawTest.performTest(getWebDriver());
     }
 
 

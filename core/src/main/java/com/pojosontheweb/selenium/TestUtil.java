@@ -103,9 +103,9 @@ public class TestUtil {
     }
 
     public void tearDown() {
-        // close webdriver
+        // quit webdriver
         if (webDriver!=null) {
-            webDriver.close();
+            webDriver.quit();
         }
         if (recordr!=null) {
             // ref should have been nulled-out unless test is skipped

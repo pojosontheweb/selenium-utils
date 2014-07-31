@@ -22,9 +22,11 @@ public class DriverBuildr {
 
         /**
          * The "webtests.browser" sys prop.
+         *
          * @see com.pojosontheweb.selenium.Browsr for available values
          */
         public static final String PROP_WEBTESTS_BROWSER = "webtests.browser";
+        public static final String PROP_WEBTESTS_LOCALES = "webtests.locales";
 
         public WebDriver build() {
             // find requested browser in sys properties
@@ -36,17 +38,27 @@ public class DriverBuildr {
                     break;
                 }
             }
-            if (browsr==null) {
+            if (browsr == null) {
                 throw new RuntimeException("Could not find browser ! " + PROP_WEBTESTS_BROWSER + "=" + browserName);
             }
             // create WebDriver using this prop
-            switch (browsr) {
-                case Chrome:
-                    return  DriverBuildr.chrome().build();
-                default:
-                    return DriverBuildr.firefox().build();
+            String locale = System.getProperty(PROP_WEBTESTS_LOCALES);
+            if (browsr.equals(Browsr.Chrome)) {
+                ChromeBuildr b = chrome();
+                if (locale != null) {
+                    b.setLocales(locale);
                 }
+                return b.build();
+            } else {
+                FirefoxBuildr b = firefox();
+                if (locale != null) {
+                    b.setLocales(locale);
+                }
+                return b.build();
             }
+
+        }
+
     }
 
     /**
@@ -55,7 +67,6 @@ public class DriverBuildr {
     public static ChromeBuildr chrome() {
         return new ChromeBuildr();
     }
-
 
     /**
      * Create and return a FirefoxBuildr instance.

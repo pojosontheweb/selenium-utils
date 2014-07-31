@@ -11,6 +11,7 @@ public class FirefoxBuildr {
 
     private File path;
     private FirefoxProfile profile;
+    private String locales;
 
     public FirefoxBuildr setFirefoxPath(File path) {
         this.path = path;
@@ -22,11 +23,19 @@ public class FirefoxBuildr {
         return this;
     }
 
+    public FirefoxBuildr setLocales(String locales) {
+        this.locales = locales;
+        return this;
+    }
+
     public WebDriver build() {
         if (profile==null) {
             File tmpDir = new File(System.getProperty("java.io.tmpdir"), "wt-ffprofile");
             tmpDir.mkdir();
             profile = new FirefoxProfile(tmpDir);
+            if (locales !=null) {
+                profile.setPreference("intl.accept_languages", locales);
+            }
         }
         if (path!=null) {
             return new FirefoxDriver(new FirefoxBinary(path), profile);
