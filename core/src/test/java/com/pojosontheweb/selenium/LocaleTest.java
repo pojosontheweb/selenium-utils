@@ -1,28 +1,28 @@
 package com.pojosontheweb.selenium;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class LocaleTest {
 
-    @Ignore
     @Test
     public void testChrome() {
         performTest(
                 DriverBuildr
                         .chrome()
-                        .setLocale("sl")
+                        .setLocales("sl,fr")
                         .build(),
-                "Iskanje Google"
+                "Iskanje Google",
+                true
         );
         performTest(
                 DriverBuildr
                         .chrome()
-                        .setLocale("de")
+                        .setLocales("de,en")
                         .build(),
-                "Google-Suche"
+                "Google-Suche",
+                true
         );
     }
 
@@ -31,35 +31,36 @@ public class LocaleTest {
         performTest(
                 DriverBuildr
                         .firefox()
-                        .setLocale("sl")
+                        .setLocales("sl")
                         .build(),
-                "Iskanje Google"
+                "Iskanje Google",
+                true
         );
         performTest(
                 DriverBuildr
                         .firefox()
-                        .setLocale("de")
+                        .setLocales("de")
                         .build(),
-                "Google-Suche"
+                "Google-Suche",
+                true
         );
     }
 
     @Test
     public void testSysPropsFirefox() {
         System.setProperty("webtests.browser", "firefox");
-        System.setProperty("webtests.locale", "de");
-        performTest(DriverBuildr.fromSysProps().build(), "Google-Suche");
+        System.setProperty("webtests.locales", "de");
+        performTest(DriverBuildr.fromSysProps().build(), "Google-Suche", true);
     }
 
-    @Ignore
     @Test
     public void testSysPropsChrome() {
         System.setProperty("webtests.browser", "chrome");
-        System.setProperty("webtests.locale", "sl");
-        performTest(DriverBuildr.fromSysProps().build(), "Iskanje Google");
+        System.setProperty("webtests.locales", "sl");
+        performTest(DriverBuildr.fromSysProps().build(), "Iskanje Google", true);
     }
 
-    public static void performTest(final WebDriver driver, String expectedText) {
+    public static void performTest(final WebDriver driver, String expectedText, boolean quit) {
 
         try {
 
@@ -73,7 +74,9 @@ public class LocaleTest {
                     .eval();
 
         } finally {
-            driver.quit();
+            if (quit) {
+                driver.quit();
+            }
         }
     }
 

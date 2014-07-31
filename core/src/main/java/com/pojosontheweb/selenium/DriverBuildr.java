@@ -26,7 +26,7 @@ public class DriverBuildr {
          * @see com.pojosontheweb.selenium.Browsr for available values
          */
         public static final String PROP_WEBTESTS_BROWSER = "webtests.browser";
-        public static final String PROP_WEBTESTS_LOCALE = "webtests.locale";
+        public static final String PROP_WEBTESTS_LOCALES = "webtests.locales";
 
         public WebDriver build() {
             // find requested browser in sys properties
@@ -42,17 +42,17 @@ public class DriverBuildr {
                 throw new RuntimeException("Could not find browser ! " + PROP_WEBTESTS_BROWSER + "=" + browserName);
             }
             // create WebDriver using this prop
-            String locale = System.getProperty(PROP_WEBTESTS_LOCALE);
+            String locale = System.getProperty(PROP_WEBTESTS_LOCALES);
             if (browsr.equals(Browsr.Chrome)) {
                 ChromeBuildr b = chrome();
                 if (locale != null) {
-                    b.setLocale(locale);
+                    b.setLocales(locale);
                 }
                 return b.build();
             } else {
                 FirefoxBuildr b = firefox();
                 if (locale != null) {
-                    b.setLocale(locale);
+                    b.setLocales(locale);
                 }
                 return b.build();
             }

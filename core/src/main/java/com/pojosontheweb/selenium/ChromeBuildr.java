@@ -5,11 +5,12 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
+import java.util.HashMap;
 
 public class ChromeBuildr {
 
     private File driverPath;
-    private String locale;
+    private String locales;
 
     public static final String CHROMEDRIVER_PATH_SYSPROP_NAME = "webdriver.chrome.driver";
 
@@ -29,8 +30,10 @@ public class ChromeBuildr {
         }
         ChromeOptions options = new ChromeOptions();
         options.addArguments("test-type");
-        if (locale!=null) {
-            options.addArguments("lang=" + locale);
+        if (locales !=null) {
+            HashMap<String, String> prefs = new HashMap<String, String>();
+            prefs.put("intl.accept_languages", locales);
+            options.setExperimentalOptions("prefs", prefs);
         }
         return new ChromeDriver(options);
     }
@@ -40,13 +43,8 @@ public class ChromeBuildr {
         return this;
     }
 
-    /**
-     * Set the driver locale
-     * @param locale two letters to represent the locale, or two letters + country
-     * @return this
-     */
-    public ChromeBuildr setLocale(String locale) {
-        this.locale = locale;
+    public ChromeBuildr setLocales(String locales) {
+        this.locales = locales;
         return this;
     }
 }
