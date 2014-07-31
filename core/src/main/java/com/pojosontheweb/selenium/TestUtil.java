@@ -103,13 +103,9 @@ public class TestUtil {
     }
 
     public void tearDown() {
-        // close webdriver
+        // quit webdriver
         if (webDriver!=null) {
-            try {
-                webDriver.close();
-            } catch(Exception e) {
-                // we don't care...
-            }
+            webDriver.quit();
         }
         if (recordr!=null) {
             // ref should have been nulled-out unless test is skipped

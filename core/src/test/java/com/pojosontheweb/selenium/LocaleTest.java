@@ -73,7 +73,7 @@ public class LocaleTest {
                     .eval();
 
         } finally {
-            driver.close();
+            driver.quit();
         }
     }
 
