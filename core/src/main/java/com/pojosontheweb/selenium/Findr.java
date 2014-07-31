@@ -185,6 +185,9 @@ public final class Findr {
         return wrapWebDriverWait(wrapAndTrapCatchSeleniumException(new Function<WebDriver, T>() {
             @Override
             public T apply(WebDriver input) {
+                if (f==null) {
+                    throw new EmptyFindrException();
+                }
                 WebElement e = f.apply(input);
                 if (e == null) {
                     return null;
@@ -755,5 +758,11 @@ public final class Findr {
         };
     }
 
+    public static final class EmptyFindrException extends IllegalStateException {
+        public EmptyFindrException() {
+            super("Calling eval() on an empty Findr ! You need to " +
+                  "specify at least one condition before evaluating.");
+        }
+    }
 
 }
