@@ -70,6 +70,15 @@ public class GoogleRawTest {
                         }
                     });
 
+            // regexp matching
+            new Findr(driver)
+                    .elem(By.id("res"))
+                    .elemList(By.cssSelector("h3.r"))
+                    .at(0)
+                    .elem(By.tagName("em"))
+                    .where(Findr.textMatches("^POJOs.*"))
+                    .eval();
+
         } finally {
             driver.quit();
         }
