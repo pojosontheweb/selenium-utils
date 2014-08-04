@@ -728,6 +728,28 @@ public final class Findr {
     }
 
     /**
+     * Create and return a new Predicate that checks if the element's text matches passed regexp.
+     * @return a new Predicate
+     */
+    public static Predicate<WebElement> textMatches(final String regexp) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement input) {
+                String text = input.getText();
+                if (text==null) {
+                    return false;
+                }
+                return text.matches(regexp);
+            }
+
+            @Override
+            public String toString() {
+                return "matches(" + regexp + ")";
+            }
+        };
+    }
+
+    /**
      * Create and return a new Predicate that checks for a css value on the element.
      * @param propName the css prop name
      * @param expectedValue the expected css value
