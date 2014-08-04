@@ -46,10 +46,10 @@ Here is a list of all supported System Properties :
 		<td></td>
 	</tr>
 	<tr>
-		<td>webtests.locale</td>
+		<td>webtests.locales</td>
 		<td>en, fr, ...</td>
 		<td></td>
-		<td>the locale for the tests (browser language)</td>
+		<td>Comma-separated list of locale(s) for the tests (browser language)</td>
 	</tr>
 	<tr>
 		<td>webtests.findr.timeout</td>
