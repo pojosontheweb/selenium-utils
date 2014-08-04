@@ -48,7 +48,7 @@ public class GoogleRawTest {
                     .at(0)
                     .elem(By.tagName("a"))
                     .elem(By.tagName("em"))
-                    .where(Findr.textEquals("POJOs on the Web"))
+                    .where(Findrs.textEquals("POJOs on the Web"))
                     .eval();
 
             System.out.println("OK !");
@@ -64,7 +64,7 @@ public class GoogleRawTest {
                                     .at(0)
                                     .elem(By.tagName("a"))
                                     .elem(By.tagName("em"))
-                                    .where(Findr.textEquals("POJOs on the Web"))
+                                    .where(Findrs.textEquals("POJOs on the Web"))
                                     .eval();
                             return true;
                         }
@@ -76,7 +76,7 @@ public class GoogleRawTest {
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
                     .elem(By.tagName("em"))
-                    .where(Findr.textMatches("^POJOs.*"))
+                    .where(Findrs.textMatches("^POJOs.*"))
                     .eval();
 
         } finally {
