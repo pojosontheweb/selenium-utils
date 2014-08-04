@@ -19,7 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public final class Findr {
 
     /** the default wait timeout */
-    private static final int WAIT_TIMEOUT_SECONDS = 10; // secs
+    public static final int WAIT_TIMEOUT_SECONDS = 10; // secs
 
     /** ref to the driver */
     private final WebDriver driver;

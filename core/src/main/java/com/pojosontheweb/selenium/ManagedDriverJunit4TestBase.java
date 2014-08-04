@@ -12,6 +12,8 @@ import org.openqa.selenium.WebDriver;
  */
 public class ManagedDriverJunit4TestBase {
 
+    public static final String PROP_WEBTESTS_FINDR_TIMEOUT = "webtests.findr.timeout";
+
     private final TestUtil testUtil = new TestUtil();
 
     private static String toTestName(Description d) {
@@ -56,9 +58,10 @@ public class ManagedDriverJunit4TestBase {
         return testUtil.getWebDriver();
     }
 
-
     protected Findr findr() {
-        return new Findr(getWebDriver());
+        String timeoutStr = System.getProperty(PROP_WEBTESTS_FINDR_TIMEOUT);
+        int i = timeoutStr==null ? Findr.WAIT_TIMEOUT_SECONDS : Integer.parseInt(timeoutStr);
+        return new Findr(getWebDriver(), i);
     }
 
     protected Findr findr(int timeoutInSeconds) {

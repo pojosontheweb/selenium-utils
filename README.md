@@ -36,6 +36,9 @@ Here is a list of all supported System Properties :
 	</tr>
 	</thead>
 	<tbody>
+    <tr>
+        <td colspan="4"><em>General props</em></td>
+    </tr>
 	<tr>
 		<td>webtests.browser</td>
 		<td>firefox,chrome</td>
@@ -49,10 +52,10 @@ Here is a list of all supported System Properties :
 		<td>the locale for the tests (browser language)</td>
 	</tr>
 	<tr>
-		<td>webdriver.chrome.driver</td>
-		<td>path to driver exe</td>
-		<td></td>
-		<td>mandatory for Chrome</td>
+		<td>webtests.findr.timeout</td>
+		<td>Any (reasonable) positive integer</td>
+		<td>10</td>
+		<td>The default Findr timeout in seconds</td>
 	</tr>
 	<tr>
 		<td>webtests.video.enabled</td>
@@ -72,6 +75,15 @@ Here is a list of all supported System Properties :
 		<td>true</td>
 		<td>keep videos for failures only, or for all tests</td>
 	</tr>
+	<tr>
+    	<td colspan="4"><em>Chrome only</em></td>
+	</tr>
+    <tr>
+        <td>webdriver.chrome.driver</td>
+        <td>path to driver exe</td>
+        <td></td>
+        <td>mandatory for Chrome</td>
+    </tr>
 	</tbody>
 </table>
 
