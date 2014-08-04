@@ -124,6 +124,15 @@ public final class Findr {
     }
 
     /**
+     * Set the timeout (in seconds) and return an updated Findr
+     * @param timeoutInSeconds the timeout in seconds
+     * @return an updated Findr instance
+     */
+    public Findr setTimeout(int timeoutInSeconds) {
+        return new Findr(driver, timeoutInSeconds, f, path);
+    }
+
+    /**
      * Adds specified single-element selector to the chain, and return a new Findr.
      * @param by the selector
      * @return a new Findr with updated condition chain
