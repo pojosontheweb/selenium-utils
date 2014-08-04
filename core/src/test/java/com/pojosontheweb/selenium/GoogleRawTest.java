@@ -40,10 +40,6 @@ public class GoogleRawTest {
             new Findr(driver)
                     .elem(By.id("gbqfq"))
                     .sendKeys("pojos on the web", Keys.ENTER);
-            new Findr(driver)
-                    .elem(By.cssSelector(".gb_e.gb_pb"))
-                    .elem(By.cssSelector("button.gbqfb"))
-                    .click();
 
             // check the results
             new Findr(driver)
