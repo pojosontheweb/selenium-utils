@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -7,16 +8,17 @@
         <artifactId>oss-parent</artifactId>
         <version>6</version>
     </parent>
-    <groupId>org.pojosontheweb</groupId>
-    <version>LATEST-SNAPSHOT</version>
+    <groupId>com.pojosontheweb</groupId>
+    <version>1.1</version>
     <artifactId>selenium-utils</artifactId>
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
+        <!--module>monte</module-->
         <module>core</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
-    <description>JFacets profile-based framework</description>
+    <description>Utilities for selenium testing</description>
     <licenses>
         <license>
             <name>Apache 2</name>
