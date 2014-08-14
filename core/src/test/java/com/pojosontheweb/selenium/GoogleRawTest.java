@@ -39,9 +39,8 @@ public class GoogleRawTest {
             // type in our query
             new Findr(driver)
                     .elem(By.id("gbqfq"))
-                    .sendKeys("pojos on the web", Keys.ENTER);
+                    .sendKeys("pojos on the web");
             new Findr(driver)
-                    .elem(By.cssSelector(".gb_e.gb_pb"))
                     .elem(By.cssSelector("button.gbqfb"))
                     .click();
 

@@ -417,8 +417,12 @@ public final class Findr {
          * Adds a filtering predicate, and returns a new ListFindr with updated chain.
          * @param predicate the predicate used for filtering the list of elements (applied on each element)
          * @return a new ListFindr with updated chain
+         * @throws java.lang.IllegalArgumentException if called after <code>whereElemCount</code>.
          */
         public ListFindr where(final Predicate<? super WebElement> predicate) {
+            if (waitCount!=null) {
+                throw new IllegalArgumentException("It's forbidden to call ListFindr.where() after whereElemCount() has been called.");
+            }
             return new ListFindr(by, com.google.common.base.Predicates.<WebElement>and(filters, wrapAndTrap(predicate)), waitCount);
         }
 
@@ -490,10 +494,11 @@ public final class Findr {
                     if (elements == null) {
                         return null;
                     }
-                    if (waitCount != null && elements.size() != waitCount) {
+                    List<WebElement> filtered = filterElements(elements);
+                    if (waitCount != null && filtered.size() != waitCount) {
                         return null;
                     }
-                    return callback.apply(filterElements(elements));
+                    return callback.apply(filtered);
                 }
             }));
         }
