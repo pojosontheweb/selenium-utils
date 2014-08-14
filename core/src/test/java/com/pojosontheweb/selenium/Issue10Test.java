@@ -15,7 +15,7 @@ public class Issue10Test extends ManagedDriverJunit4TestBase {
         findr()
             .elem(id("top-nav"))
             .elemList(cssSelector("li a"))
-            .where(Findr.textEquals("Home"))
+            .where(Findrs.textEquals("Home"))
             .whereElemCount(1)
             .eval();
 
@@ -27,7 +27,7 @@ public class Issue10Test extends ManagedDriverJunit4TestBase {
                 .elem(id("top-nav"))
                 .elemList(cssSelector("li a"))
                 .whereElemCount(1)
-                .where(Findr.textEquals("Home"));
+                .where(Findrs.textEquals("Home"));
         } catch(IllegalArgumentException e) {
             // all good
             failed = true;
