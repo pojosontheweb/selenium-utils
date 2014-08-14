@@ -39,9 +39,8 @@ public class GoogleRawTest {
             // type in our query
             new Findr(driver)
                     .elem(By.id("gbqfq"))
-                    .sendKeys("pojos on the web", Keys.ENTER);
+                    .sendKeys("pojos on the web");
             new Findr(driver)
-                    .elem(By.cssSelector(".gb_e.gb_pb"))
                     .elem(By.cssSelector("button.gbqfb"))
                     .click();
 
@@ -52,7 +51,7 @@ public class GoogleRawTest {
                     .at(0)
                     .elem(By.tagName("a"))
                     .elem(By.tagName("em"))
-                    .where(Findr.textEquals("POJOs on the Web"))
+                    .where(Findrs.textEquals("POJOs on the Web"))
                     .eval();
 
             System.out.println("OK !");
@@ -68,11 +67,20 @@ public class GoogleRawTest {
                                     .at(0)
                                     .elem(By.tagName("a"))
                                     .elem(By.tagName("em"))
-                                    .where(Findr.textEquals("POJOs on the Web"))
+                                    .where(Findrs.textEquals("POJOs on the Web"))
                                     .eval();
                             return true;
                         }
                     });
+
+            // regexp matching
+            new Findr(driver)
+                    .elem(By.id("res"))
+                    .elemList(By.cssSelector("h3.r"))
+                    .at(0)
+                    .elem(By.tagName("em"))
+                    .where(Findrs.textMatches("^POJOs.*"))
+                    .eval();
 
         } finally {
             driver.quit();

@@ -104,13 +104,33 @@ public class TestUtil {
 
     public void tearDown() {
         // quit webdriver
+        // TODO find better exception handling mechanism, this one
+        // is pretty ugly !!!
+        Exception closeException = null;
         if (webDriver!=null) {
-            webDriver.quit();
+            try {
+                webDriver.quit();
+            } catch (Exception e) {
+                closeException = e;
+            }
         }
+        Exception recordrException = null;
         if (recordr!=null) {
             // ref should have been nulled-out unless test is skipped
             // or whatever : destroy the files in any case !!!
-            recordr.removeVideoFiles();
+            try {
+                recordr.removeVideoFiles();
+            } catch(Exception e) {
+                recordrException = e;
+            }
+        }
+        if (closeException!=null) {
+            // re-throw
+            throw new RuntimeException(closeException);
+        }
+        if (recordrException!=null) {
+            // re-throw
+            throw new RuntimeException(recordrException);
         }
     }
 
