@@ -3,6 +3,9 @@ package com.pojosontheweb.selenium;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.WebElement;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Findrs {
 
     /**
@@ -79,8 +82,11 @@ public class Findrs {
                 @Override
                 public boolean apply(WebElement webElement) {
                     String cssClasses = webElement.getAttribute("class");
-                    // TODO needs tokenize (substring ain't enough)
-                    return cssClasses!=null && cssClasses.contains(className);
+                    if (cssClasses==null) {
+                        return false;
+                    }
+                    List<String> tokens = Arrays.asList(cssClasses.split("\\s"));
+                    return tokens.contains(className);
                 }
 
                 @Override
