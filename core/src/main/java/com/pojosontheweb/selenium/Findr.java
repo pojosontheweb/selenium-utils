@@ -97,13 +97,8 @@ public final class Findr {
             public T apply(F input) {
                 try {
                     return function.apply(input);
-                } catch(StaleElementReferenceException e) {
-                    // stale -> retry
-                    return null;
-                } catch(TimeoutException e) {
-                    // special case for nested Findrs : if the
-                    // composed function time-outs, we don't want
-                    // to stop the outer one...
+                } catch(WebDriverException e) {
+                    // retry in case of exception
                     return null;
                 }
             }

@@ -139,13 +139,13 @@ new Findr(driver)			// create Findr
     .elemList(By.cssSelector("h3.r")) // wait for a list of elements
     .at(0)					// wait for 1st in the list
     .elem(By.tagName("a"))	// wait for some <a> tag under the first list elem
-    .where(Findr.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
+    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
     .eval();	// evaluate the whole stuff ! will block until success, or timeout
 ```
 
 ### Built-in predicates
 
-`Findr` has a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
+The `Findrs` class exposes a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
 
 * attrEquals(String attrName, String expectedValue)
 * hasClass(String className)
@@ -156,8 +156,8 @@ Those can be used directly in your findrs :
 ```
 new Findr(driver)
 	.elem(By.cssSelector("div.my-class"))
-	.where(Findr.attrEquals("my-attr", "my-value"))
-	.where(Findr.textEquals("This is some content"))
+	.where(Findrs.attrEquals("my-attr", "my-value"))
+	.where(Findrs.textEquals("This is some content"))
 	.eval();
 ``` 
 
