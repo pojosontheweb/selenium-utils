@@ -19,6 +19,9 @@ class GFindr {
 
     static def withDriver(WebDriver d, @DelegatesTo(GFindr) Closure c) {
         rehydrateAndCall(c, new GFindr(new Findr(d)))
+//        def code = c.rehydrate(new GFindr(new Findr(d)), c, null)
+//        code.resolveStrategy = Closure.DELEGATE_FIRST
+//        return code()
     }
 
     def elem(@DelegatesTo(DlgElem) Closure c) {
@@ -26,8 +29,8 @@ class GFindr {
     }
 
     static Closure rehydrateAndCall(Closure c, Object o) {
-        def code = c.rehydrate(o, null, null)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        def code = c.rehydrate(o, c, null)
+        code.resolveStrategy = Closure.DELEGATE_FIRST
         return code()
     }
 

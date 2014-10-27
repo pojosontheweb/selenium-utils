@@ -19,10 +19,17 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
 
         GFindr.withDriver(webDriver) {
 
+            // to test scopes
+            println "test scope 1 : $webDriver"
+
             // type in our query
             elem {
                 id('gbqfq')
                 sendKeys('pojos on the web')
+
+                // to test scopes
+                println "test scope 2 : $webDriver"
+
             }
 
             // click search btn
