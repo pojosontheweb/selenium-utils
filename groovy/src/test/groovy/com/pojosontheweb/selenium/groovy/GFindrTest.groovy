@@ -1,9 +1,5 @@
 package com.pojosontheweb.selenium.groovy
 
-import com.google.common.base.Predicate
-import com.pojosontheweb.selenium.Findr
-import com.pojosontheweb.selenium.Findrs
-import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.pojosontheweb.selenium.groovy.GFindr
 
