@@ -18,10 +18,10 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
 
     @Test
     void googleTest() {
-        GFindr.withDriver(webDriver) {
+        // open google home
+        webDriver.get("http://www.google.com")
 
-            // open google home
-            webDriver.get("http://www.google.com")
+        GFindr.withDriver(webDriver) {
 
             // type in our query
             elem {
