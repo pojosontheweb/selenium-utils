@@ -17,18 +17,15 @@ class GFindr {
         this.findr = findr
     }
 
-    static def withDriver(WebDriver d, @DelegatesTo(GFindr) Closure c) {
-        rehydrateAndCall(c, new GFindr(new Findr(d)))
-//        def code = c.rehydrate(new GFindr(new Findr(d)), c, null)
-//        code.resolveStrategy = Closure.DELEGATE_FIRST
-//        return code()
+    static GFindr from(Findr f) {
+        return new GFindr(f)
     }
 
     def elem(@DelegatesTo(DlgElem) Closure c) {
         rehydrateAndCall(c, new DlgElem(findr: findr))
     }
 
-    static Closure rehydrateAndCall(Closure c, Object o) {
+    static def rehydrateAndCall(Closure c, Object o) {
         def code = c.rehydrate(o, c, null)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         return code()
@@ -59,11 +56,6 @@ class DlgElem {
         findr = findr.where(c as Predicate)
         return findr
     }
-
-    def elem(@DelegatesTo(DlgElem) Closure c) {
-        GFindr.rehydrateAndCall(c, new DlgElem(findr: findr))
-    }
-
 
     def elemList(@DelegatesTo(DlgListElem) Closure c) {
         GFindr.rehydrateAndCall(c, new DlgListElem(findr: findr))
@@ -107,26 +99,9 @@ class DlgListElem {
         return listFindr
     }
 
-    Findr elem(@DelegatesTo(DlgListElemAt) Closure c) {
-        GFindr.rehydrateAndCall(c, new DlgListElemAt(listFindr: listFindr))
-    }
-
-
-}
-
-class DlgListElemAt {
-
-    Findr.ListFindr listFindr
-    Findr findr
-
-    Findr at(int i) {
+    Findr at(int i, @DelegatesTo(DlgElem) Closure c) {
         findr = listFindr.at(i)
-        return findr
-    }
-
-    def elem(@DelegatesTo(DlgElem) Closure c) {
         GFindr.rehydrateAndCall(c, new DlgElem(findr: findr))
     }
 
 }
-
