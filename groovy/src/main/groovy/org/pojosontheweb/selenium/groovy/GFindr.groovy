@@ -19,15 +19,13 @@ class GFindr {
 
     static def withDriver(WebDriver d, @DelegatesTo(GFindr) Closure c) {
         def gf = new GFindr(new Findr(d))
-        def code = c.rehydrate(gf, this, this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        def code = c.rehydrate(gf, this, gf)
         return code()
     }
 
     def elem(@DelegatesTo(DlgElem) Closure c) {
         def w = new DlgElem(findr: findr)
-        def code = c.rehydrate(w, this, this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        def code = c.rehydrate(w, this, w)
         return code()
     }
 
@@ -59,16 +57,14 @@ class DlgElem {
 
     def elem(@DelegatesTo(DlgElem) Closure c) {
         def w = new DlgElem(findr: findr)
-        def code = c.rehydrate(w, this, this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        def code = c.rehydrate(w, this, w)
         return code()
     }
 
 
     def elemList(@DelegatesTo(DlgListElem) Closure c) {
         def w = new DlgListElem(findr: findr)
-        def code = c.rehydrate(w, this, this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        def code = c.rehydrate(w, this, w)
         return code()
     }
 
@@ -112,8 +108,7 @@ class DlgListElem {
 
     Findr elem(@DelegatesTo(DlgListElemAt) Closure c) {
         def w = new DlgListElemAt(listFindr: listFindr)
-        def code = c.rehydrate(w, this, this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        def code = c.rehydrate(w, this, w)
         return code()
     }
 
@@ -132,8 +127,7 @@ class DlgListElemAt {
 
     def elem(@DelegatesTo(DlgElem) Closure c) {
         def w = new DlgElem(findr: findr)
-        def code = c.rehydrate(w, this, this)
-        code.resolveStrategy = Closure.DELEGATE_ONLY
+        def code = c.rehydrate(w, this, w)
         return code()
     }
 
