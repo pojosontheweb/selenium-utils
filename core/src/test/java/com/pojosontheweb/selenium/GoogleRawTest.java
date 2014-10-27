@@ -46,39 +46,21 @@ public class GoogleRawTest {
 
             // check the results
             new Findr(driver)
-                    .elem(By.id("res"))
+                    .elem(By.id("search"))
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
                     .elem(By.tagName("a"))
-                    .elem(By.tagName("em"))
-                    .where(Findrs.textEquals("POJOs on the Web"))
+                    .where(Findrs.textStartsWith("POJOs on the Web"))
                     .eval();
 
             System.out.println("OK !");
 
-            // a basic nested finder test
-            new Findr(driver)
-                    .elem(By.id("res"))
-                    .eval(new Function<WebElement, Object>() {
-                        @Override
-                        public Object apply(WebElement input) {
-                            Findr.fromWebElement(driver, input, 2)
-                                    .elemList(By.cssSelector("h3.r"))
-                                    .at(0)
-                                    .elem(By.tagName("a"))
-                                    .elem(By.tagName("em"))
-                                    .where(Findrs.textEquals("POJOs on the Web"))
-                                    .eval();
-                            return true;
-                        }
-                    });
-
             // regexp matching
             new Findr(driver)
-                    .elem(By.id("res"))
+                    .elem(By.id("search"))
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
-                    .elem(By.tagName("em"))
+                    .elem(By.tagName("a"))
                     .where(Findrs.textMatches("^POJOs.*"))
                     .eval();
 

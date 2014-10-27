@@ -530,6 +530,22 @@ public final class Findr {
             }
         }
 
+        @Override
+        public String toString() {
+            return "ListFindr{" +
+                "by=" + by +
+                ", waitCount=" + waitCount +
+                '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Findr{" +
+            "driver=" + driver +
+            ", path=" + path +
+            ", waitTimeout=" + waitTimeout +
+            '}';
     }
 
     // Utility statics
