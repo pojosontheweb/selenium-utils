@@ -3,13 +3,15 @@ package org.pojosontheweb.selenium.groovy
 import com.google.common.base.Function
 import com.google.common.base.Predicate
 import com.pojosontheweb.selenium.Findr
+import com.pojosontheweb.selenium.Findrs
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
 
 /**
  * Created by vankeisb on 27/10/14.
  */
-class GFindr {
+class GFindr extends Findrs {
 
     private final Findr findr
 
@@ -17,8 +19,8 @@ class GFindr {
         this.findr = findr
     }
 
-    static GFindr from(Findr f) {
-        return new GFindr(f)
+    static def from(Findr f, @DelegatesTo(GFindr) Closure c) {
+        rehydrateAndCall(c, new GFindr(f))
     }
 
     def elem(@DelegatesTo(DlgElem) Closure c) {
@@ -95,6 +97,11 @@ class DlgListElem {
 
     Findr.ListFindr where(Closure c) {
         listFindr = listFindr.where(c as Predicate)
+        return listFindr
+    }
+
+    Findr.ListFindr where(Predicate<WebElement> p) {
+        listFindr = listFindr.where(p)
         return listFindr
     }
 

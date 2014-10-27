@@ -2,8 +2,9 @@ package com.pojosontheweb.selenium.groovy
 
 import com.pojosontheweb.selenium.Findr
 import groovy.transform.CompileStatic
+import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
-import org.pojosontheweb.selenium.groovy.GFindr
+import static org.pojosontheweb.selenium.groovy.GFindr.from
 
 import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase
 import org.junit.Test
@@ -16,37 +17,38 @@ import org.junit.Test
 class GFindrTest extends ManagedDriverJunit4TestBase {
 
     @Test
-    void googleTest() {
+    void google() {
         // open google home
         webDriver.get("http://www.google.com")
-        GFindr g = new GFindr(findr())
+        from(findr()) {
 
-        // type in our query
-        g.elem {
-            id('gbqfq')
-            sendKeys('pojos on the web')
-        }
+            // type in our query
+            elem {
+                id('gbqfq')
+                sendKeys('pojos on the web')
+            }
 
-        // click search btn
-        g.elem {
-            selector('button.gbqfb')
-            click()
-        }
+            // click search btn
+            elem {
+                selector('button.gbqfb')
+                click()
+            }
 
-        // assert results
-        g.elem {
-            id 'search'
-            elemList {
-                selector 'h3.r'
-                where { WebElement e ->
-                    e.displayed
-                }
-                at(0) {
-                    tagName 'a'
+            // assert results
+            elem {
+                id 'search'
+                elemList {
+                    selector 'h3.r'
                     where { WebElement e ->
-                        e.text.startsWith 'POJOs on the Web'
+                        e.displayed
                     }
-                    eval()
+                    at(0) {
+                        tagName 'a'
+                        where { WebElement e ->
+                            e.text.startsWith 'POJOs on the Web'
+                        }
+                        eval()
+                    }
                 }
             }
         }
@@ -55,42 +57,42 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
     @Test
     void testReuse() {
         webDriver.get("http://www.google.com")
-        GFindr g = new GFindr(findr())
-
-        g.elem {
-            id('gbqfq')
-            sendKeys('pojos on the web')
-        }
-        g.elem {
-            selector('button.gbqfb')
-            click()
-        }
-
-        // reuse
-        Findr f1 = (Findr)g.elem {
-            id 'search'
-        }
-
-        f1.eval()
-        println f1
-
-        Findr f2 = (Findr)GFindr.from(f1)
-            .elemList {
-            selector 'h3.r'
-            where { WebElement e ->
-                e.displayed
+        from(findr()) {
+            elem {
+                id('gbqfq')
+                sendKeys('pojos on the web')
             }
-            at(0) {
-                tagName 'a'
-                where { WebElement e ->
-                    e.text.startsWith 'POJOs on the Web'
+            elem {
+                selector('button.gbqfb')
+                click()
+            }
+
+            // reuse
+            Findr f1 = (Findr)elem {
+                id 'search'
+            }
+
+            f1.eval()
+            println f1
+
+            Findr f2 = (Findr)from(f1) {
+                elemList {
+                    selector 'h3.r'
+                    where isDisplayed()
+                    at(0) {
+                        tagName 'a'
+                        where { WebElement e ->
+                            e.text.startsWith 'POJOs on the Web'
+                        }
+                    }
                 }
             }
+
+            f2.eval()
+            println f2
         }
-
-        f2.eval()
-        println f2
-
     }
+
+
 
 }
