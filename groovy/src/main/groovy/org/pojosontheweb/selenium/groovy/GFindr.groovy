@@ -25,6 +25,10 @@ class GFindr {
         rehydrateAndCall(c, new DlgElem(findr: findr))
     }
 
+    def elemList(@DelegatesTo(DlgListElem) Closure c) {
+        rehydrateAndCall(c, new DlgListElem(findr: findr))
+    }
+
     static def rehydrateAndCall(Closure c, Object o) {
         def code = c.rehydrate(o, c, null)
         code.resolveStrategy = Closure.DELEGATE_FIRST
@@ -98,6 +102,12 @@ class DlgListElem {
         listFindr = listFindr.whereElemCount(c)
         return listFindr
     }
+
+    Findr at(int i) {
+        findr = listFindr.at(i)
+        return findr
+    }
+
 
     Findr at(int i, @DelegatesTo(DlgElem) Closure c) {
         findr = listFindr.at(i)

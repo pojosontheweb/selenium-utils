@@ -19,7 +19,6 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
     void googleTest() {
         // open google home
         webDriver.get("http://www.google.com")
-
         GFindr g = new GFindr(findr())
 
         // type in our query
@@ -51,6 +50,46 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
                 }
             }
         }
+    }
+
+    @Test
+    void testReuse() {
+        webDriver.get("http://www.google.com")
+        GFindr g = new GFindr(findr())
+
+        g.elem {
+            id('gbqfq')
+            sendKeys('pojos on the web')
+        }
+        g.elem {
+            selector('button.gbqfb')
+            click()
+        }
+
+        // reuse
+        Findr f1 = (Findr)g.elem {
+            id 'search'
+        }
+
+        f1.eval()
+        println f1
+
+        Findr f2 = (Findr)GFindr.from(f1)
+            .elemList {
+            selector 'h3.r'
+            where { WebElement e ->
+                e.displayed
+            }
+            at(0) {
+                tagName 'a'
+                where { WebElement e ->
+                    e.text.startsWith 'POJOs on the Web'
+                }
+            }
+        }
+
+        f2.eval()
+        println f2
 
     }
 
