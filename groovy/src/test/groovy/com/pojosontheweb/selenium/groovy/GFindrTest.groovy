@@ -2,9 +2,8 @@ package com.pojosontheweb.selenium.groovy
 
 import com.pojosontheweb.selenium.Findr
 import groovy.transform.CompileStatic
-import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
-import static org.pojosontheweb.selenium.groovy.GFindr.from
+import static org.pojosontheweb.selenium.groovy.GFindr.dsl
 
 import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase
 import org.junit.Test
@@ -20,7 +19,7 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
     void google() {
         // open google home
         webDriver.get("http://www.google.com")
-        from(findr()) {
+        dsl(webDriver) {
 
             // type in our query
             elem {
@@ -57,7 +56,7 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
     @Test
     void testReuse() {
         webDriver.get("http://www.google.com")
-        from(findr()) {
+        dsl(webDriver) {
             elem {
                 id('gbqfq')
                 sendKeys('pojos on the web')
@@ -75,7 +74,7 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
             f1.eval()
             println f1
 
-            Findr f2 = (Findr)from(f1) {
+            Findr f2 = (Findr)dsl(f1) {
                 elemList {
                     selector 'h3.r'
                     where isDisplayed()

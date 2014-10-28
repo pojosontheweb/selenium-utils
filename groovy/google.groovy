@@ -9,7 +9,8 @@ import com.pojosontheweb.selenium.DriverBuildr
 import com.pojosontheweb.selenium.Findr
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import org.pojosontheweb.selenium.groovy.GFindr
+import static org.pojosontheweb.selenium.groovy.GFindr.dsl
+import static org.pojosontheweb.selenium.groovy.GFindr.quitAtEnd
 
 // init a chrome driver
 // --------------------
@@ -26,10 +27,10 @@ Findr.DEBUG = true
 // get google home
 driver.get 'http://www.google.com'
 
-try {
+quitAtEnd(driver) {
 
     // allow us to use the DSL and do our business !
-    GFindr.from(driver) {
+    dsl(driver) {
 
         // type in our query
         println "Typing query..."
@@ -66,7 +67,4 @@ try {
 
         println "All good !"
     }
-} finally {
-    // quit driver at end
-    driver.quit()
 }
