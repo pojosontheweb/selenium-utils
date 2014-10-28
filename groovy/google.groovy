@@ -42,7 +42,7 @@ quitAtEnd(driver) {
         // click search btn
         println "Click search button"
         elem {
-            selector('button.gbqfb')
+            selector 'button.gbqfb'
             click()
         }
 

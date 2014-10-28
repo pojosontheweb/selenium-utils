@@ -18,18 +18,20 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
     @Test
     void google() {
         // open google home
-        webDriver.get("http://www.google.com")
+        webDriver.get 'http://www.google.com'
+
+        // dsl-ize !
         dsl(webDriver) {
 
             // type in our query
             elem {
-                id('gbqfq')
-                sendKeys('pojos on the web')
+                id 'gbqfq'
+                sendKeys 'pojos on the web'
             }
 
             // click search btn
             elem {
-                selector('button.gbqfb')
+                selector 'button.gbqfb'
                 click()
             }
 
@@ -55,14 +57,14 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
 
     @Test
     void testReuse() {
-        webDriver.get("http://www.google.com")
+        webDriver.get 'http://www.google.com'
         dsl(webDriver) {
             elem {
-                id('gbqfq')
-                sendKeys('pojos on the web')
+                id 'gbqfq'
+                sendKeys 'pojos on the web'
             }
             elem {
-                selector('button.gbqfb')
+                selector 'button.gbqfb'
                 click()
             }
 
