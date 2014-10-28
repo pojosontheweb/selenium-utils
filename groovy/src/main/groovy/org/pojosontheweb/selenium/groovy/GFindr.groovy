@@ -19,7 +19,7 @@ class GFindr extends Findrs {
         this.findr = findr
     }
 
-    static def quitAtEnd(WebDriver d, Closure c) {
+    static def withQuit(WebDriver d, Closure c) {
         try {
             c()
         } finally {
@@ -28,11 +28,11 @@ class GFindr extends Findrs {
         }
     }
 
-    static def dsl(Findr f, @DelegatesTo(GFindr) Closure c) {
+    static def withDsl(Findr f, @DelegatesTo(GFindr) Closure c) {
         rehydrateAndCall(c, new GFindr(f))
     }
 
-    static def dsl(WebDriver d, @DelegatesTo(GFindr) Closure c) {
+    static def withDsl(WebDriver d, @DelegatesTo(GFindr) Closure c) {
         rehydrateAndCall(c, new GFindr(new Findr(d)))
     }
 

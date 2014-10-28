@@ -9,12 +9,12 @@ import com.pojosontheweb.selenium.DriverBuildr
 import com.pojosontheweb.selenium.Findr
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import static org.pojosontheweb.selenium.groovy.GFindr.dsl
-import static org.pojosontheweb.selenium.groovy.GFindr.quitAtEnd
+import static org.pojosontheweb.selenium.groovy.GFindr.withDsl
+import static org.pojosontheweb.selenium.groovy.GFindr.withQuit
 
 // init a chrome driver
 // --------------------
-WebDriver driver = DriverBuildr
+WebDriver d = DriverBuildr
     .chrome()
     .setDriverPath(new File('/Users/vankeisb/bin/chromedriver')) // TODO change for your config
     .build()
@@ -25,29 +25,27 @@ WebDriver driver = DriverBuildr
 Findr.DEBUG = true
 
 // get google home
-driver.get 'http://www.google.com'
+d.get 'http://www.google.com'
 
-quitAtEnd(driver) {
-
-    // allow us to use the DSL and do our business !
-    dsl(driver) {
+withQuit(d) {       // quit driver at end
+    withDsl(d) {    // use the DSL
 
         // type in our query
-        println "Typing query..."
+        println 'Typing query...'
         elem {
             id 'gbqfq'
             sendKeys 'pojos on the web'
         }
 
         // click search btn
-        println "Click search button"
+        println 'Click search button'
         elem {
             selector 'button.gbqfb'
             click()
         }
 
         // assert results
-        println "Assert search result"
+        println 'Assert search result'
         elem {
             id 'search'
             elemList {
@@ -66,5 +64,6 @@ quitAtEnd(driver) {
         }
 
         println "All good !"
+
     }
 }
