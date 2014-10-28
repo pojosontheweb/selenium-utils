@@ -58,7 +58,7 @@ There are also variants to `eval()` that accept a `failureMessage` argument.
 
 ### Debugging logs
 
-`Findr` executes the various functions you compose as a "back box", and it's sometimes hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the static flag `Findr.debug`, so that it outputs the logs (to stdout) when asserting the condition chain. 
+`Findr` executes the various functions you compose as a "back box", and it's sometimes hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the static flag `Findr.DEBUG`, so that it outputs the logs (to stdout) when asserting the condition chain. 
 
 ## WebDriver init
 

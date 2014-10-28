@@ -23,6 +23,10 @@ class GFindr extends Findrs {
         rehydrateAndCall(c, new GFindr(f))
     }
 
+    static def from(WebDriver d, @DelegatesTo(GFindr) Closure c) {
+        rehydrateAndCall(c, new GFindr(new Findr(d)))
+    }
+
     def elem(@DelegatesTo(DlgElem) Closure c) {
         rehydrateAndCall(c, new DlgElem(findr: findr))
     }

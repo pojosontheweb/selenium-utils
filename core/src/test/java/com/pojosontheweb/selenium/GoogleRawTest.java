@@ -2,6 +2,7 @@ package com.pojosontheweb.selenium;
 
 import com.google.common.base.Function;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 
@@ -17,6 +18,7 @@ public class GoogleRawTest {
         );
     }
 
+    @Ignore
     @Test
     public void testFirefox() {
         System.out.println("Testing with Firefox");
