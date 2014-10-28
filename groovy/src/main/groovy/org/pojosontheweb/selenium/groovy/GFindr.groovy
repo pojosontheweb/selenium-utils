@@ -19,15 +19,6 @@ class GFindr extends Findrs {
         this.findr = findr
     }
 
-    static def withQuit(WebDriver d, Closure c) {
-        try {
-            c()
-        } finally {
-            println "Quitting WebDriver $d"
-            d.quit()
-        }
-    }
-
     static def withDsl(Findr f, @DelegatesTo(GFindr) Closure c) {
         rehydrateAndCall(c, new GFindr(f))
     }
@@ -108,6 +99,11 @@ class DlgListElem {
         return listFindr
     }
 
+    Findr.ListFindr tagName(String tagName) {
+        listFindr = findr.elemList(By.tagName(tagName))
+        return listFindr
+    }
+
     Findr.ListFindr where(Closure c) {
         listFindr = listFindr.where(c as Predicate)
         return listFindr
@@ -133,5 +129,10 @@ class DlgListElem {
         findr = listFindr.at(i)
         GFindr.rehydrateAndCall(c, new DlgElem(findr: findr))
     }
+
+    def eval(Closure c) {
+        return listFindr.eval(c as Function)
+    }
+
 
 }

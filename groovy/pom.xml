@@ -72,6 +72,10 @@
                         <configuration>
                             <target>
                                 <delete>
+                                    <fileset dir="${project.basedir}/.."
+                                             includes="Expression$*.class"/>
+                                </delete>
+                                <delete>
                                     <fileset dir="${project.basedir}"
                                              includes="Expression$*.class"/>
                                 </delete>
