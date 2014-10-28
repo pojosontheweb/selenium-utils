@@ -2,6 +2,70 @@
 
 Takes the misery out of selenium !
 
+## Findr
+
+`Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
+
+The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.
+
+Evaluation fails if the chain doesn't completely completes within a given timeout, and an exception is thrown.
+
+Simple example over Google search :
+
+```
+// get google
+driver.get("http://www.google.com");
+
+// perform the search
+new Findr(driver)			// create a Findr
+	.elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
+    .sendKeys("pojos on the web", Keys.ENTER);  // type the query
+
+// check the results
+new Findr(driver)			// create Findr
+	.elem(By.id("ires"))	// wait for elem by id
+    .elemList(By.cssSelector("h3.r")) // wait for a list of elements
+    .at(0)					// wait for 1st in the list
+    .elem(By.tagName("a"))	// wait for some <a> tag under the first list elem
+    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
+    .eval();	// evaluate the whole stuff ! will block until success, or timeout
+```
+
+### Built-in predicates
+
+The `Findrs` class exposes a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
+
+* attrEquals(String attrName, String expectedValue)
+* hasClass(String className)
+* textEquals(final String expected)
+ 
+Those can be used directly in your findrs :
+
+```
+new Findr(driver)
+	.elem(By.cssSelector("div.my-class"))
+	.where(Findrs.attrEquals("my-attr", "my-value"))
+	.where(Findrs.textEquals("This is some content"))
+	.eval();
+``` 
+
+
+### Error reporting
+
+`Findr` tries to report failures in condition chains by including a String-ified version of the path. Of course, the stack trace of the Timeout exception will tell where the evaluation failed.
+
+There are also variants to `eval()` that accept a `failureMessage` argument.
+
+### Debugging logs
+
+Findr executes the various functions you compose as a "back box", and it's sometimes hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set a flag on Findr, so that it outputs the logs (to stdout) when asserting the condition chain :
+
+```
+// static flag : booooo... 
+Findr.debug = true; 
+```
+
+
 ## WebDriver init
 
 Use `DrivrBuilder` in order to create instances of `WebDriver`. The API can be used statically :
@@ -113,60 +177,6 @@ Doing so will allow you to run your test directly, and parameterize it using sys
 We have a very basic `ScreenRecordr` class that performs video capture on the host that runs the webdriver. It's activated by the TestCase plumbing, via sys props. 
 
 It's built on [Monte Media Library](http://www.randelshofer.ch/monte/), and is pure Java. It's been tested on a different platforms (mac, windows, linux), and even seems to work in headless/xvfb environments. 
-
-## Findr
-
-`Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
-
-The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.
-
-Evaluation fails if the chain doesn't completely completes within a given timeout, and an exception is thrown.
-
-Simple example over Google search :
-
-```
-// get google
-driver.get("http://www.google.com");
-
-// perform the search
-new Findr(driver)			// create a Findr
-	.elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
-    .sendKeys("pojos on the web", Keys.ENTER);  // type the query
-
-// check the results
-new Findr(driver)			// create Findr
-	.elem(By.id("ires"))	// wait for elem by id
-    .elemList(By.cssSelector("h3.r")) // wait for a list of elements
-    .at(0)					// wait for 1st in the list
-    .elem(By.tagName("a"))	// wait for some <a> tag under the first list elem
-    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
-    .eval();	// evaluate the whole stuff ! will block until success, or timeout
-```
-
-### Built-in predicates
-
-The `Findrs` class exposes a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
-
-* attrEquals(String attrName, String expectedValue)
-* hasClass(String className)
-* textEquals(final String expected)
- 
-Those can be used directly in your findrs :
-
-```
-new Findr(driver)
-	.elem(By.cssSelector("div.my-class"))
-	.where(Findrs.attrEquals("my-attr", "my-value"))
-	.where(Findrs.textEquals("This is some content"))
-	.eval();
-``` 
-
-
-### Error reporting
-
-`Findr` tries to report failures in condition chains by including a String-ified version of the path. Of course, the stack trace of the Timeout exception will tell where the evaluation failed.
-
-There are also variants to `eval()` that accept a `failureMessage` argument.
 
 ## Using with Maven
 
