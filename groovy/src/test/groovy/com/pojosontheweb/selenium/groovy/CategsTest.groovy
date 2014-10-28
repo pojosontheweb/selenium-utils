@@ -10,6 +10,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.pojosontheweb.selenium.groovy.FindrCategory
 import org.pojosontheweb.selenium.groovy.ListFindrCategory
@@ -21,8 +22,16 @@ import static org.openqa.selenium.By.tagName
 
 class CategsTest extends ManagedDriverJunit4TestBase {
 
+// alternative to "use"
+//    static {
+//        WebDriver.metaClass.mixin WebDriverCategory
+//        Findr.metaClass.mixin FindrCategory
+//        Findr.ListFindr.metaClass.mixin ListFindrCategory
+//    }
+
     @Test
     void categsLeBonCoin() {
+
         use(WebDriverCategory,FindrCategory,ListFindrCategory) {
 
             def d = webDriver
