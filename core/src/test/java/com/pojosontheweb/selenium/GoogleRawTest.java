@@ -1,11 +1,9 @@
 package com.pojosontheweb.selenium;
 
 import com.google.common.base.Function;
+import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 public class GoogleRawTest {
 
@@ -33,11 +31,30 @@ public class GoogleRawTest {
 
         try {
 
+            Findr.DEBUG = true;
+
             // get google
             driver.get("http://www.google.com");
 
+            // should fail
+            boolean fail;
+            try {
+                new Findr(driver)
+                    .setTimeout(5)
+                    .elem(By.id("gbqfqwb"))
+                    .elem(By.id("gs_lc0"))
+                    .elem(By.id("idont"))
+                    .elem(By.id("exist"))
+                    .eval();
+                fail = false;
+            } catch(TimeoutException e) {
+                fail = true;
+            }
+            Assert.assertTrue(fail);
+
             // type in our query
             new Findr(driver)
+                    .setTimeout(5)
                     .elem(By.id("gbqfq"))
                     .sendKeys("pojos on the web");
             new Findr(driver)
@@ -63,6 +80,8 @@ public class GoogleRawTest {
                     .elem(By.tagName("a"))
                     .where(Findrs.textMatches("^POJOs.*"))
                     .eval();
+
+            System.out.println("Regexp OK !");
 
         } finally {
             driver.quit();
