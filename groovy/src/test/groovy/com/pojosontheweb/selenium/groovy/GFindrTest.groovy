@@ -1,8 +1,15 @@
 package com.pojosontheweb.selenium.groovy
 
 import com.pojosontheweb.selenium.Findr
+import com.pojosontheweb.selenium.Findrs
 import groovy.transform.CompileStatic
+import org.junit.Ignore
+
+import static org.openqa.selenium.By.*
 import org.openqa.selenium.WebElement
+import org.pojosontheweb.selenium.groovy.FindrCategory
+import org.pojosontheweb.selenium.groovy.ListFindrCategory
+import org.pojosontheweb.selenium.groovy.WebDriverCategory
 
 import static org.pojosontheweb.selenium.groovy.GFindr.withDsl
 
@@ -13,10 +20,11 @@ import org.junit.Test
 /**
  * Created by vankeisb on 27/10/14.
  */
-@CompileStatic
 class GFindrTest extends ManagedDriverJunit4TestBase {
 
+    @CompileStatic
     @Test
+    @Ignore
     void google() {
         // open google home
         webDriver.get 'http://www.google.com'
@@ -56,7 +64,9 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
         }
     }
 
+    @CompileStatic
     @Test
+    @Ignore
     void testReuse() {
         webDriver.get 'http://www.google.com'
         withDsl(webDriver) {
@@ -95,6 +105,34 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
         }
     }
 
+    @Test
+    void dsl() {
+        def d = webDriver
+        d.get 'http://www.google.com'
+        Findr.DEBUG = true
+        use(WebDriverCategory, FindrCategory, ListFindrCategory) {
+            def f = findr().setTimeout(1)
+            def f2 = f.elem(id('gbqfq')) {
+                where(Findrs.isDisplayed())
+                where { WebElement e ->
+                    e.displayed
+                }
+                elem(id('foo')) {
+                    where { WebElement e ->
+                        e.displayed
+                    }
+                     byId('bar') {
+                        elemList(tagName('ul')) {
+                            at(0) {
+                                where(Findrs.isEnabled())
+                            }
+                        }
+                    }
+                }
+            }
 
+            println f2
+       }
+    }
 
 }

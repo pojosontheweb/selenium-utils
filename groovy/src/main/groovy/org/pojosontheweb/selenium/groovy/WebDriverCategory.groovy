@@ -19,9 +19,4 @@ class WebDriverCategory {
         }
     }
 
-    static def foo()   {
-
-    }
-
-
 }

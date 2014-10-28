@@ -7,10 +7,10 @@ import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase
 import com.pojosontheweb.selenium.formz.Select
 import groovy.json.JsonBuilder
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.pojosontheweb.selenium.groovy.FindrCategory
 import org.pojosontheweb.selenium.groovy.ListFindrCategory
@@ -18,18 +18,13 @@ import org.pojosontheweb.selenium.groovy.WebDriverCategory
 
 import static com.pojosontheweb.selenium.Findrs.textEquals
 import static org.openqa.selenium.By.className
+import static org.openqa.selenium.By.id
 import static org.openqa.selenium.By.tagName
 
 class CategsTest extends ManagedDriverJunit4TestBase {
 
-// alternative to "use"
-//    static {
-//        WebDriver.metaClass.mixin WebDriverCategory
-//        Findr.metaClass.mixin FindrCategory
-//        Findr.ListFindr.metaClass.mixin ListFindrCategory
-//    }
-
     @Test
+    @Ignore
     void categsLeBonCoin() {
 
         use(WebDriverCategory,FindrCategory,ListFindrCategory) {
@@ -63,16 +58,16 @@ class CategsTest extends ManagedDriverJunit4TestBase {
                 f.byId('ContainerMain')
                     .elemList(className('detail'))
                     .where { WebElement e ->
-                    e.text!=null
-                }
-                .eval({ List<WebElement> elems ->
-                    elems.each { WebElement e ->
-                        res << [
-                            text: e.text
-                        ]
-                        true
+                        e.text!=null
                     }
-                } as Function)
+                    .eval({ List<WebElement> elems ->
+                        elems.each { WebElement e ->
+                            res << [
+                                text: e.text
+                            ]
+                            true
+                        }
+                    } as Function)
 
                 ((JavascriptExecutor)d).executeScript("window.scrollTo(0, document.body.scrollHeight);")
 

@@ -15,4 +15,14 @@ class FindrCategory {
         where(c as Predicate)
     }
 
+    def elem(By by, @DelegatesTo(DslFindr) Closure c) {
+        def df = new DslFindr(this.elem(by))
+        DslFindr.rehydrateAndCall(c, df)
+        return df
+    }
+
+    def byId(String id, @DelegatesTo(DslFindr) Closure c) {
+        return elem(By.id(id), c)
+    }
+
 }

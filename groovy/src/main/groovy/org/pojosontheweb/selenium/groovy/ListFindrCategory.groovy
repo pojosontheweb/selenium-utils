@@ -10,4 +10,10 @@ class ListFindrCategory {
         where(c as Predicate)
     }
 
+    def at(int i, @DelegatesTo(DslFindr) Closure c) {
+        DslFindr df = new DslFindr(this.at(i))
+        DslFindr.rehydrateAndCall(c, df)
+    }
+
+
 }
