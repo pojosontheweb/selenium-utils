@@ -72,12 +72,12 @@ class CategsTest extends ManagedDriverJunit4TestBase {
                 if (page>1) {
                     f.byId('paging')
                         .where { WebElement e ->
-                        e.displayed
-                    }
-                    .elemList(tagName('a'))
-                        .where(textEquals("$page"))
-                        .at(0)
-                        .click()
+                            e.displayed
+                        }
+                        .elemList(tagName('a'))
+                            .where(textEquals("$page"))
+                            .at(0)
+                            .click()
                 }
             }
 
