@@ -1,6 +1,8 @@
 package org.pojosontheweb.selenium.groovy
 
 import com.pojosontheweb.selenium.Findr
+import com.pojosontheweb.selenium.ScreenRecordr
+import com.pojosontheweb.selenium.TestUtil
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
@@ -24,11 +26,22 @@ class WebDriverCategory {
         ((JavascriptExecutor)this).executeScript(javascript, new Object[0])
     }
 
-    def withQuit(Closure c) {
+    TestUtil withTestUtil(String testName, Closure c) {
+        TestUtil tu = new TestUtil(this)
+        tu.setUp()
         try {
             c()
+            if (tu.isFailuresOnly()) {
+                tu.removeVideoFiles()
+            } else {
+                tu.moveVideoFiles(testName);
+            }
+        } catch(Exception e) {
+            // keep video for failed tests if video is on
+            tu.moveVideoFiles(testName);
         } finally {
-            quit()
+            tu.tearDown()
         }
+        return tu
     }
 }

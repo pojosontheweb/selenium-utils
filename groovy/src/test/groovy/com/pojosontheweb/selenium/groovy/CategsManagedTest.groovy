@@ -16,7 +16,7 @@ import static com.pojosontheweb.selenium.Findrs.textEquals
 import static org.openqa.selenium.By.className
 import static org.openqa.selenium.By.tagName
 
-class CategsTest extends ManagedDriverJunit4TestBase {
+class CategsManagedTest extends ManagedDriverJunit4TestBase {
 
     @Test
     void categsLeBonCoin() {

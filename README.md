@@ -6,7 +6,7 @@ Takes the misery out of selenium !
 
 `Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
 
-The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.
+The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods for fluent style, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.
 
 Evaluation fails if the chain doesn't completely completes within a given timeout, and an exception is thrown.
 
@@ -33,11 +33,14 @@ new Findr(driver)			// create Findr
 
 ### Built-in predicates
 
+You'll need many different predicates when writing your tests. You'll want to check for various stuff like "text equals", or "attribute has a given value". 
+
 The `Findrs` class exposes a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
 
 * attrEquals(String attrName, String expectedValue)
 * hasClass(String className)
 * textEquals(final String expected)
+* and many more...
  
 Those can be used directly in your findrs :
 

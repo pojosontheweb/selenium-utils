@@ -70,6 +70,13 @@ public class TestUtil {
 
     private ScreenRecordr recordr = null;
 
+    public TestUtil() {
+    }
+
+    public TestUtil(WebDriver webDriver) {
+        this.webDriver = webDriver;
+    }
+
     public void removeVideoFiles() {
         if (recordr!=null) {
             log("removing video files");
@@ -89,8 +96,10 @@ public class TestUtil {
 
     public void setUp() {
 
-        // init web driver before each test
-        webDriver = DriverBuildr.fromSysProps().build();
+        // init web driver before each test if needed
+        if (webDriver==null) {
+            webDriver = DriverBuildr.fromSysProps().build();
+        }
 
         // init recorder if needed
         recordr = videoEnabled ? new ScreenRecordr() : null;
