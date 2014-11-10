@@ -4,11 +4,11 @@
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Selenium-utils : selenium-utils">
+    <meta name="description" content="selenium-utils : Takes the misery out of Selenium">
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>Selenium-utils</title>
+    <title>selenium-utils</title>
   </head>
 
   <body>
@@ -18,8 +18,8 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/pojosontheweb/selenium-utils">View on GitHub</a>
 
-          <h1 id="project_title">Selenium-utils</h1>
-          <h2 id="project_tagline">selenium-utils</h2>
+          <h1 id="project_title">selenium-utils</h1>
+          <h2 id="project_tagline">Takes the misery out of Selenium</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/pojosontheweb/selenium-utils/zipball/master">Download this project as a .zip file</a>
@@ -31,10 +31,68 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>
-<a id="selenium-utils" class="anchor" href="#selenium-utils" aria-hidden="true"><span class="octicon octicon-link"></span></a>Selenium Utils</h1>
+        <h2>
+<a id="findr" class="anchor" href="#findr" aria-hidden="true"><span class="octicon octicon-link"></span></a>Findr</h2>
 
-<p>Takes the misery out of selenium !</p>
+<p><code>Findr</code> is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.</p>
+
+<p>The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.</p>
+
+<p>Evaluation fails if the chain doesn't completely completes within a given timeout, and an exception is thrown.</p>
+
+<p>Simple example over Google search :</p>
+
+<pre><code>// get google
+driver.get("http://www.google.com");
+
+// perform the search
+new Findr(driver)           // create a Findr
+    .elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
+    .sendKeys("pojos on the web", Keys.ENTER);  // type the query
+
+// check the results
+new Findr(driver)           // create Findr
+    .elem(By.id("ires"))    // wait for elem by id
+    .elemList(By.cssSelector("h3.r")) // wait for a list of elements
+    .at(0)                  // wait for 1st in the list
+    .elem(By.tagName("a"))  // wait for some &lt;a&gt; tag under the first list elem
+    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
+    .eval();    // evaluate the whole stuff ! will block until success, or timeout
+</code></pre>
+
+<h3>
+<a id="built-in-predicates" class="anchor" href="#built-in-predicates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Built-in predicates</h3>
+
+<p>The <code>Findrs</code> class exposes a set of static factory methods that create <code>Predicate&lt;WebElement&gt;</code>s for the recurrent stuff, for example :</p>
+
+<ul>
+<li>attrEquals(String attrName, String expectedValue)</li>
+<li>hasClass(String className)</li>
+<li>textEquals(final String expected)</li>
+</ul>
+
+<p>Those can be used directly in your findrs :</p>
+
+<pre><code>new Findr(driver)
+    .elem(By.cssSelector("div.my-class"))
+    .where(Findrs.attrEquals("my-attr", "my-value"))
+    .where(Findrs.textEquals("This is some content"))
+    .eval();
+</code></pre>
+
+<h3>
+<a id="error-reporting" class="anchor" href="#error-reporting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Error reporting</h3>
+
+<p><code>Findr</code> tries to report failures in condition chains by including a String-ified version of the path. Of course, the stack trace of the Timeout exception will tell where the evaluation failed.</p>
+
+<p>There are also variants to <code>eval()</code> that accept a <code>failureMessage</code> argument.</p>
+
+<h3>
+<a id="understanding-failures" class="anchor" href="#understanding-failures" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understanding failures</h3>
+
+<p><code>Findr</code> executes the various functions you compose as a "back box", and it's sometimes hard to understand where 
+it went wrong in the conditions chain. In order to get insights about what's going on, you can 
+set the sys prop <code>webtests.findr.verbose</code>, so that it outputs the logs (to stdout) when asserting the condition chain. </p>
 
 <h2>
 <a id="webdriver-init" class="anchor" href="#webdriver-init" aria-hidden="true"><span class="octicon octicon-link"></span></a>WebDriver init</h2>
@@ -90,6 +148,12 @@ WebDriver driver = DriverBuildr
         <td>Any (reasonable) positive integer</td>
         <td>10</td>
         <td>The default Findr timeout in seconds</td>
+    </tr>
+    <tr>
+        <td>webtests.findr.verbose</td>
+        <td>true,fase</td>
+        <td>false</td>
+        <td>log some infos about findr evaluation chains (helps debugging)</td>
     </tr>
     <tr>
         <td>webtests.video.enabled</td>
@@ -151,62 +215,6 @@ WebDriver driver = DriverBuildr
 <p>It's built on <a href="http://www.randelshofer.ch/monte/">Monte Media Library</a>, and is pure Java. It's been tested on a different platforms (mac, windows, linux), and even seems to work in headless/xvfb environments. </p>
 
 <h2>
-<a id="findr" class="anchor" href="#findr" aria-hidden="true"><span class="octicon octicon-link"></span></a>Findr</h2>
-
-<p><code>Findr</code> is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.</p>
-
-<p>The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.</p>
-
-<p>Evaluation fails if the chain doesn't completely completes within a given timeout, and an exception is thrown.</p>
-
-<p>Simple example over Google search :</p>
-
-<pre><code>// get google
-driver.get("http://www.google.com");
-
-// perform the search
-new Findr(driver)           // create a Findr
-    .elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
-    .sendKeys("pojos on the web", Keys.ENTER);  // type the query
-
-// check the results
-new Findr(driver)           // create Findr
-    .elem(By.id("ires"))    // wait for elem by id
-    .elemList(By.cssSelector("h3.r")) // wait for a list of elements
-    .at(0)                  // wait for 1st in the list
-    .elem(By.tagName("a"))  // wait for some &lt;a&gt; tag under the first list elem
-    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
-    .eval();    // evaluate the whole stuff ! will block until success, or timeout
-</code></pre>
-
-<h3>
-<a id="built-in-predicates" class="anchor" href="#built-in-predicates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Built-in predicates</h3>
-
-<p>The <code>Findrs</code> class exposes a set of static factory methods that create <code>Predicate&lt;WebElement&gt;</code>s for the recurrent stuff, for example :</p>
-
-<ul>
-<li>attrEquals(String attrName, String expectedValue)</li>
-<li>hasClass(String className)</li>
-<li>textEquals(final String expected)</li>
-</ul>
-
-<p>Those can be used directly in your findrs :</p>
-
-<pre><code>new Findr(driver)
-    .elem(By.cssSelector("div.my-class"))
-    .where(Findrs.attrEquals("my-attr", "my-value"))
-    .where(Findrs.textEquals("This is some content"))
-    .eval();
-</code></pre>
-
-<h3>
-<a id="error-reporting" class="anchor" href="#error-reporting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Error reporting</h3>
-
-<p><code>Findr</code> tries to report failures in condition chains by including a String-ified version of the path. Of course, the stack trace of the Timeout exception will tell where the evaluation failed.</p>
-
-<p>There are also variants to <code>eval()</code> that accept a <code>failureMessage</code> argument.</p>
-
-<h2>
 <a id="using-with-maven" class="anchor" href="#using-with-maven" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using with Maven</h2>
 
 <p>Add the dependency to your pom :</p>
@@ -250,7 +258,7 @@ new Findr(driver)           // create Findr
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Selenium-utils maintained by <a href="https://github.com/pojosontheweb">pojosontheweb</a></p>
+        <p class="copyright">selenium-utils maintained by <a href="https://github.com/pojosontheweb">pojosontheweb</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
