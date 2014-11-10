@@ -46,6 +46,7 @@ public class GoogleRawTest {
                     .elem(By.id("gbqfqwb"))
                     .elem(By.id("gs_lc0"))
                     .elem(By.id("idont"))
+                    .where(Findrs.isDisplayed())
                     .elem(By.id("exist"))
                     .eval();
                 fail = false;

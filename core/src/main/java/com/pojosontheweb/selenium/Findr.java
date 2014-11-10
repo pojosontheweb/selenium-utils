@@ -1,15 +1,11 @@
 package com.pojosontheweb.selenium;
 
-import java.io.Serializable;
 import java.util.*;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utility for accessing Selenium DOM safely, wait-style.
