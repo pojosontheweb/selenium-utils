@@ -1,0 +1,46 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<h1>Findr test page</h1>
+<div id="container">
+    <button class="btn">Click me !</button>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+
+        var container = $('#container');
+
+        $('.btn').click(function() {
+            container.empty();
+            setTimeout(function() {
+                var btn2 = $('<button>')
+                        .text('Click me 2')
+                        .addClass('btn');
+
+                container.append(btn2);
+
+                btn2.click(function() {
+                    container.empty();
+                    var lastBtn = $('<button>')
+                            .addClass('btn')
+                            .prop('disabled', true)
+                            .text('I am last...')
+                            .click(function() {
+                                $('.result').text('DOKI');
+                            });
+                    container.append(lastBtn);
+                    setTimeout(function() {
+                        var res = $('<div>').addClass('result').text('OK');
+                        container.append(res);
+                        lastBtn.prop('disabled', false);
+                    }, 2000);
+                });
+            }, 2000);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,20 +1,15 @@
 # Selenium Goodies : meet Findr
 
-Writing Selenium tests is not easy as it seems. Especially for today's AJAX-y apps, where the DOM is fully dynamic, with parts of the pages being rendered in unpredictable orders etc. 
+Writing Selenium tests is not easy as it seems. Especially for today's AJAX-y apps, where the DOM is fully 
+dynamic, with parts of the pages being rendered in unpredictable orders, elements being removed and added to the 
+page, etc. 
 
-## The problem
+## The problem(s)
+
+- Cannot use findElement(s) without an implicit wait
+- Implicit wait doesn't solve the reference reuse problem (stale)
+- Expected Conditions and findElement(s) not tightly integrated : hard to be DRY and clean
+- No standard tooling (recording and debugging tests etc) 
 
 
-Using the "standard way" in Selenium doesn't really work now :
-
-```
-WebElement e = driver.findElement(...);
-// do something with 'e'
-e.click();
-WebElement e2 = e.findElement(...);
-// do somthing with e2
-e.getText()...
-```
-
-Problem is that when you intend to click the first element,  
 
