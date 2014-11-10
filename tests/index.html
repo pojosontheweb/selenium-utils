@@ -1,41 +1,46 @@
 <html>
-	<head>
-			<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-	</head>
-	<body>
-		<h1>Findr test page</h1>
-		<button id="btn1">Click me !</button>
-		<div id="container1"></div>
-		<div id="container2"></div>
-		
-		<script type="text/javascript">
-		$(function() {
-			
-			var count = 0;
-			
-			$('#btn1').click(function() {
-				var btn1 = $(this);
-				btn1.prop('disabled', true)
-				setTimeout(function() {					
-					var btn2 = $('<button>')
-						.text('Click me 2')
-						.prop('disabled', true);					
-					$('#container1').append(btn2);
-					
-					setTimeout(function() {
-						btn2.prop('disabled', false);
-					}, 2000);					
-					
-					btn2.click(function() {
-						btn2.prop('disabled', true);
-						setTimeout(function() {
-							$('#container2').text('DONE : ' + count++);
-							btn2.prop('disabled', false);
-						}, 2000);
-					});					
-				}, 2000);
-			});			
-		});
-		</script>
-	</body>
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<h1>Findr test page</h1>
+<div id="container">
+    <button class="btn">Click me !</button>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+
+        var container = $('#container');
+
+        $('.btn').click(function() {
+            container.empty();
+            setTimeout(function() {
+                var btn2 = $('<button>')
+                        .text('Click me 2')
+                        .addClass('btn');
+
+                container.append(btn2);
+
+                btn2.click(function() {
+                    container.empty();
+                    var lastBtn = $('<button>')
+                            .addClass('btn')
+                            .prop('disabled', true)
+                            .text('I am last...')
+                            .click(function() {
+                                $('.result').text('DOKI');
+                            });
+                    container.append(lastBtn);
+                    setTimeout(function() {
+                        var res = $('<div>').addClass('result').text('OK');
+                        container.append(res);
+                        lastBtn.prop('disabled', false);
+                    }, 2000);
+                });
+            }, 2000);
+        });
+    });
+</script>
+</body>
 </html>
