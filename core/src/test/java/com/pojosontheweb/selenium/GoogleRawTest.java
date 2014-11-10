@@ -69,7 +69,7 @@ public class GoogleRawTest {
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
                     .elem(By.tagName("a"))
-                    .where(Findrs.textStartsWith("POJOs on the Web"))
+                    .where(Findrs.textContains("POJOs on the Web"))
                     .eval();
 
             System.out.println("OK !");
@@ -80,7 +80,7 @@ public class GoogleRawTest {
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
                     .elem(By.tagName("a"))
-                    .where(Findrs.textMatches("^POJOs.*"))
+                    .where(Findrs.textMatches(".*(POJOs).*"))
                     .eval();
 
             System.out.println("Regexp OK !");

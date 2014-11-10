@@ -142,7 +142,32 @@ public class Findrs {
             };
         }
 
-        /**
+    /**
+     * Create and return a new Predicate checking that an element's
+     * inner text contains passed text.
+     * @param expectedContains the expected contained text
+     * @return a new Predicate
+     */
+    public static Predicate<WebElement> textContains(final String expectedContains) {
+        return new Predicate<WebElement>() {
+            @Override
+            public boolean apply(WebElement input) {
+                String text = input.getText();
+                if (text==null) {
+                    return false;
+                }
+                return text.contains(expectedContains);
+            }
+
+            @Override
+            public String toString() {
+                return "textContains(" + expectedContains + ")";
+
+            }
+        };
+    }
+
+    /**
          * Create and return a new Predicate checking that an element's
          * inner text ends with passed text.
          * @param expectedEndsWith the expected start of text
