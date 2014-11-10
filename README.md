@@ -56,9 +56,11 @@ new Findr(driver)
 
 There are also variants to `eval()` that accept a `failureMessage` argument.
 
-### Debugging logs
+### Understanding failures
 
-`Findr` executes the various functions you compose as a "back box", and it's sometimes hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the static flag `Findr.DEBUG`, so that it outputs the logs (to stdout) when asserting the condition chain. 
+`Findr` executes the various functions you compose as a "back box", and it's sometimes hard to understand where 
+it went wrong in the conditions chain. In order to get insights about what's going on, you can 
+set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when asserting the condition chain. 
 
 ## WebDriver init
 
@@ -114,6 +116,12 @@ Here is a list of all supported System Properties :
 		<td>Any (reasonable) positive integer</td>
 		<td>10</td>
 		<td>The default Findr timeout in seconds</td>
+	</tr>
+	<tr>
+		<td>webtests.findr.verbose</td>
+		<td>true,fase</td>
+		<td>false</td>
+		<td>log some infos about findr evaluation chains (helps debugging)</td>
 	</tr>
 	<tr>
 		<td>webtests.video.enabled</td>

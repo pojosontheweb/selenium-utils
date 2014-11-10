@@ -20,6 +20,9 @@ public final class Findr {
     /** the default wait timeout */
     public static final int WAIT_TIMEOUT_SECONDS = 10; // secs
 
+    /** the sys prop name for enabling debugger in findr eval(s) */
+    public static final String SYSPROP_VERBOSE = "webtests.findr.verbose";
+
     /** ref to the driver */
     private final WebDriver driver;
 
@@ -37,10 +40,12 @@ public final class Findr {
      */
     private final int waitTimeout;
 
-    public static boolean DEBUG = false;
+    private static boolean isDebugEnabled() {
+        return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "true"));
+    }
 
     private static void logDebug(String message) {
-        if (DEBUG) {
+        if (isDebugEnabled()) {
             System.out.println(message);
         }
     }

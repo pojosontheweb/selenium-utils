@@ -13,6 +13,7 @@
     <name>selenium-utils/core</name>
     <properties>
         <webtests.browser>firefox</webtests.browser>
+        <webtests.findr.verbose>true</webtests.findr.verbose>
     </properties>
     <dependencies>
         <dependency>
@@ -49,6 +50,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <webtests.browser>${webtests.browser}</webtests.browser>
+                        <webtests.findr.verbose>${webtests.debug}</webtests.findr.verbose>
                         <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
                         <webtests.video.dir>${project.build.directory}/webtests-videos</webtests.video.dir>
                         <webtests.video.failures.only>${webtests.video.failures.only}</webtests.video.failures.only>

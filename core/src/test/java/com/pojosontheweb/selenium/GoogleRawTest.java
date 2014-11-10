@@ -33,8 +33,6 @@ public class GoogleRawTest {
 
         try {
 
-            Findr.DEBUG = true;
-
             // get google
             driver.get("http://www.google.com");
 
