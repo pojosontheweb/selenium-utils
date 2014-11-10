@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Selenium-utils : selenium-utils">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Selenium-utils</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/pojosontheweb/selenium-utils">View on GitHub</a>
+
+          <h1 id="project_title">Selenium-utils</h1>
+          <h2 id="project_tagline">selenium-utils</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/pojosontheweb/selenium-utils/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/pojosontheweb/selenium-utils/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="selenium-utils" class="anchor" href="#selenium-utils" aria-hidden="true"><span class="octicon octicon-link"></span></a>Selenium Utils</h1>
+
+<p>Takes the misery out of selenium !</p>
+
+<h2>
+<a id="webdriver-init" class="anchor" href="#webdriver-init" aria-hidden="true"><span class="octicon octicon-link"></span></a>WebDriver init</h2>
+
+<p>Use <code>DrivrBuilder</code> in order to create instances of <code>WebDriver</code>. The API can be used statically :</p>
+
+<pre><code>// create a simple Chrome Driver
+WebDriver driver = DriverBuildr
+    .chrome()
+    .setDriverPath(new File("/path/to/chromedriver"))
+    .build();
+</code></pre>
+
+<p>Or by defining system properties :</p>
+
+<pre><code>WebDriver = DriverBuildr.fromSysProps().build();
+</code></pre>
+
+<p>The latter approach allows for more flexible builds. </p>
+
+<h3>
+<a id="system-properties" class="anchor" href="#system-properties" aria-hidden="true"><span class="octicon octicon-link"></span></a>System Properties</h3>
+
+<p>Here is a list of all supported System Properties :</p>
+
+<table>
+    <thead>
+    <tr>
+        <th>property</th>
+        <th>allowed values</th>
+        <th>default</th>
+        <th>comment</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td colspan="4"><em>General props</em></td>
+    </tr>
+    <tr>
+        <td>webtests.browser</td>
+        <td>firefox,chrome</td>
+        <td>firefox</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>webtests.locales</td>
+        <td>en, fr, ...</td>
+        <td></td>
+        <td>Comma-separated list of locale(s) for the tests (browser language)</td>
+    </tr>
+    <tr>
+        <td>webtests.findr.timeout</td>
+        <td>Any (reasonable) positive integer</td>
+        <td>10</td>
+        <td>The default Findr timeout in seconds</td>
+    </tr>
+    <tr>
+        <td>webtests.video.enabled</td>
+        <td>true,false</td>
+        <td>false</td>
+        <td>enables video recording of failed tests</td>
+    </tr>
+    <tr>
+        <td>webtests.video.dir</td>
+        <td>path to folder</td>
+        <td>tmp dir</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>webtests.video.failures.only</td>
+        <td>true,false</td>
+        <td>true</td>
+        <td>keep videos for failures only, or for all tests</td>
+    </tr>
+    <tr>
+        <td colspan="4"><em>Chrome only</em></td>
+    </tr>
+    <tr>
+        <td>webdriver.chrome.driver</td>
+        <td>path to driver exe</td>
+        <td></td>
+        <td>mandatory for Chrome</td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>
+<a id="testcase-plumbing" class="anchor" href="#testcase-plumbing" aria-hidden="true"><span class="octicon octicon-link"></span></a>TestCase plumbing</h2>
+
+<p>Base classes are included that manage the driver init/close and video stuff. If you use JUnit for example, you simply have to extend a base class :</p>
+
+<pre><code>public class MyTest extends ManagedDriverJunit4TestBase {
+
+    @Test
+    public void testMe()  {
+        WebDriver d = getWebDriver();
+        ...
+    }
+
+}
+</code></pre>
+
+<p>Doing so will allow you to run your test directly, and parameterize it using sys props. </p>
+
+<blockquote>
+<p>There's also a <code>TestUtil</code> class that implements the lifecycle of a typical test. You can delegate to that one if you already extend a base class in your test.</p>
+</blockquote>
+
+<h3>
+<a id="video-recording" class="anchor" href="#video-recording" aria-hidden="true"><span class="octicon octicon-link"></span></a>Video recording</h3>
+
+<p>We have a very basic <code>ScreenRecordr</code> class that performs video capture on the host that runs the webdriver. It's activated by the TestCase plumbing, via sys props. </p>
+
+<p>It's built on <a href="http://www.randelshofer.ch/monte/">Monte Media Library</a>, and is pure Java. It's been tested on a different platforms (mac, windows, linux), and even seems to work in headless/xvfb environments. </p>
+
+<h2>
+<a id="findr" class="anchor" href="#findr" aria-hidden="true"><span class="octicon octicon-link"></span></a>Findr</h2>
+
+<p><code>Findr</code> is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.</p>
+
+<p>The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.</p>
+
+<p>Evaluation fails if the chain doesn't completely completes within a given timeout, and an exception is thrown.</p>
+
+<p>Simple example over Google search :</p>
+
+<pre><code>// get google
+driver.get("http://www.google.com");
+
+// perform the search
+new Findr(driver)           // create a Findr
+    .elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
+    .sendKeys("pojos on the web", Keys.ENTER);  // type the query
+
+// check the results
+new Findr(driver)           // create Findr
+    .elem(By.id("ires"))    // wait for elem by id
+    .elemList(By.cssSelector("h3.r")) // wait for a list of elements
+    .at(0)                  // wait for 1st in the list
+    .elem(By.tagName("a"))  // wait for some &lt;a&gt; tag under the first list elem
+    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
+    .eval();    // evaluate the whole stuff ! will block until success, or timeout
+</code></pre>
+
+<h3>
+<a id="built-in-predicates" class="anchor" href="#built-in-predicates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Built-in predicates</h3>
+
+<p>The <code>Findrs</code> class exposes a set of static factory methods that create <code>Predicate&lt;WebElement&gt;</code>s for the recurrent stuff, for example :</p>
+
+<ul>
+<li>attrEquals(String attrName, String expectedValue)</li>
+<li>hasClass(String className)</li>
+<li>textEquals(final String expected)</li>
+</ul>
+
+<p>Those can be used directly in your findrs :</p>
+
+<pre><code>new Findr(driver)
+    .elem(By.cssSelector("div.my-class"))
+    .where(Findrs.attrEquals("my-attr", "my-value"))
+    .where(Findrs.textEquals("This is some content"))
+    .eval();
+</code></pre>
+
+<h3>
+<a id="error-reporting" class="anchor" href="#error-reporting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Error reporting</h3>
+
+<p><code>Findr</code> tries to report failures in condition chains by including a String-ified version of the path. Of course, the stack trace of the Timeout exception will tell where the evaluation failed.</p>
+
+<p>There are also variants to <code>eval()</code> that accept a <code>failureMessage</code> argument.</p>
+
+<h2>
+<a id="using-with-maven" class="anchor" href="#using-with-maven" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using with Maven</h2>
+
+<p>Add the dependency to your pom :</p>
+
+<pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.pojosontheweb&lt;/groupId&gt;
+    &lt;artifactId&gt;selenium-utils-core&lt;/artifactId&gt;
+    &lt;version&gt;LATEST-SNAPSHOT&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<p>Configure surefire :</p>
+
+<pre><code>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;systemPropertyVariables&gt;
+            &lt;webtests.browser&gt;${webtests.browser}&lt;/webtests.browser&gt;
+            &lt;webtests.video.enabled&gt;${webtests.video.enabled}&lt;/webtests.video.enabled&gt;
+            &lt;webtests.video.dir&gt;${project.build.directory}/webtests-videos&lt;/webtests.video.dir&gt;
+            &lt;webdriver.chrome.driver&gt;${webdriver.chrome.driver}&lt;/webdriver.chrome.driver&gt;
+        &lt;/systemPropertyVariables&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;
+</code></pre>
+
+<p>Invoke maven :</p>
+
+<pre><code>$&gt; mvn test
+</code></pre>
+
+<p>With sys props :</p>
+
+<pre><code>$&gt; mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedriver -Dwebtests.video.enabled=true
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Selenium-utils maintained by <a href="https://github.com/pojosontheweb">pojosontheweb</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
