@@ -106,6 +106,7 @@ class GFindrTest extends ManagedDriverJunit4TestBase {
     }
 
     @Test
+    @Ignore
     void dsl() {
         def d = webDriver
         d.get 'http://www.google.com'

@@ -15,15 +15,19 @@ public class SelectTest extends ManagedDriverJunit4TestBase {
 
         getWebDriver().get("http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select");
         getWebDriver().switchTo().frame("view");
-        Findr select = findr().elem(By.tagName("select"));
+        Findr fSelect = findr().elem(By.tagName("select"));
+        Select select = new Select(fSelect);
 
         // assert value
-        select.where(Select.selectedText("Volvo")).eval();
-
+        fSelect.where(Select.selectedText("Volvo")).eval();
         // change value
-        Select.selectByVisibleText(select, "Audi");
-
+        fSelect.eval(Select.makeSelectByVisibleText("Audi"));
         // assert value again
-        select.where(Select.selectedText("Audi")).eval();
+        fSelect.where(Select.selectedText("Audi")).eval();
+
+        // same with instance methods
+        select.assertSelectedText("Audi")
+            .selectByVisibleText("Volvo")
+            .assertSelectedText("Volvo");
     }
 }

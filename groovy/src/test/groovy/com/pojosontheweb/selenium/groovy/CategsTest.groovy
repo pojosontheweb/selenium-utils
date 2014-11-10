@@ -1,16 +1,12 @@
 package com.pojosontheweb.selenium.groovy
 
-import com.google.common.base.Function
 import com.pojosontheweb.selenium.Findr
-import com.pojosontheweb.selenium.Findrs
+import static com.pojosontheweb.selenium.Findrs.*
 import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase
-import com.pojosontheweb.selenium.formz.Select
 import groovy.json.JsonBuilder
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import org.openqa.selenium.Dimension
-import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.pojosontheweb.selenium.groovy.FindrCategory
 import org.pojosontheweb.selenium.groovy.ListFindrCategory
@@ -18,34 +14,36 @@ import org.pojosontheweb.selenium.groovy.WebDriverCategory
 
 import static com.pojosontheweb.selenium.Findrs.textEquals
 import static org.openqa.selenium.By.className
-import static org.openqa.selenium.By.id
 import static org.openqa.selenium.By.tagName
 
 class CategsTest extends ManagedDriverJunit4TestBase {
 
     @Test
-    @Ignore
     void categsLeBonCoin() {
 
         use(WebDriverCategory,FindrCategory,ListFindrCategory) {
 
             def d = webDriver
 
-            // test start
+            // no paren is more stylish...
             d.get 'http://www.leboncoin.fr'
 
-            d.manage().window().setSize(new Dimension(1400, 1000))
+            // categ shortcut method
+            d.windowSize = new Dimension(1400, 1000)
 
+            // creates a default Findr for this driver
             Findr f = d.findr
 
+            // click on the 1st link with title "Alsace"
             f.byId('TableContentBottom')
                 .elemList(tagName('a'))
-                .where(Findrs.attrEquals('title', 'Alsace'))
+                .where(attrEquals('title', 'Alsace'))
                 .at(0)
                 .click()
 
-            Select.selectByVisibleText(f.byId('search_category'), 'Motos')
-            Select.selectByVisibleText(f.byId('searcharea'), 'Toute la France')
+            // use the Select helper
+            f.byId('search_category').asSelect().selectByVisibleText('Motos')
+            f.byId('searcharea').asSelect().selectByVisibleText('Toute la France')
 
             f.byId('searchbutton').click()
 
@@ -60,16 +58,16 @@ class CategsTest extends ManagedDriverJunit4TestBase {
                     .where { WebElement e ->
                         e.text!=null
                     }
-                    .eval({ List<WebElement> elems ->
+                    .eval { List<WebElement> elems ->
                         elems.each { WebElement e ->
                             res << [
                                 text: e.text
                             ]
                             true
                         }
-                    } as Function)
+                    }
 
-                ((JavascriptExecutor)d).executeScript("window.scrollTo(0, document.body.scrollHeight);")
+                d.executeJavaScript("window.scrollTo(0, document.body.scrollHeight);")
 
                 if (page>1) {
                     f.byId('paging')
@@ -84,7 +82,7 @@ class CategsTest extends ManagedDriverJunit4TestBase {
             }
 
 
-            println "Trouvé : ${res.size()} annonces"
+            println "Found : ${res.size()} ads"
             println new JsonBuilder(res).toPrettyString()
 
             Assert.assertEquals(70, res.size())
