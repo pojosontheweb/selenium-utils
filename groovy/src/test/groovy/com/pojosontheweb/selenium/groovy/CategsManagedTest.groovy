@@ -55,10 +55,10 @@ class CategsManagedTest extends ManagedDriverJunit4TestBase {
                 println "page $page"
                 f.byId('ContainerMain')
                     .elemList(className('detail'))
-                    .where { WebElement e ->
+                    .where { e ->
                         e.text!=null
                     }
-                    .eval { List<WebElement> elems ->
+                    .eval { elems ->
                         elems.each { WebElement e ->
                             res << [
                                 text: e.text

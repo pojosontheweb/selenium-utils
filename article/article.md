@@ -1,4 +1,6 @@
-Writing Selenium tests is not easy as it seems. Especially for today's AJAX-y apps, where the DOM is fully dynamic, with parts of the pages being rendered asynchronously, in unpredictable orders, elements being removed and added to the page, etc. 
+
+
+Writing Selenium tests is not easy as it seems. Especially for today's AJAX apps, where the DOM is fully dynamic, with parts of the pages being rendered asynchronously, in unpredictable order. 
 
 # The problem
 
