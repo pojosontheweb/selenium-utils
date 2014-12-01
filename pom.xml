@@ -16,7 +16,7 @@
     <modules>
         <!--module>monte</module-->
         <module>core</module>
-        <module>groovy</module>
+        <!--<module>groovy</module>-->
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
     <description>Utilities for selenium testing</description>
