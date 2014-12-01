@@ -1,11 +1,10 @@
 package com.pojosontheweb.selenium;
 
 import com.google.common.base.Function;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 public class GoogleRawTest {
 
@@ -19,6 +18,7 @@ public class GoogleRawTest {
         );
     }
 
+    @Ignore
     @Test
     public void testFirefox() {
         System.out.println("Testing with Firefox");
@@ -36,8 +36,26 @@ public class GoogleRawTest {
             // get google
             driver.get("http://www.google.com");
 
+            // should fail
+            boolean fail;
+            try {
+                new Findr(driver)
+                    .setTimeout(5)
+                    .elem(By.id("gbqfqwb"))
+                    .elem(By.id("gs_lc0"))
+                    .elem(By.id("idont"))
+                    .where(Findrs.isDisplayed())
+                    .elem(By.id("exist"))
+                    .eval();
+                fail = false;
+            } catch(TimeoutException e) {
+                fail = true;
+            }
+            Assert.assertTrue(fail);
+
             // type in our query
             new Findr(driver)
+                    .setTimeout(5)
                     .elem(By.id("gbqfq"))
                     .sendKeys("pojos on the web");
             new Findr(driver)
@@ -46,41 +64,25 @@ public class GoogleRawTest {
 
             // check the results
             new Findr(driver)
-                    .elem(By.id("res"))
+                    .elem(By.id("search"))
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
                     .elem(By.tagName("a"))
-                    .elem(By.tagName("em"))
-                    .where(Findrs.textEquals("POJOs on the Web"))
+                    .where(Findrs.textContains("POJOs on the Web"))
                     .eval();
 
             System.out.println("OK !");
 
-            // a basic nested finder test
-            new Findr(driver)
-                    .elem(By.id("res"))
-                    .eval(new Function<WebElement, Object>() {
-                        @Override
-                        public Object apply(WebElement input) {
-                            Findr.fromWebElement(driver, input, 2)
-                                    .elemList(By.cssSelector("h3.r"))
-                                    .at(0)
-                                    .elem(By.tagName("a"))
-                                    .elem(By.tagName("em"))
-                                    .where(Findrs.textEquals("POJOs on the Web"))
-                                    .eval();
-                            return true;
-                        }
-                    });
-
             // regexp matching
             new Findr(driver)
-                    .elem(By.id("res"))
+                    .elem(By.id("search"))
                     .elemList(By.cssSelector("h3.r"))
                     .at(0)
-                    .elem(By.tagName("em"))
-                    .where(Findrs.textMatches("^POJOs.*"))
+                    .elem(By.tagName("a"))
+                    .where(Findrs.textMatches(".*(POJOs).*"))
                     .eval();
+
+            System.out.println("Regexp OK !");
 
         } finally {
             driver.quit();

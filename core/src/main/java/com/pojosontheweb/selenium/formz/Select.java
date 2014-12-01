@@ -7,15 +7,32 @@ import org.openqa.selenium.WebElement;
 
 public class Select {
 
-    private Select() {
+    private final Findr findr;
+
+    public Select(Findr findr) {
+        this.findr = findr;
     }
 
-    public static void selectByVisibleText(Findr selectFindr, final String text) {
-        selectFindr.eval(new Function<WebElement, Object>() {
+    public Findr getFindr() {
+        return findr;
+    }
+
+    public Select selectByVisibleText(String text) {
+        findr.eval(makeSelectByVisibleText(text));
+        return this;
+    }
+
+    public Select assertSelectedText(String expected) {
+        findr.where(selectedText(expected)).eval();
+        return this;
+    }
+
+    public static Function<WebElement,?> makeSelectByVisibleText(final String text) {
+        return new Function<WebElement, Object>() {
             @Override
             public Object apply(WebElement select) {
                 org.openqa.selenium.support.ui.Select selSelect =
-                        new org.openqa.selenium.support.ui.Select(select);
+                    new org.openqa.selenium.support.ui.Select(select);
                 selSelect.selectByVisibleText(text);
                 return true;
             }
@@ -24,7 +41,7 @@ public class Select {
             public String toString() {
                 return "selectByVisibleText:" + text;
             }
-        });
+        };
     }
 
     public static Predicate<WebElement> selectedText(final String expectedText) {
@@ -50,6 +67,14 @@ public class Select {
             }
 
         };
+    }
+
+    /**
+     * @deprecated use instance method(s) instead
+     */
+    @Deprecated
+    public static void selectByVisibleText(Findr selectFindr, final String text) {
+        selectFindr.eval(makeSelectByVisibleText(text));
     }
 
 }

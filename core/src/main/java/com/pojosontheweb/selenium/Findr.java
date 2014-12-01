@@ -3,7 +3,6 @@ package com.pojosontheweb.selenium;
 import java.util.*;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -21,6 +20,9 @@ public final class Findr {
     /** the default wait timeout */
     public static final int WAIT_TIMEOUT_SECONDS = 10; // secs
 
+    /** the sys prop name for enabling debugger in findr eval(s) */
+    public static final String SYSPROP_VERBOSE = "webtests.findr.verbose";
+
     /** ref to the driver */
     private final WebDriver driver;
 
@@ -37,6 +39,16 @@ public final class Findr {
      * The wait timeout (in seconds)
      */
     private final int waitTimeout;
+
+    private static boolean isDebugEnabled() {
+        return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "true"));
+    }
+
+    private static void logDebug(String message) {
+        if (isDebugEnabled()) {
+            System.out.println(message);
+        }
+    }
 
     /**
      * Create a Findr with passed arguments
@@ -105,17 +117,48 @@ public final class Findr {
         };
     }
 
-    private Findr compose(Function<SearchContext,WebElement> function, String pathElem) {
-        Function<SearchContext,WebElement> newFunction = wrapAndTrapCatchSeleniumException(function);
+    private Findr compose(final Function<SearchContext,WebElement> function, final String pathElem) {
+        final Function<SearchContext,WebElement> newFunction = wrapAndTrapCatchSeleniumException(function);
         ArrayList<String> newPath = new ArrayList<String>(path);
         if (pathElem!=null) {
             newPath.add(pathElem);
         }
+        Function<SearchContext,WebElement> composed;
         if (f==null) {
-            return new Findr(driver, waitTimeout, newFunction, newPath);
+            composed = new Function<SearchContext, WebElement>() {
+                @Override
+                public WebElement apply(SearchContext input) {
+                    WebElement res = newFunction.apply(input);
+                    if (res==null) {
+                        logDebug("  ! " + pathElem + " (null)");
+                    } else {
+                        logDebug("  > " + pathElem + " : " + res);
+                    }
+                    return res;
+                }
+            };
         } else {
-            return new Findr(driver, waitTimeout, Functions.compose(newFunction, f), newPath);
+            composed = new Function<SearchContext, WebElement>() {
+                @Override
+                public WebElement apply(SearchContext input) {
+                    WebElement res1 = f.apply(input);
+                    if (res1==null) {
+                        logDebug("  - " + pathElem);
+                        return null;
+                    } else {
+                        WebElement res2 = newFunction.apply(res1);
+                        if (res2==null) {
+                            logDebug("  ! " + pathElem);
+                        } else {
+                            logDebug("  > " + pathElem + " : " + res2);
+                        }
+                        return res2;
+                    }
+                }
+            };
         }
+        return new Findr(driver, waitTimeout, composed, newPath);
+
     }
 
     /**
@@ -192,11 +235,19 @@ public final class Findr {
                 if (f==null) {
                     throw new EmptyFindrException();
                 }
+                logDebug("Findr eval :");
                 WebElement e = f.apply(input);
                 if (e == null) {
+                    logDebug("  => Chain STOPPED before callback");
                     return null;
                 }
-                return callback.apply(e);
+                T res = callback.apply(e);
+                if (res==null || (res instanceof Boolean && !((Boolean)res))) {
+                    logDebug("  => " + callback + " result : " + res + ", will try again");
+                } else {
+                    logDebug("  => " + callback + " result : " + res + ", OK");
+                }
+                return res;
             }
         }));
     }
@@ -530,6 +581,22 @@ public final class Findr {
             }
         }
 
+        @Override
+        public String toString() {
+            return "ListFindr{" +
+                "by=" + by +
+                ", waitCount=" + waitCount +
+                '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Findr{" +
+            "driver=" + driver +
+            ", path=" + path +
+            ", waitTimeout=" + waitTimeout +
+            '}';
     }
 
     // Utility statics

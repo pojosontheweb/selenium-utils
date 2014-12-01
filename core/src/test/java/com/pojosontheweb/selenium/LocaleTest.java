@@ -1,5 +1,6 @@
 package com.pojosontheweb.selenium;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -26,6 +27,7 @@ public class LocaleTest {
         );
     }
 
+    @Ignore
     @Test
     public void testFirefox() {
         performTest(
@@ -46,6 +48,7 @@ public class LocaleTest {
         );
     }
 
+    @Ignore
     @Test
     public void testSysPropsFirefox() {
         System.setProperty("webtests.browser", "firefox");
