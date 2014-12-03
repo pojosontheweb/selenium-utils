@@ -112,6 +112,12 @@ Here is a list of all supported System Properties :
 		<td>Comma-separated list of locale(s) for the tests (browser language)</td>
 	</tr>
 	<tr>
+		<td>webtests.hub.url</td>
+		<td>valid remote driver url</td>
+		<td></td>
+		<td>Connect to a Selenium Grid (RemoteWebDriver). Video recording is not available when using remote drivers.</td>
+	</tr>
+	<tr>
 		<td>webtests.findr.timeout</td>
 		<td>Any (reasonable) positive integer</td>
 		<td>10</td>

@@ -27,6 +27,7 @@ public class DriverBuildr {
          */
         public static final String PROP_WEBTESTS_BROWSER = "webtests.browser";
         public static final String PROP_WEBTESTS_LOCALES = "webtests.locales";
+        public static final String PROP_WEBTESTS_HUB_URL = "webtests.hub.url";
 
         public WebDriver build() {
             // find requested browser in sys properties
@@ -41,22 +42,32 @@ public class DriverBuildr {
             if (browsr == null) {
                 throw new RuntimeException("Could not find browser ! " + PROP_WEBTESTS_BROWSER + "=" + browserName);
             }
-            // create WebDriver using this prop
+            String hubUrl = System.getProperty(PROP_WEBTESTS_HUB_URL);
             String locale = System.getProperty(PROP_WEBTESTS_LOCALES);
-            if (browsr.equals(Browsr.Chrome)) {
-                ChromeBuildr b = chrome();
-                if (locale != null) {
+            if (hubUrl!=null) {
+                // remote !
+                RemoteBuildr b = remote();
+                b.setBrowsr(browsr);
+                b.setHubUrl(hubUrl);
+                if (locale!=null) {
                     b.setLocales(locale);
                 }
                 return b.build();
             } else {
-                FirefoxBuildr b = firefox();
-                if (locale != null) {
-                    b.setLocales(locale);
+                if (browsr.equals(Browsr.Chrome)) {
+                    ChromeBuildr b = chrome();
+                    if (locale != null) {
+                        b.setLocales(locale);
+                    }
+                    return b.build();
+                } else {
+                    FirefoxBuildr b = firefox();
+                    if (locale != null) {
+                        b.setLocales(locale);
+                    }
+                    return b.build();
                 }
-                return b.build();
             }
-
         }
 
     }
@@ -73,6 +84,10 @@ public class DriverBuildr {
      */
     public static FirefoxBuildr firefox() {
         return new FirefoxBuildr();
+    }
+
+    public static RemoteBuildr remote() {
+        return new RemoteBuildr();
     }
 
 
