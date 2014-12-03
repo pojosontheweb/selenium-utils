@@ -28,6 +28,11 @@ public class ChromeBuildr {
                         "by calling the builder or by setting the " + CHROMEDRIVER_PATH_SYSPROP_NAME + " System Property");
             }
         }
+
+        return new ChromeDriver(createChromeOptions(locales));
+    }
+
+    public static ChromeOptions createChromeOptions(String locales) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("test-type");
         if (locales !=null) {
@@ -35,7 +40,7 @@ public class ChromeBuildr {
             prefs.put("intl.accept_languages", locales);
             options.setExperimentalOptions("prefs", prefs);
         }
-        return new ChromeDriver(options);
+        return options;
     }
 
     public ChromeBuildr setDriverPath(File driverPath) {

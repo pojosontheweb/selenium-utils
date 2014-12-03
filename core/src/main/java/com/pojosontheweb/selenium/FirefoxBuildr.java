@@ -30,17 +30,24 @@ public class FirefoxBuildr {
 
     public WebDriver build() {
         if (profile==null) {
-            File tmpDir = new File(System.getProperty("java.io.tmpdir"), "wt-ffprofile");
-            tmpDir.mkdir();
-            profile = new FirefoxProfile(tmpDir);
-            if (locales !=null) {
-                profile.setPreference("intl.accept_languages", locales);
-            }
+            profile = createFirefoxProfile(locales);
         }
         if (path!=null) {
             return new FirefoxDriver(new FirefoxBinary(path), profile);
         } else {
             return new FirefoxDriver(profile);
         }
+    }
+
+    public static FirefoxProfile createFirefoxProfile(String locales) {
+        File tmpDir = new File(System.getProperty("java.io.tmpdir"), "wt-ffprofile");
+        if (!tmpDir.mkdir()) {
+            throw new IllegalStateException("unable to create tmp dir " + tmpDir.getAbsolutePath());
+        }
+        FirefoxProfile profile = new FirefoxProfile(tmpDir);
+        if (locales !=null) {
+            profile.setPreference("intl.accept_languages", locales);
+        }
+        return profile;
     }
 }
