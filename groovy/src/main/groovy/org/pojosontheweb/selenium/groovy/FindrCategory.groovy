@@ -20,4 +20,16 @@ class FindrCategory {
         return new Select(this)
     }
 
+    def plus(By by) {
+        elem(by)
+    }
+
+    def plus(Closure c) {
+        where(c as Predicate)
+    }
+
+    def plus(Predicate p) {
+        where(p)
+    }
+
 }
