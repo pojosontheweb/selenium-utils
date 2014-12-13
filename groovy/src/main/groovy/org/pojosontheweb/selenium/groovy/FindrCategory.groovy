@@ -3,6 +3,7 @@ package org.pojosontheweb.selenium.groovy
 import com.google.common.base.Function
 import com.google.common.base.Predicate
 import com.pojosontheweb.selenium.Findr
+import com.pojosontheweb.selenium.Findr.ListFindr
 import com.pojosontheweb.selenium.formz.Select
 import org.openqa.selenium.By
 
@@ -31,6 +32,10 @@ class FindrCategory {
 
     Findr plus(By by) {
         elem(by)
+    }
+
+    ListFindr plus(ListFindr lf) {
+        append(lf)
     }
 
     def rightShift(Function f) {

@@ -203,6 +203,10 @@ public final class Findr {
         return new ListFindr(by);
     }
 
+    public ListFindr append(ListFindr lf) {
+        return new ListFindr(lf.by, lf.filters, lf.waitCount);
+    }
+
     private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
         try {
             return new WebDriverWait(driver, waitTimeout).until(callback);
@@ -325,8 +329,6 @@ public final class Findr {
         );
     }
 
-    private static final Predicate<WebElement> TRUE = com.google.common.base.Predicates.alwaysTrue();
-
     /**
      * Shortcut method : evaluates chain, and sends keys to target WebElement of this
      * Findr. If sendKeys throws an exception, then the whole chain is evaluated again, until
@@ -376,7 +378,7 @@ public final class Findr {
         private final Integer waitCount;
 
         private ListFindr(By by) {
-            this(by, TRUE, null);
+            this(by, null, null);
         }
 
         private ListFindr(By by, Predicate<WebElement> filters, Integer waitCount) {
@@ -394,7 +396,7 @@ public final class Findr {
                     }
                     try {
                         return predicate.apply(input);
-                    } catch(StaleElementReferenceException e) {
+                    } catch(WebDriverException e) {
                         return false;
                     }
 
@@ -431,8 +433,28 @@ public final class Findr {
             if (waitCount!=null) {
                 throw new IllegalArgumentException("It's forbidden to call ListFindr.where() after whereElemCount() has been called.");
             }
-            return new ListFindr(by, com.google.common.base.Predicates.<WebElement>and(filters, wrapAndTrap(predicate)), waitCount);
+            return new ListFindr(by, composeFilters(predicate), waitCount);
         }
+
+        private Predicate<WebElement> composeFilters(final Predicate<? super WebElement> predicate) {
+            return new Predicate<WebElement>() {
+                @Override
+                public boolean apply(WebElement input) {
+                    return (filters == null || filters.apply(input)) && wrapAndTrap(predicate).apply(input);
+                }
+
+                @Override
+                public String toString() {
+                    if (filters!=null) {
+                        return filters.toString() + " + " + predicate.toString();
+                    } else {
+                        return predicate.toString();
+                    }
+                }
+            };
+        }
+
+
 
         /**
          * Index-based access to the list of elements in this ListFindr. Allows
@@ -445,18 +467,28 @@ public final class Findr {
                 @Override
                 public WebElement apply(SearchContext input) {
                     List<WebElement> elements;
+                    List<WebElement> filtered;
                     try {
-                        elements = filterElements(input.findElements(by));
+                        elements = input.findElements(by);
+                        filtered = filterElements(elements);
                     } catch(Exception e) {
                         return null;
                     }
                     if (elements==null) {
                         return null;
                     }
-                    if (index>=elements.size()) {
+                    if (waitCount != null && filtered.size() != waitCount) {
+                        logDebug("  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
+                        return null;
+                    } else {
+                        if (isDebugEnabled() && waitCount!=null) {
+                            logDebug("  > elemCount OK (" + waitCount + ")");
+                        }
+                    }
+                    if (index>=filtered.size()) {
                         return null;
                     }
-                    return elements.get(index);
+                    return filtered.get(index);
                 }
             },
                     by.toString() + "[" + index + "]"
@@ -466,9 +498,14 @@ public final class Findr {
         private List<WebElement> filterElements(List<WebElement> source) {
             List<WebElement> filtered = new ArrayList<WebElement>();
             for (WebElement element : source) {
-                if (filters.apply(element)) {
+                if (filters==null || filters.apply(element)) {
                     filtered.add(element);
                 }
+            }
+            if (isDebugEnabled() && filters!=null) {
+                int srcSize = source.size();
+                int filteredSize = filtered.size();
+                logDebug("  > [" + by + "]* filter(" + filters + ") : " + srcSize + " -> " + filteredSize);
             }
             return filtered;
         }
@@ -491,6 +528,7 @@ public final class Findr {
          * @throws TimeoutException if at least one condition in the chain failed
          */
         public <T> T eval(final Function<List<WebElement>, T> callback) throws TimeoutException {
+            logDebug("ListFindr eval :");
             return wrapWebDriverWaitList(wrapAndTrapCatchSeleniumException(new Function<WebDriver, T>() {
                 @Override
                 public T apply(WebDriver input) {
@@ -504,9 +542,21 @@ public final class Findr {
                     }
                     List<WebElement> filtered = filterElements(elements);
                     if (waitCount != null && filtered.size() != waitCount) {
+                        logDebug("  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
+                        logDebug("  => Chain STOPPED before callback");
                         return null;
+                    } else {
+                        if (isDebugEnabled() && waitCount!=null) {
+                            logDebug("  > elemCount OK (" + waitCount + ")");
+                        }
                     }
-                    return callback.apply(filtered);
+                    T res = callback.apply(filtered);
+                    if (res==null || (res instanceof Boolean && !((Boolean)res))) {
+                        logDebug("  => " + callback + " result : " + res + ", will try again");
+                    } else {
+                        logDebug("  => " + callback + " result : " + res + ", OK");
+                    }
+                    return res;
                 }
             }));
         }
@@ -537,19 +587,21 @@ public final class Findr {
         @Override
         public String toString() {
             return "ListFindr{" +
-                "by=" + by +
-                ", waitCount=" + waitCount +
-                '}';
+                    "by=" + by +
+                    ", filters=" + filters +
+                    ", waitCount=" + waitCount +
+                    ", findr=" + Findr.this +
+                    '}';
         }
     }
 
     @Override
     public String toString() {
         return "Findr{" +
-            "driver=" + driver +
-            ", path=" + path +
-            ", waitTimeout=" + waitTimeout +
-            '}';
+                "driver=" + driver +
+                ", path=" + path +
+                ", waitTimeout=" + waitTimeout +
+                '}';
     }
 
     // Utility statics
