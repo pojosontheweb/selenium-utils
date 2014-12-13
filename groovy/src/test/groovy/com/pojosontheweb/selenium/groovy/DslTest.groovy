@@ -71,25 +71,23 @@ class DslTest extends ManagedDriverJunit4TestBase {
                                 isDisplayed() +
                                 whereElemCount(1) >> eval()
 
-            println $(".container > div.row") +
-                isDisplayed() +
+            $(".container > div.row") +
+            isDisplayed() +
+            whereElemCount(1) +
+            at(0) +
+                $(".col-md-12") +
+                attrEquals("role", "main") +
                 whereElemCount(1) +
                 at(0) +
-                    $(".col-md-12") +
-                    attrEquals("role", "main") +
-                    whereElemCount(1) +
+                    $(".row") +
                     at(0) +
-                        $(".row") +
+                        $(".col-md-6") +
+                        whereElemCount(4) +
                         at(0) +
-                            $(".col-md-6") +
+                            $("span.title-img") +
+                            textEquals("Persistence") +
                             isDisplayed() +
-                            whereElemCount(4) +
-                            at(0) +
-                                $("span.title-img") +
-                                textEquals("Persistence") +
-                                isDisplayed() +
-                                whereElemCount(1) >> eval()
-
+                            whereElemCount(1) >> eval()
         }
     }
 
