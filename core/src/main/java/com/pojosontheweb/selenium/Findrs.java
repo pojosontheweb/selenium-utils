@@ -1,5 +1,6 @@
 package com.pojosontheweb.selenium;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.WebElement;
 
@@ -289,5 +290,64 @@ public class Findrs {
                 }
             };
         }
+
+    public static Function<WebElement, ?> click() {
+        return new Function<WebElement, Object>() {
+            @Override
+            public Object apply(WebElement webElement) {
+                try {
+                    webElement.click();
+                } catch (Exception e) {
+                    // click threw : try again !
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "click()";
+            }
+        };
+    }
+
+    public static Function<WebElement, ?> clear() {
+        return new Function<WebElement, Object>() {
+            @Override
+            public Object apply(WebElement webElement) {
+                try {
+                    webElement.clear();
+                } catch (Exception e) {
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "clear()";
+            }
+        };
+    }
+
+    public static Function<WebElement, ?> sendKeys(final CharSequence... keys) {
+        return new Function<WebElement, Object>() {
+            @Override
+            public Object apply(WebElement webElement) {
+                try {
+                    webElement.sendKeys(keys);
+                } catch(Exception e) {
+                    // sendKeys throws, try again !
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return "sendKeys(" + Arrays.toString(keys) + ")";
+            }
+        };
+    }
 
 }

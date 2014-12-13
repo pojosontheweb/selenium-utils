@@ -252,7 +252,7 @@ public final class Findr {
         }));
     }
 
-    private static final Function<WebElement,?> IDENTITY_FOR_EVAL = new Function<WebElement, Object>() {
+    public static final Function<WebElement,?> IDENTITY_FOR_EVAL = new Function<WebElement, Object>() {
         @Override
         public Object apply(WebElement webElement) {
             return true;
@@ -335,23 +335,7 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void sendKeys(final CharSequence... keys) throws TimeoutException {
-        eval(new Function<WebElement, Object>() {
-            @Override
-            public Object apply(WebElement webElement) {
-                try {
-                    webElement.sendKeys(keys);
-                } catch(Exception e) {
-                    // sendKeys throws, try again !
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "sendKeys(" + Arrays.toString(keys) + ")";
-            }
-        });
+        eval(Findrs.sendKeys(keys));
     }
 
     /**
@@ -361,23 +345,7 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void click() {
-        eval(new Function<WebElement, Object>() {
-            @Override
-            public Object apply(WebElement webElement) {
-                try {
-                    webElement.click();
-                } catch(Exception e) {
-                    // click threw : try again !
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "click()";
-            }
-        });
+        eval(Findrs.click());
     }
 
     /**
@@ -387,22 +355,7 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void clear() {
-        eval(new Function<WebElement, Object>() {
-            @Override
-            public Object apply(WebElement webElement) {
-                try {
-                    webElement.clear();
-                } catch(Exception e) {
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "clear()";
-            }
-        });
+        eval(Findrs.clear());
     }
 
     private static final Function<List<WebElement>,Object> IDENTITY_LIST = new Function<List<WebElement>, Object>() {

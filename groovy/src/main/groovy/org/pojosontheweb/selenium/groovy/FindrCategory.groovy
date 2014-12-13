@@ -1,5 +1,6 @@
 package org.pojosontheweb.selenium.groovy
 
+import com.google.common.base.Function
 import com.google.common.base.Predicate
 import com.pojosontheweb.selenium.Findr
 import com.pojosontheweb.selenium.formz.Select
@@ -20,16 +21,24 @@ class FindrCategory {
         return new Select(this)
     }
 
-    def plus(By by) {
-        elem(by)
+    Findr plus(Predicate p) {
+        where(p)
     }
 
-    def plus(Closure c) {
+    Findr plus(Closure c) {
         where(c as Predicate)
     }
 
-    def plus(Predicate p) {
-        where(p)
+    Findr plus(By by) {
+        elem(by)
+    }
+
+    def rightShift(Function f) {
+        eval(f)
+    }
+
+    def rightShift(Closure c) {
+        eval(c as Function)
     }
 
 }

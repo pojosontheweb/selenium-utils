@@ -1,50 +1,71 @@
 package com.pojosontheweb.selenium.groovy
 
 import com.pojosontheweb.selenium.Findr
-import org.junit.Ignore
-
-import static com.pojosontheweb.selenium.Findrs.*
-import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase
 import groovy.json.JsonBuilder
 import org.junit.Assert
-import org.junit.Test
-import static org.openqa.selenium.By.*
-import org.openqa.selenium.Dimension
+import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
+import org.pojosontheweb.selenium.groovy.At
 import org.pojosontheweb.selenium.groovy.FindrCategory
 import org.pojosontheweb.selenium.groovy.ListFindrCategory
-import org.pojosontheweb.selenium.groovy.WebDriverCategory
+import org.pojosontheweb.selenium.groovy.WhereElemCount
 
+import static org.pojosontheweb.selenium.groovy.ListFindrCategory.*
+
+import static com.pojosontheweb.selenium.Findrs.*
+import org.junit.Ignore
+import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase
+import org.junit.Test
+import org.openqa.selenium.Dimension
+import org.pojosontheweb.selenium.groovy.WebDriverCategory
 
 class DslTest extends ManagedDriverJunit4TestBase {
 
-    @Ignore
+    private Findr.ListFindr $(String selector) {
+        findr().elemList(By.cssSelector(selector))
+    }
+
+    private Findr.ListFindr $(Findr f, String selector) {
+        f.elemList(By.cssSelector(selector))
+    }
+
+    private static WhereElemCount whereElemCount(int i) {
+        new WhereElemCount(i)
+    }
+
+    private static At at(int i) {
+        new At(i)
+    }
+
+    private static Closure eval() {
+        return { true }
+    }
+
     @Test
     void dsl() {
 
-        use(WebDriverCategory,FindrCategory,ListFindrCategory) {
+        use(WebDriverCategory, FindrCategory, ListFindrCategory) {
 
             def d = webDriver
-
-            // no paren is more stylish...
             d.get 'http://www.leboncoin.fr'
-
-            // categ shortcut method
             d.windowSize = new Dimension(1400, 1000)
 
-            // creates a default Findr for this driver
-            Findr f = d.findr
+            assert $('#foo .bar') instanceof Findr.ListFindr
+            assert $('#foo') + isDisplayed() instanceof Findr.ListFindr
+            assert $('#foo') + isDisplayed() + whereElemCount(5) instanceof Findr.ListFindr
+            assert $('#foo') + isDisplayed() + whereElemCount(5) + at(0) instanceof Findr
+            assert findr() + isDisplayed() instanceof Findr
 
-            (f + id('TableContentBottom') +
-                tagName('a') +
-                attrEquals('title', 'Alsace')
-            ).click()
+            findr().elem(By.id('TableContentBottom')) + isDisplayed() >> eval()
+            $('#TableContentBottom') + isDisplayed() >> eval()
 
-            // use the Select helper
-            (f+id('search_category')).asSelect().selectByVisibleText('Motos')
-            f.byId('searcharea').asSelect().selectByVisibleText('Toute la France')
 
-            f.byId('searchbutton').click()
+            $('#TableContentBottom a') + attrEquals('title', 'Alsace') + at(0) >> click()
+
+            $('#search_category') at 0 asSelect() selectByVisibleText('Motos')
+            $('#searcharea')[0].asSelect().selectByVisibleText('Toute la France')
+
+            $('#searchbutton')[0].click()
 
             def res = []
 
@@ -52,31 +73,25 @@ class DslTest extends ManagedDriverJunit4TestBase {
 
             (1..nbPages).each { page ->
                 println "page $page"
-                (((f + id('ContainerMain'))*className('detail')) + { e -> e.text!=null }).e
 
-
-                f.byId('ContainerMain')
-                    .elemList(className('detail'))
-                    .where { WebElement e ->
-                        e.text!=null
+                $('#ContainerMain .detail') + { WebElement e ->
+                    e.text != null
+                } >> { List<WebElement> elems ->
+                    elems.each { WebElement e ->
+                        res << [
+                            text: e.text
+                        ]
+                        true
                     }
-                    .eval { List<WebElement> elems ->
-                        elems.each { WebElement e ->
-                            res << [
-                                text: e.text
-                            ]
-                            true
-                        }
-                    }
+                }
 
                 d.executeJavaScript("window.scrollTo(0, document.body.scrollHeight);")
 
                 if (page>1) {
-                    (f + id('paging') +
+                    $('#paging a') +
+                        textEquals("$page") +
                         isDisplayed() +
-                        tagName('a') +
-                        textEquals("$page")
-                    ).click()
+                        at(0) >> click()
                 }
             }
 
