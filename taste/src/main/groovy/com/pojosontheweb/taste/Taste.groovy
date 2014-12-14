@@ -170,6 +170,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                 map['fileName'] = fileName
                 println toJson(map)
             } else {
+                logDebug("\nTest '$test.name' executed\n")
                 printTestResult(fileName, testResult)
                 printConfig()
             }
@@ -184,7 +185,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             } else {
                 Map map = suiteResult.toMap(false)
                 map['fileName'] = fileName
-                Findr.logDebug("")
+                logDebug("")
                 println "Suite '$suiteResult.name' executed\n\n${toTxt(map)}"
                 println "\nTests (${suiteResult.testResults.size()})\n"
                 suiteResult.testResults.each {

@@ -3,7 +3,7 @@ import static com.pojosontheweb.taste.Cfg.*
 config {
 
     // we output json
-//    json true
+    json true
 
     // we use chrome
     chrome {
@@ -20,7 +20,7 @@ config {
     // Findr settings
     findr {
         timeout 10
-//        verbose true
+        verbose true
     }
 
     // Video settings
