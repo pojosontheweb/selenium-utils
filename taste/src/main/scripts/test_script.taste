@@ -20,7 +20,7 @@ test('POJOs on the web') {
                 at(0) +
                     $(".col-md-6") +
                     isDisplayed() +
-                    whereElemCount(4) +
+                    whereElemCount(5) +
                     at(0) +
                         $("span.title-img") +
                         textEquals("Persistence") +

@@ -54,9 +54,18 @@ class Taste {
             }
         }
 
+        log("""
+
+_/_/_/_/_/                      _/
+   _/      _/_/_/    _/_/_/  _/_/_/_/    _/_/
+  _/    _/    _/  _/_/        _/      _/_/_/_/
+ _/    _/    _/      _/_/    _/      _/
+_/      _/_/_/  _/_/_/        _/_/    _/_/_/
+""")
+
         String fileName = files[0]
 
-        log("Taste : running $fileName (${options.b})")
+        log("- $fileName (${options.b})")
 
         Binding b = new Binding()
         GroovyShell shell = new CustomShell(b)
@@ -74,22 +83,22 @@ class Taste {
             if (options.j) {
                 printJson()
             } else {
-                println("""Test $f.testName FAILED : $f.err.message
-- fileName:$fileName
-- startedOn:$f.startedOn
-- finishedOn:$f.finishedOn
-- stackTrace:$f.stackTrace""")
+                println("""Test '$f.testName' FAILED : $f.err.message
+- fileName      : $fileName
+- startedOn     : $f.startedOn
+- finishedOn    : $f.finishedOn
+- stackTrace    : $f.stackTrace""")
             }
         } else if (res instanceof ResultSuccess) {
             ResultSuccess s = (ResultSuccess)res
             if (options.j) {
                 printJson()
             } else {
-                println("""Test $s.testName SUCCESS
-- fileName:$fileName
-- startedOn:$s.startedOn
-- finishedOn:$s.finishedOn
-- retVal:$s.retVal""")
+                println("""Test '$s.testName' SUCCESS
+- fileName      : $fileName
+- startedOn     : $s.startedOn
+- finishedOn    : $s.finishedOn
+- retVal        : $s.retVal""")
             }
 
         } else {
