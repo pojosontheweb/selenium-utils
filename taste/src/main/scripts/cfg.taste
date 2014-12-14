@@ -20,7 +20,7 @@ config {
     // Findr settings
     findr {
         timeout 10
-        verbose true
+//        verbose true
     }
 
     // Video settings

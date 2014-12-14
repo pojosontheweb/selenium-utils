@@ -148,7 +148,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                 status = "SUCCESS"
                 prefix = ">"
             }
-            println "$prefix $testResult.testName : $status\n${toTxt(map)}"
+            "$prefix $testResult.testName : $status\n${toTxt(map)}"
         }
 
         def printConfig = {
@@ -172,7 +172,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             } else {
                 logDebug("")
                 println "Test '$test.name' executed\n"
-                printTestResult(fileName, testResult)
+                println printTestResult(fileName, testResult)
                 printConfig()
             }
 
@@ -182,17 +182,44 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             if (jsonOutput) {
                 Map map = suiteResult.toMap(true)
                 map['fileName'] = fileName
+                int nbSuccess = 0,
+                    nbFailed = 0,
+                    total = suiteResult.testResults.size()
+                suiteResult.testResults.each { TestResult tr ->
+                    if (tr instanceof ResultFailure) {
+                        nbFailed++
+                    } else if (tr instanceof ResultSuccess) {
+                        nbSuccess++
+                    }
+                }
+                map.total = total
+                map.failed = nbFailed
+                map.success = nbSuccess
                 println toJson(map)
             } else {
                 Map map = suiteResult.toMap(false)
                 map['fileName'] = fileName
                 logDebug("")
-                println "Suite '$suiteResult.name' executed\n\n${toTxt(map)}"
-                println "\nTests (${suiteResult.testResults.size()})\n"
-                suiteResult.testResults.each {
-                    printTestResult(fileName, it)
-                    println ""
+                int nbSuccess = 0,
+                    nbFailed = 0,
+                    total = suiteResult.testResults.size()
+
+                StringBuilder sb = new StringBuilder()
+                suiteResult.testResults.each { TestResult tr ->
+                    sb << '\n' << printTestResult(fileName, tr)
+                    if (tr instanceof ResultFailure) {
+                        nbFailed++
+                    } else if (tr instanceof ResultSuccess) {
+                        nbSuccess++
+                    }
                 }
+                def percent = nbSuccess / total * 100
+                println "$suiteResult.name : $total tests, SUCCESS $nbSuccess, FAILED $nbFailed - $percent %\n"
+                println toTxt(map)
+                println ""
+                println "Tests : "
+                println sb
+                println ""
                 printConfig()
             }
 

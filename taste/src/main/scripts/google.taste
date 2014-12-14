@@ -8,6 +8,7 @@ import static com.pojosontheweb.taste.Taste.*
 suite('Google Tests') {
 
     add test('searchF') {
+
         webDriver.get 'http://www.google.com'
 
         findr()
@@ -47,6 +48,7 @@ suite('Google Tests') {
     add test('imagesF') {
 
         webDriver.get 'http://www.google.com'
+
         findr()
             .elemList(By.tagName('a'))
             .where(textEquals('Images'))
