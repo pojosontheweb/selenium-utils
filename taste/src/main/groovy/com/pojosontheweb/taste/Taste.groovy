@@ -81,7 +81,7 @@ _/_/_/_/_/                      _/
   _/    _/    _/  _/_/        _/      _/_/_/_/
  _/    _/    _/      _/_/    _/      _/
 _/      _/_/_/  _/_/_/        _/_/    _/_/_/
-                         WebTesting with style
+                         WebTesting With Style
 """)
 
         if (cfg) {
@@ -111,14 +111,12 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
         String fileName = files[0]
 
-        logDebug("[Taste] running $fileName (${options.b})...")
+        logDebug("[Taste] evaluating $fileName")
 
         Binding b = new Binding()
         GroovyShell shell = new CustomShell(b)
         // TODO handle cast in case folks try to do something else than running tests
         def res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
-
-        logDebug("[Taste] '$fileName' evaluated")
 
         def toJson = { Map map ->
             new JsonBuilder(map).toPrettyString()

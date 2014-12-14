@@ -25,7 +25,7 @@ class Suite {
     }
 
     void add(Test test) {
-        Findr.logDebug("[Suite][$name] adding test $test.name")
+        Findr.logDebug("[Suite][$name] << $test.name")
         tests << test
     }
 
