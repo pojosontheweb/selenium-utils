@@ -6,24 +6,24 @@ suite('a bunch of tests') {
 
         webDriver.get 'http://www.pojosontheweb.com'
 
-        $(".container") +
+        $$(".container") +
             isDisplayed() +
             whereElemCount(1) +
             at(0) +
-            $('.row') +
+            $$('.row') +
             whereElemCount(5) +
             at(0) +
-            $(".col-md-12") +
+            $$(".col-md-12") +
             attrEquals("role", "main") +
             whereElemCount(1) +
             at(0) +
-            $(".row") +
+            $$(".row") +
             at(0) +
-            $(".col-md-6") +
+            $$(".col-md-6") +
             isDisplayed() +
             whereElemCount(4) +
             at(0) +
-            $("span.title-img") +
+            $$("span.title-img") +
             textEquals("Persistence") +
             isDisplayed() +
             whereElemCount(1) >> eval()
@@ -37,24 +37,24 @@ suite('a bunch of tests') {
 
         webDriver.get 'http://www.pojosontheweb.com'
 
-        $(".container") +
+        $$(".container") +
             isDisplayed() +
             whereElemCount(1) +
             at(0) +
-            $('.row') +
+            $$('.row') +
             whereElemCount(5) +
             at(0) +
-            $(".col-md-12") +
+            $$(".col-md-12") +
             attrEquals("role", "main") +
             whereElemCount(1) +
             at(0) +
-            $(".row") +
+            $$(".row") +
             at(0) +
-            $(".col-md-6") +
+            $$(".col-md-6") +
             isDisplayed() +
             whereElemCount(44) +
             at(0) +
-            $("span.title-img") +
+            $$("span.title-img") +
             textEquals("Persistence") +
             isDisplayed() +
             whereElemCount(1) >> eval()

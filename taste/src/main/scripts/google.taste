@@ -1,21 +1,37 @@
+import org.openqa.selenium.WebElement
+
 import static com.pojosontheweb.taste.Taste.*
 
-//suite('Google Tests') {
+suite('Google Tests') {
 
     test('search') {
 
         webDriver.get 'http://www.google.com'
 
-        $('#gbqfq')[0] >> sendKeys('pojos on the web')
+        $('#gbqfq') >> sendKeys('pojos on the web')
 
-        $('button.gbqfb') + at(0) >> click()
+        $('button.gbqfb') >> click()
 
-        $('#search h3.r') +
+        $$('#search h3.r') +
             textContains("POJOs on the Web") +
             at(0) +
-            $('a')[0] +
+            $('a') +
             textContains("POJOs on the Web") >> eval()
 
     }
 
-//}
+    add test('images') {
+
+        webDriver.get 'http://www.google.com'
+        $('a.gb_f') + textEquals('Images') >> click()
+
+        $('#lst-ib') >> sendKeys('pojo')
+
+        $('a') + { WebElement e ->
+            e.getAttribute('href') =~ /www\.pojosontheweb\.com/
+        } >> eval()
+
+
+    }
+
+}

@@ -21,18 +21,18 @@ class DslTest extends ManagedDriverJunit4TestBase {
     void operators() {
         use(WebDriverCategory, FindrCategory, ListFindrCategory, DollrCategory) {
 
-            assert $('#foo .bar') instanceof Findr.ListFindr
-            assert $('#foo') + isDisplayed() instanceof Findr.ListFindr
-            assert $('#foo') + isDisplayed() + whereElemCount(5) instanceof Findr.ListFindr
-            assert $('#foo') + isDisplayed() + whereElemCount(5) + at(0) instanceof Findr
+            assert $$('#foo .bar') instanceof Findr.ListFindr
+            assert $$('#foo') + isDisplayed() instanceof Findr.ListFindr
+            assert $$('#foo') + isDisplayed() + whereElemCount(5) instanceof Findr.ListFindr
+            assert $$('#foo') + isDisplayed() + whereElemCount(5) + at(0) instanceof Findr
             assert findr() + isDisplayed() instanceof Findr
-            assert $(findr(), '.blah') instanceof Findr.ListFindr
+            assert $$(findr(), '.blah') instanceof Findr.ListFindr
 
-            def lf = $('#foo') +
+            def lf = $$('#foo') +
                 isDisplayed() +
                 at(0) +
                 isDisplayed() +
-                $('.baz') +
+                $$('.baz') +
                 isDisplayed() +
                 { WebElement e -> e.getCssValue('starsky') == 'hutch'}
 
@@ -41,7 +41,14 @@ class DslTest extends ManagedDriverJunit4TestBase {
             assert lf instanceof Findr.ListFindr
             assert lf[0] instanceof Findr
             assert lf.at(0) instanceof Findr
-            assert lf + whereElemCount(12) + at(0) + $('div.lastone') + whereElemCount(2)
+            assert lf + whereElemCount(12) + at(0) + $$('div.lastone') + whereElemCount(2) instanceof Findr.ListFindr
+
+            assert $('#foo') instanceof Findr
+            assert $('#foo') + $('.bar') instanceof Findr
+            assert $('#foo') + $$('.bar') instanceof Findr.ListFindr
+            assert $$('.bar') + at(0) + $$('.baz') instanceof Findr.ListFindr
+            assert $$('.foo') + at(0) + $('.bar') instanceof Findr
+            assert $$('.bar') + at(0) + $$('.baz') instanceof Findr.ListFindr
         }
     }
 
@@ -51,40 +58,34 @@ class DslTest extends ManagedDriverJunit4TestBase {
             webDriver.get 'http://www.pojosontheweb.com'
             $(".container") +
             isDisplayed() +
-            whereElemCount(1) +
-            at(0) +
-                $('.row') +
+                $$('.row') +
                 whereElemCount(5) +
                 at(0) +
                     $(".col-md-12") +
                     attrEquals("role", "main") +
-                    whereElemCount(1) +
-                    at(0) +
                         $(".row") +
-                        at(0) +
-                            $(".col-md-6") +
+                            $$(".col-md-6") +
                             isDisplayed() +
                             whereElemCount(4) +
                             at(0) +
                                 $("span.title-img") +
                                 textEquals("Persistence") +
-                                isDisplayed() +
-                                whereElemCount(1) >> eval()
+                                isDisplayed() >> eval()
 
-            $(".container > div.row") +
+            $$(".container > div.row") +
             isDisplayed() +
             whereElemCount(1) +
             at(0) +
-                $(".col-md-12") +
+                $$(".col-md-12") +
                 attrEquals("role", "main") +
                 whereElemCount(1) +
                 at(0) +
-                    $(".row") +
+                    $$(".row") +
                     at(0) +
-                        $(".col-md-6") +
+                        $$(".col-md-6") +
                         whereElemCount(4) +
                         at(0) +
-                            $("span.title-img") +
+                            $$("span.title-img") +
                             textEquals("Persistence") +
                             isDisplayed() +
                             whereElemCount(1) >> eval()
@@ -105,14 +106,16 @@ class DslTest extends ManagedDriverJunit4TestBase {
             $('#TableContentBottom') + isDisplayed() >> eval()
 
             // click
-            $('#TableContentBottom a') + attrEquals('title', 'Alsace') + at(0) >> click()
+            $$('#TableContentBottom a') +
+                attrEquals('title', 'Alsace') +
+                at(0) >> click()
 
             // selects
-            $('#search_category') at 0 asSelect() selectByVisibleText('Motos')
-            $('#searcharea')[0].asSelect().selectByVisibleText('Toute la France')
+            $('#search_category') asSelect() selectByVisibleText('Motos')
+            $('#searcharea').asSelect().selectByVisibleText('Toute la France')
 
             // search
-            $('#searchbutton')[0].click()
+            $('#searchbutton').click()
 
             // build result
             def res = [],
@@ -121,7 +124,7 @@ class DslTest extends ManagedDriverJunit4TestBase {
             (1..nbPages).each { page ->
                 println "page $page"
 
-                $('#ContainerMain .detail') + { WebElement e ->
+                $$('#ContainerMain .detail') + { WebElement e ->
                     e.text != null
                 } >> { List<WebElement> elems ->
                     elems.each { WebElement e ->
@@ -135,7 +138,7 @@ class DslTest extends ManagedDriverJunit4TestBase {
                 d.executeJavaScript("window.scrollTo(0, document.body.scrollHeight);")
 
                 if (page>1) {
-                    $('#paging a') +
+                    $$('#paging a') +
                         textEquals("$page") +
                         isDisplayed() +
                         at(0) >> click()

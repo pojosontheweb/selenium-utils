@@ -6,12 +6,20 @@ import org.openqa.selenium.By
 @Category(Object)
 class DollrCategory {
 
-    Findr.ListFindr $(String selector) {
+    Findr.ListFindr $$(String selector) {
         findr().elemList(By.cssSelector(selector))
     }
 
-    Findr.ListFindr $(Findr f, String selector) {
+    Findr.ListFindr $$(Findr f, String selector) {
         f.elemList(By.cssSelector(selector))
+    }
+
+    Findr $(String selector) {
+        findr().elem(By.cssSelector(selector))
+    }
+
+    Findr $(Findr f, String selector) {
+        f.elem(By.cssSelector(selector))
     }
 
     WhereElemCount whereElemCount(int i) {
