@@ -68,67 +68,56 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         Binding b = new Binding()
         GroovyShell shell = new CustomShell(b)
         // TODO handle cast in case folks try to do something else than running tests
-        TestResult res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
+        def res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
 
-        log("...$fileName evaluated")
+        log("...$fileName evaluated, will now run tests")
 
-        def printJson = {
-            Map m = res.toMap()
-            m['fileName'] = fileName
-            println new JsonBuilder(m).toPrettyString()
-        }
+        if (res instanceof Test) {
+            Test test = (Test)res
+            def testResult = test.execute()
 
-        if (res instanceof ResultFailure) {
-            ResultFailure f = (ResultFailure)res
-            if (options.j) {
-                printJson()
-            } else {
-                println("""Test '$f.testName' FAILED : $f.err.message
+            def printJson = {
+                Map m = testResult.toMap()
+                m['fileName'] = fileName
+                println new JsonBuilder(m).toPrettyString()
+            }
+
+            if (testResult instanceof ResultFailure) {
+                ResultFailure f = (ResultFailure)testResult
+                if (options.j) {
+                    printJson()
+                } else {
+                    println("""Test '$test.name' FAILED : $f.err.message
 - fileName      : $fileName
 - startedOn     : $f.startedOn
 - finishedOn    : $f.finishedOn
 - stackTrace    : $f.stackTrace""")
-            }
-        } else if (res instanceof ResultSuccess) {
-            ResultSuccess s = (ResultSuccess)res
-            if (options.j) {
-                printJson()
-            } else {
-                println("""Test '$s.testName' SUCCESS
+                }
+            } else if (testResult instanceof ResultSuccess) {
+                ResultSuccess s = (ResultSuccess)testResult
+                if (options.j) {
+                    printJson()
+                } else {
+                    println("""Test '$test.name' SUCCESS
 - fileName      : $fileName
 - startedOn     : $s.startedOn
 - finishedOn    : $s.finishedOn
 - retVal        : $s.retVal""")
+                }
+
+            } else {
+                println("""Test '$test.name' FAILED with invalid return value $testResult ($fileName)""")
             }
 
         } else {
-            throw new IllegalStateException("File $fileName returned invalid TestResult : $res")
+            throw new IllegalStateException("File $fileName returned invalid Test : $res")
         }
 
         System.exit(0)
     }
 
-    static TestResult test(String testName, @DelegatesTo(TestContext) Closure c) {
-        use(WebDriverCategory, FindrCategory, ListFindrCategory, DollrCategory) {
-
-            // create driver
-            WebDriver webDriver = DriverBuildr.fromSysProps().build()
-
-            // quit at end
-            webDriver.withQuit {
-
-                TestContext tc = new TestContext(webDriver, testName)
-                def code = c.rehydrate(tc, this, this)
-                code.resolveStrategy = DELEGATE_ONLY
-                try {
-                    def res = code()
-                    new ResultSuccess(testName, tc.startTime, new Date(), res)
-                } catch (Throwable err) {
-                    new ResultFailure(testName, tc.startTime, new Date(), err)
-                }
-            }
-
-        }
+    static Test test(String testName, @DelegatesTo(TestContext) Closure c) {
+        new Test(name: testName, body: c)
     }
 
 }
