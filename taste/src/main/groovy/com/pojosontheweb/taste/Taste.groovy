@@ -185,7 +185,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                 Map map = suiteResult.toMap(false)
                 map['fileName'] = fileName
                 Findr.logDebug("")
-                println "Suite executed\n\n${toTxt(map)}"
+                println "Suite '$suiteResult.name' executed\n\n${toTxt(map)}"
                 println "\nTests (${suiteResult.testResults.size()})\n"
                 suiteResult.testResults.each {
                     printTestResult(fileName, it)
