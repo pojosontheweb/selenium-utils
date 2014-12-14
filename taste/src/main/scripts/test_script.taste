@@ -1,7 +1,7 @@
 import static com.pojosontheweb.taste.Taste.test
 import static com.pojosontheweb.selenium.Findrs.*
 
-test('zboub') {
+test('POJOs on the web') {
 
     webDriver.get 'http://www.pojosontheweb.com'
 

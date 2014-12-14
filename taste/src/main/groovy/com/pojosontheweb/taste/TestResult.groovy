@@ -103,7 +103,7 @@ class ResultFailure extends TestResult {
             startedOn   : startedOn.time,
             finishedOn  : finishedOn.time,
             err         : err.message,
-            stack       : err.stackTrace
+            stack       : stackTrace
         ]
     }
 

@@ -20,6 +20,7 @@ class Taste {
         def cli = new CliBuilder(usage:'taste [options] files...', posix: false)
         cli.b(longOpt:'browser', args:1, argName:'browser', 'browser to use (chrome or firefox, defaults to FF)')
         cli.v(longOpt:'verbose', 'show logs')
+        cli.j(longOpt:'json', 'output json')
 
         def invalidArgs = {
             cli.usage()
@@ -59,38 +60,43 @@ class Taste {
 
         Binding b = new Binding()
         GroovyShell shell = new CustomShell(b)
-        try {
-            // TODO handle cast in case folks try to do something else than running tests
-            TestResult res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
-            if (res instanceof ResultFailure) {
-                ResultFailure f = (ResultFailure)res
-                log("""Test $f.testName FAILED : $f.err.message
+        // TODO handle cast in case folks try to do something else than running tests
+        TestResult res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
+
+        def printJson = {
+            Map m = res.toMap()
+            m['fileName'] = fileName
+            println new JsonBuilder(m).toPrettyString()
+        }
+
+        if (res instanceof ResultFailure) {
+            ResultFailure f = (ResultFailure)res
+            if (options.j) {
+                printJson()
+            } else {
+                println("""Test $f.testName FAILED : $f.err.message
+- fileName:$fileName
 - startedOn:$f.startedOn
 - finishedOn:$f.finishedOn
 - stackTrace:$f.stackTrace""")
-
-            } else if (res instanceof ResultSuccess) {
-                ResultSuccess s = (ResultSuccess)res
-                log("""Test $s.testName SUCCESS
+            }
+        } else if (res instanceof ResultSuccess) {
+            ResultSuccess s = (ResultSuccess)res
+            if (options.j) {
+                printJson()
+            } else {
+                println("""Test $s.testName SUCCESS
+- fileName:$fileName
 - startedOn:$s.startedOn
 - finishedOn:$s.finishedOn
 - retVal:$s.retVal""")
-
-            } else {
-                throw new IllegalStateException("File $fileName returned invalid TestResult : $res")
             }
 
-            if (!verbose) {
-                JsonBuilder json = new JsonBuilder(res.toMap())
-                println json.toPrettyString()
-            }
-            System.exit(0)
-
-        } catch(Exception e) {
-            println "Taste Internal Error : \n"
-            e.printStackTrace()
-            System.exit(-1)
+        } else {
+            throw new IllegalStateException("File $fileName returned invalid TestResult : $res")
         }
+
+        System.exit(0)
     }
 
     static TestResult test(String testName, @DelegatesTo(TestContext) Closure c) {
