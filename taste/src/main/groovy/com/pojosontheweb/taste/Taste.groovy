@@ -170,7 +170,8 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                 map['fileName'] = fileName
                 println toJson(map)
             } else {
-                logDebug("\nTest '$test.name' executed\n")
+                logDebug("")
+                println "Test '$test.name' executed\n"
                 printTestResult(fileName, testResult)
                 printConfig()
             }

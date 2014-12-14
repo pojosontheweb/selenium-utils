@@ -1,0 +1,21 @@
+import static com.pojosontheweb.taste.Taste.*
+
+//suite('Google Tests') {
+
+    test('search') {
+
+        webDriver.get 'http://www.google.com'
+
+        $('#gbqfq')[0] >> sendKeys('pojos on the web')
+
+        $('button.gbqfb') + at(0) >> click()
+
+        $('#search h3.r') +
+            textContains("POJOs on the Web") +
+            at(0) +
+            $('a')[0] +
+            textContains("POJOs on the Web") >> eval()
+
+    }
+
+//}

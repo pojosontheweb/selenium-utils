@@ -3,6 +3,7 @@ package com.pojosontheweb.selenium;
 import java.util.*;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -205,6 +206,14 @@ public final class Findr {
 
     public ListFindr append(ListFindr lf) {
         return new ListFindr(lf.by, lf.filters, lf.waitCount);
+    }
+
+    public Findr append(Findr f) {
+        List<String> newPath = new ArrayList<String>(path!=null?path:new ArrayList<String>());
+        if (f.path!=null) {
+            newPath.addAll(f.path);
+        }
+        return compose(f.f, "append[" + Joiner.on(", ").join(f.path) + "]");
     }
 
     private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
