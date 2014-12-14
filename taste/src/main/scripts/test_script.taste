@@ -1,5 +1,4 @@
-import static com.pojosontheweb.taste.Taste.test
-import static com.pojosontheweb.selenium.Findrs.*
+import static com.pojosontheweb.taste.Taste.*
 
 test('POJOs on the web') {
 

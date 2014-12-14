@@ -11,9 +11,9 @@ import java.io.File;
  */
 public class TestUtil {
 
-    private static final String SYS_PROP_VIDEO_ENABLED = "webtests.video.enabled";
-    private static final String SYS_PROP_VIDEO_FAILED_ONLY = "webtests.video.failures.only";
-    private static final String SYS_PROP_VIDEO_DIR = "webtests.video.dir";
+    public static final String SYS_PROP_VIDEO_ENABLED = "webtests.video.enabled";
+    public static final String SYS_PROP_VIDEO_FAILED_ONLY = "webtests.video.failures.only";
+    public static final String SYS_PROP_VIDEO_DIR = "webtests.video.dir";
 
     private WebDriver webDriver;
     private boolean videoEnabled = isVideoEnabledFromSysProps();

@@ -1,0 +1,35 @@
+import static com.pojosontheweb.taste.Cfg.*
+
+config {
+
+    // we output json
+//    json true
+
+    // we use chrome
+    chrome {
+        // with a driver path
+        driverPath '/Users/vankeisb/chromedriver'
+    }
+
+    // override some system properties
+    sysProps['foo.bar'] = 'baz'
+
+    // english then fr
+    locales "en", "fr"
+
+    // Findr settings
+    findr {
+        timeout 10
+//        verbose true
+    }
+
+    // Video settings
+    video {
+        enabled false
+        dir "/tmp/taste-videos"
+        failuresOnly true
+    }
+
+
+
+}

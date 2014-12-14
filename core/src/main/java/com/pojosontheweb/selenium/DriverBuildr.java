@@ -25,9 +25,9 @@ public class DriverBuildr {
          *
          * @see com.pojosontheweb.selenium.Browsr for available values
          */
-        public static final String PROP_WEBTESTS_BROWSER = "webtests.browser";
-        public static final String PROP_WEBTESTS_LOCALES = "webtests.locales";
-        public static final String PROP_WEBTESTS_HUB_URL = "webtests.hub.url";
+        static final String PROP_WEBTESTS_BROWSER = "webtests.browser";
+        static final String PROP_WEBTESTS_LOCALES = "webtests.locales";
+        static final String PROP_WEBTESTS_HUB_URL = "webtests.hub.url";
 
         public WebDriver build() {
             // find requested browser in sys properties
