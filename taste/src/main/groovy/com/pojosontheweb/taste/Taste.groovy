@@ -59,18 +59,35 @@ class Taste extends Findrs {
             }
         }
 
+        def prettifyKeys = { Map map ->
+            int maxLen = 0
+            def sorted = map.keySet().sort()
+            sorted.each { String k ->
+                maxLen = Math.max(k.length(), maxLen)
+            }
+            Map newMap = [:]
+            sorted.collect { String k ->
+                int nbSpaces = maxLen - k.length()
+                def pk = k + " "*nbSpaces
+                newMap[pk] = map[k]
+            }
+            return newMap
+        }
+
+
         logDebug("""
 _/_/_/_/_/                      _/
    _/      _/_/_/    _/_/_/  _/_/_/_/    _/_/
   _/    _/    _/  _/_/        _/      _/_/_/_/
  _/    _/    _/      _/_/    _/      _/
 _/      _/_/_/  _/_/_/        _/_/    _/_/_/
+                         WebTesting with style
 """)
 
         if (cfg) {
             logDebug("[Taste] loaded config from ${cfgFile.absolutePath} :")
-            cfg.sysProps.each { k,v ->
-                logDebug("[Taste]   - $k\t\t: $v")
+            prettifyKeys(cfg.sysProps).each { k,v ->
+                logDebug("[Taste]   - $k : $v")
             }
         } else {
             logDebug("[Taste] no config file provided, will use args from command line (not provided on command line, and not found in ~/.taste/cfg.taste)")
@@ -109,10 +126,11 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
         def toTxt = { Map map ->
             StringBuilder buf = new StringBuilder()
-            def keys = map.keySet()
+            def pmap = prettifyKeys(map)
+            def keys = pmap.keySet()
             for (def it = keys.iterator(); it.hasNext(); ) {
-                def k = it.next(), v = map[k]
-                buf << "- $k\t: $v"
+                def k = it.next(), v = pmap[k]
+                buf << "- $k : $v"
                 if (it.hasNext()) {
                     buf << "\n"
                 }
@@ -135,20 +153,32 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             println "$prefix $testResult.testName : $status\n${toTxt(map)}"
         }
 
+        def printConfig = {
+            if (cfg) {
+                println "Config :"
+                prettifyKeys(cfg.sysProps).each { k, v->
+                    println "- $k : $v"
+                }
+            } else {
+                println "Config : none."
+            }
+        }
+
         if (res instanceof Test) {
             Test test = (Test) res
-            TestResult testResult = test.execute()
+            TestResult testResult = test.execute(cfg)
             if (jsonOutput) {
                 Map map = testResult.toMap()
                 map['fileName'] = fileName
                 println toJson(map)
             } else {
                 printTestResult(fileName, testResult)
+                printConfig()
             }
 
         } else if (res instanceof Suite) {
             Suite suite = (Suite)res
-            SuiteResult suiteResult = suite.execute()
+            SuiteResult suiteResult = suite.execute(cfg)
             if (jsonOutput) {
                 Map map = suiteResult.toMap(true)
                 map['fileName'] = fileName
@@ -163,6 +193,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                     printTestResult(fileName, it)
                     println ""
                 }
+                printConfig()
             }
 
         } else {

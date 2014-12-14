@@ -60,12 +60,14 @@ public class TestUtil {
     }
 
     public void log(String... args) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("ManagerDriverTestBase : ");
-        for (String s : args) {
-            sb.append(s);
+        if (Findr.isDebugEnabled()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[TestUtil] ");
+            for (String s : args) {
+                sb.append(s);
+            }
+            System.out.println(sb.toString());
         }
-        System.out.println(sb.toString());
     }
 
     private ScreenRecordr recordr = null;

@@ -20,14 +20,14 @@ config {
     // Findr settings
     findr {
         timeout 10
-//        verbose true
+        verbose true
     }
 
     // Video settings
     video {
-        enabled false
+        enabled true
         dir "/tmp/taste-videos"
-        failuresOnly true
+        failuresOnly false
     }
 
 

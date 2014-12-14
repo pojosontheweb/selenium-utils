@@ -9,7 +9,7 @@ class Suite {
 
     List<Test> tests
 
-    SuiteResult execute() {
+    SuiteResult execute(Cfg cfg) {
         Findr.logDebug("[Suite][$name] Loading tests")
         Date startedOn = new Date()
         def code = body.rehydrate(this, this, this)
@@ -18,7 +18,7 @@ class Suite {
         code()
         Findr.logDebug("[Suite][$name] Will execute ${tests.size()} test(s)")
         List<TestResult> results = tests.collect { Test t ->
-            t.execute()
+            t.execute(cfg)
         }
         Findr.logDebug("[Suite][$name] Done, returning results")
         new SuiteResult(name, startedOn, new Date(), results)
