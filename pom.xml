@@ -17,6 +17,7 @@
         <!--module>monte</module-->
         <module>core</module>
         <module>groovy</module>
+        <module>taste</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
     <description>Utilities for selenium testing</description>
@@ -41,6 +42,11 @@
             <url>http://www.rvkb.com</url>
         </developer>
     </developers>
+    <properties>
+        <gmavenVersion>1.5</gmavenVersion>
+        <gmavenProviderSelection>2.0</gmavenProviderSelection>
+        <groovyVersion>2.1.3</groovyVersion>
+    </properties>
     <build>
         <pluginManagement>
             <plugins>

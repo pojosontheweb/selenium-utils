@@ -41,7 +41,7 @@ public final class Findr {
     private final int waitTimeout;
 
     private static boolean isDebugEnabled() {
-        return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "true"));
+        return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "false"));
     }
 
     private static void logDebug(String message) {

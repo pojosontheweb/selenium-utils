@@ -1,0 +1,34 @@
+import static com.pojosontheweb.taste.Taste.test
+import static com.pojosontheweb.selenium.Findrs.*
+
+test('zboub') {
+
+    webDriver.get 'http://www.pojosontheweb.com'
+
+    $(".container") +
+    isDisplayed() +
+    whereElemCount(1) +
+    at(0) +
+        $('.row') +
+        whereElemCount(5) +
+        at(0) +
+            $(".col-md-12") +
+            attrEquals("role", "main") +
+            whereElemCount(1) +
+            at(0) +
+                $(".row") +
+                at(0) +
+                    $(".col-md-6") +
+                    isDisplayed() +
+                    whereElemCount(4) +
+                    at(0) +
+                        $("span.title-img") +
+                        textEquals("Persistence") +
+                        isDisplayed() +
+                        whereElemCount(1) >> eval()
+
+    return ["foo":123]
+
+
+}
+

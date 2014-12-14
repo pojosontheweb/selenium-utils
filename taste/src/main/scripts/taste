@@ -1,0 +1,2 @@
+#!/bin/bash
+java $TASTE_OPTS -jar /Users/vankeisb/projects/selenium-utils/taste/target/taste-LATEST-SNAPSHOT-jar-with-dependencies.jar $*
