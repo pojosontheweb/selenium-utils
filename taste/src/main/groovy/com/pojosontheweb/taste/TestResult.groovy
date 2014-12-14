@@ -57,8 +57,8 @@ class ResultSuccess extends TestResult {
         [
             success     : true,
             testName    : testName,
-            startedOn   : startedOn.time,
-            finishedOn  : finishedOn.time,
+            startedOn   : startedOn,
+            finishedOn  : finishedOn,
             retVal      : retVal
         ]
     }
@@ -100,8 +100,8 @@ class ResultFailure extends TestResult {
         [
             success     : false,
             testName    : testName,
-            startedOn   : startedOn.time,
-            finishedOn  : finishedOn.time,
+            startedOn   : startedOn,
+            finishedOn  : finishedOn,
             err         : err.message,
             stack       : stackTrace
         ]

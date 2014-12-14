@@ -1,6 +1,7 @@
 package com.pojosontheweb.taste
 
 import com.pojosontheweb.selenium.DriverBuildr
+import com.pojosontheweb.selenium.Findr
 import groovy.transform.Immutable
 import org.openqa.selenium.WebDriver
 import org.pojosontheweb.selenium.groovy.DollrCategory
@@ -18,6 +19,7 @@ class Test {
     Closure body
 
     TestResult execute() {
+        Findr.logDebug("[Test][$name] Starting")
         use(WebDriverCategory, FindrCategory, ListFindrCategory, DollrCategory) {
             // create driver
             WebDriver webDriver = DriverBuildr.fromSysProps().build()
@@ -27,12 +29,13 @@ class Test {
                 code.resolveStrategy = DELEGATE_ONLY
                 try {
                     def res = code()
+                    Findr.logDebug("[Test][$name] SUCCESS")
                     new ResultSuccess(name, tc.startTime, new Date(), res)
                 } catch (Throwable err) {
+                    Findr.logDebug("[Test][$name] FAILURE")
                     new ResultFailure(name, tc.startTime, new Date(), err)
                 }
             }
         }
-
     }
 }

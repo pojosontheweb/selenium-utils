@@ -59,14 +59,14 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
         String fileName = files[0]
 
-        log("Running $fileName (${options.b})...")
+        log("[Taste] Running $fileName (${options.b})...")
 
         Binding b = new Binding()
         GroovyShell shell = new CustomShell(b)
         // TODO handle cast in case folks try to do something else than running tests
         def res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
 
-        log("...$fileName evaluated, will now run tests")
+        log("[Taste] '$fileName' evaluated")
 
         def toJson = { Map map ->
             new JsonBuilder(map).toPrettyString()
@@ -88,8 +88,16 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         def printTestResult = { String fName, TestResult testResult ->
             Map map = testResult.toMap()
             map['fileName'] = fName
-            String status = testResult instanceof ResultFailure ? "FAILED" : "SUCCESS"
-            println "Test '$testResult.testName' $status\n${toTxt(map)}"
+            String status
+            String prefix
+            if (testResult instanceof ResultFailure) {
+                status = "FAILED"
+                prefix = "!"
+            } else {
+                status = "SUCCESS"
+                prefix = ">"
+            }
+            println "$prefix $testResult.testName : $status\n${toTxt(map)}"
         }
 
         if (res instanceof Test) {
@@ -113,10 +121,12 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             } else {
                 Map map = suiteResult.toMap(false)
                 map['fileName'] = fileName
-                println "Suite '$suite.name' executed :\n${toTxt(map)}"
-                println "${suiteResult.testResults.size()} Tests :"
+                Findr.logDebug("")
+                println "Suite executed\n\n${toTxt(map)}"
+                println "\nTests (${suiteResult.testResults.size()})\n"
                 suiteResult.testResults.each {
                     printTestResult(fileName, it)
+                    println ""
                 }
             }
 
