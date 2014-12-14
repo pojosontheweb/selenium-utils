@@ -54,9 +54,7 @@ class Taste {
             }
         }
 
-        log("""
-
-_/_/_/_/_/                      _/
+        log("""_/_/_/_/_/                      _/
    _/      _/_/_/    _/_/_/  _/_/_/_/    _/_/
   _/    _/    _/  _/_/        _/      _/_/_/_/
  _/    _/    _/      _/_/    _/      _/
@@ -65,12 +63,14 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
         String fileName = files[0]
 
-        log("- $fileName (${options.b})")
+        log("Running $fileName (${options.b})...")
 
         Binding b = new Binding()
         GroovyShell shell = new CustomShell(b)
         // TODO handle cast in case folks try to do something else than running tests
         TestResult res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
+
+        log("...$fileName evaluated")
 
         def printJson = {
             Map m = res.toMap()
