@@ -2,14 +2,10 @@ package com.pojosontheweb.taste
 
 import com.pojosontheweb.selenium.DriverBuildr
 import com.pojosontheweb.selenium.Findr
+import com.pojosontheweb.selenium.Findrs
 import groovy.json.JsonBuilder
-import org.openqa.selenium.WebDriver
-import org.pojosontheweb.selenium.groovy.DollrCategory
-import org.pojosontheweb.selenium.groovy.FindrCategory
-import org.pojosontheweb.selenium.groovy.ListFindrCategory
-import org.pojosontheweb.selenium.groovy.WebDriverCategory
 
-class Taste {
+class Taste extends Findrs {
 
     private static void invalidArgs() {
 
@@ -72,41 +68,56 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
         log("...$fileName evaluated, will now run tests")
 
-        if (res instanceof Test) {
-            Test test = (Test)res
-            def testResult = test.execute()
+        def toJson = { Map map ->
+            new JsonBuilder(map).toPrettyString()
+        }
 
-            def printJson = {
-                Map m = testResult.toMap()
-                m['fileName'] = fileName
-                println new JsonBuilder(m).toPrettyString()
+        def toTxt = { Map map ->
+            StringBuilder buf = new StringBuilder()
+            def keys = map.keySet()
+            for (def it = keys.iterator(); it.hasNext(); ) {
+                def k = it.next(), v = map[k]
+                buf << "- $k\t: $v"
+                if (it.hasNext()) {
+                    buf << "\n"
+                }
+            }
+            buf.toString()
+        }
+
+        def printTestResult = { String fName, TestResult testResult ->
+            Map map = testResult.toMap()
+            map['fileName'] = fName
+            String status = testResult instanceof ResultFailure ? "FAILED" : "SUCCESS"
+            println "Test '$testResult.testName' $status\n${toTxt(map)}"
+        }
+
+        if (res instanceof Test) {
+            Test test = (Test) res
+            TestResult testResult = test.execute()
+            if (options.j) {
+                Map map = testResult.toMap()
+                map['fileName'] = fileName
+                println toJson(map)
+            } else {
+                printTestResult(fileName, testResult)
             }
 
-            if (testResult instanceof ResultFailure) {
-                ResultFailure f = (ResultFailure)testResult
-                if (options.j) {
-                    printJson()
-                } else {
-                    println("""Test '$test.name' FAILED : $f.err.message
-- fileName      : $fileName
-- startedOn     : $f.startedOn
-- finishedOn    : $f.finishedOn
-- stackTrace    : $f.stackTrace""")
-                }
-            } else if (testResult instanceof ResultSuccess) {
-                ResultSuccess s = (ResultSuccess)testResult
-                if (options.j) {
-                    printJson()
-                } else {
-                    println("""Test '$test.name' SUCCESS
-- fileName      : $fileName
-- startedOn     : $s.startedOn
-- finishedOn    : $s.finishedOn
-- retVal        : $s.retVal""")
-                }
-
+        } else if (res instanceof Suite) {
+            Suite suite = (Suite)res
+            SuiteResult suiteResult = suite.execute()
+            if (options.j) {
+                Map map = suiteResult.toMap(true)
+                map['fileName'] = fileName
+                println toJson(map)
             } else {
-                println("""Test '$test.name' FAILED with invalid return value $testResult ($fileName)""")
+                Map map = suiteResult.toMap(false)
+                map['fileName'] = fileName
+                println "Suite '$suite.name' executed :\n${toTxt(map)}"
+                println "${suiteResult.testResults.size()} Tests :"
+                suiteResult.testResults.each {
+                    printTestResult(fileName, it)
+                }
             }
 
         } else {
@@ -118,6 +129,10 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
     static Test test(String testName, @DelegatesTo(TestContext) Closure c) {
         new Test(name: testName, body: c)
+    }
+
+    static Suite suite(String testName, @DelegatesTo(Suite) Closure c) {
+        new Suite(name: testName, body: c)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.pojosontheweb.taste
 
 import com.pojosontheweb.selenium.DriverBuildr
+import groovy.transform.Immutable
 import org.openqa.selenium.WebDriver
 import org.pojosontheweb.selenium.groovy.DollrCategory
 import org.pojosontheweb.selenium.groovy.FindrCategory
@@ -10,12 +11,13 @@ import org.pojosontheweb.selenium.groovy.WebDriverCategory
 /**
  * Created by vankeisb on 14/12/14.
  */
+@Immutable
 class Test {
 
     String name
     Closure body
 
-    def execute() {
+    TestResult execute() {
         use(WebDriverCategory, FindrCategory, ListFindrCategory, DollrCategory) {
             // create driver
             WebDriver webDriver = DriverBuildr.fromSysProps().build()
