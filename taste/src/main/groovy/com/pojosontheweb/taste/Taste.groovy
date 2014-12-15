@@ -1,6 +1,5 @@
 package com.pojosontheweb.taste
 
-import com.pojosontheweb.selenium.Findr
 import com.pojosontheweb.selenium.Findrs
 import groovy.json.JsonBuilder
 
@@ -8,6 +7,15 @@ import static com.pojosontheweb.selenium.Findr.logDebug
 import static com.pojosontheweb.selenium.SysProps.*
 
 class Taste extends Findrs {
+
+    private static final String LOGO = """
+_/_/_/_/_/                      _/
+   _/      _/_/_/    _/_/_/  _/_/_/_/    _/_/
+  _/    _/    _/  _/_/        _/      _/_/_/_/
+ _/    _/    _/      _/_/    _/      _/
+_/      _/_/_/  _/_/_/        _/_/    _/_/_/
+                         WebTesting With Style
+"""
 
     static void main(String[] args) {
 
@@ -17,10 +25,11 @@ class Taste extends Findrs {
         cli.b(longOpt:'browser', args:1, argName:'browser', 'chrome|firefox')
         cli.v(longOpt:'verbose', 'show all logs')
         cli.j(longOpt:'json', 'output test results as json')
-        cli.h(longOpt:'help', 'output this message')
-        cli.c(longOpt:'cfg', args:1, argName:'config_file', 'path to a taste config file')
+        cli.h(longOpt:'help', 'print this message')
+        cli.c(longOpt:'config', args:1, argName:'config_file', 'path to a taste config file')
 
         def invalidArgs = {
+            println LOGO
             cli.usage()
             System.exit(0)
         }
@@ -75,14 +84,7 @@ class Taste extends Findrs {
         }
 
 
-        logDebug("""
-_/_/_/_/_/                      _/
-   _/      _/_/_/    _/_/_/  _/_/_/_/    _/_/
-  _/    _/    _/  _/_/        _/      _/_/_/_/
- _/    _/    _/      _/_/    _/      _/
-_/      _/_/_/  _/_/_/        _/_/    _/_/_/
-                         WebTesting With Style
-""")
+        logDebug(LOGO)
 
         if (cfg) {
             logDebug("[Taste] loaded config from ${cfgFile.absolutePath} :")
@@ -106,6 +108,9 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         }
 
         boolean jsonOutput = cfg ? cfg.json : false
+        if (options.j) {
+            jsonOutput = true
+        }
 
         // let's go
 
