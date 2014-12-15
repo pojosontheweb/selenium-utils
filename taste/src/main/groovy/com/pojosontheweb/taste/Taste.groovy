@@ -14,7 +14,7 @@ _/_/_/_/_/                      _/
   _/    _/    _/  _/_/        _/      _/_/_/_/
  _/    _/    _/      _/_/    _/      _/
 _/      _/_/_/  _/_/_/        _/_/    _/_/_/
-                         WebTesting With Style
+                        Selenium With Style
 """
 
     static void main(String[] args) {
