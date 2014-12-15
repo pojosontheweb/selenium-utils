@@ -87,7 +87,23 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.7</version>
                 <executions>
+                    <!--<execution>-->
+                        <!--<id>set-taste-version</id>-->
+                        <!--<phase>process-sources</phase>-->
+                        <!--<configuration>-->
+                            <!--<target>-->
+                                <!--<replace file="${project.basedir}/src/main/groovy/com/pojosontheweb/taste/Taste.groovy"-->
+                                         <!--token="@TASTE_VERSION"-->
+                                         <!--value="${project.version}"/>-->
+                            <!--</target>-->
+                        <!--</configuration>-->
+                        <!--<goals>-->
+                            <!--<goal>run</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+
                     <execution>
+                        <id>make-dist</id>
                         <phase>install</phase>
                         <configuration>
                             <target>
