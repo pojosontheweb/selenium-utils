@@ -1,0 +1,11 @@
+import foo.MyHelper
+
+import static com.pojosontheweb.taste.Taste.*
+
+test('Test with a helper') {
+
+    String foo = MyHelper.help()
+    println "$foo"
+
+}
+

@@ -108,23 +108,42 @@
                         <configuration>
                             <target>
 
-                                <mkdir dir="${project.build.directory}/dist"/>
+                                <property name="taste.dist" value="${project.build.directory}/dist/taste-${project.version}"/>
+                                <property name="taste.dist.bin" value="${taste.dist}/taste/bin"/>
+                                <property name="taste.dist.lib" value="${taste.dist}/taste/lib"/>
+                                <property name="taste.dist.samples" value="${taste.dist}/taste/samples"/>
+
+                                <mkdir dir="${taste.dist.bin}"/>
+                                <mkdir dir="${taste.dist.lib}"/>
+                                <mkdir dir="${taste.dist.samples}"/>
+
                                 <copy file="${project.basedir}/src/main/scripts/taste"
-                                      todir="${project.build.directory}/dist">
+                                      todir="${taste.dist.bin}">
                                     <filterset>
                                         <filter token="JAR_NAME" value="taste-${project.version}-full.jar"/>
                                     </filterset>
                                 </copy>
-                                <chmod file="${project.build.directory}/dist/taste"
+                                <chmod file="${taste.dist.bin}/taste"
                                        perm="+x"/>
-
                                 <copy file="${project.build.directory}/taste-${project.version}-jar-with-dependencies.jar"
-                                      tofile="${project.build.directory}/dist/taste-${project.version}-full.jar"/>
-                                <mkdir dir="${project.build.directory}/dist/samples"/>
+                                      tofile="${taste.dist.lib}/taste-${project.version}-full.jar"/>
+
                                 <copy file="${project.basedir}/src/main/scripts/cfg.taste"
-                                      todir="${project.build.directory}/dist/samples/"/>
+                                      todir="${taste.dist.samples}"/>
                                 <copy file="${project.basedir}/src/main/scripts/google.taste"
-                                      todir="${project.build.directory}/dist/samples/"/>
+                                      todir="${taste.dist.samples}"/>
+
+                                <tar longfile="gnu"
+                                     destfile="${project.build.directory}/taste-${project.version}-bin.tar.gz"
+                                     compression="gzip">
+                                    <tarfileset dir="${taste.dist}">
+                                        <exclude name="**/taste"/>
+                                    </tarfileset>
+                                    <tarfileset dir="${taste.dist}"
+                                                mode="755">
+                                        <include name="**/taste"/>
+                                    </tarfileset>
+                                </tar>
 
                             </target>
                         </configuration>

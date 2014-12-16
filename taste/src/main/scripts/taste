@@ -1,2 +1,12 @@
-#!/bin/bash
-java $TASTE_OPTS -jar @JAR_NAME@ $*
+#!/bin/sh
+
+#
+# rjar launcher script
+#
+
+if [ -z "$TASTE_HOME" ] ; then
+    # must be set !
+    echo "the TASTE_HOME environment variable must be set"
+else
+    java $TASTE_OPTS -jar $TASTE_HOME/lib/@JAR_NAME@ $*
+fi
