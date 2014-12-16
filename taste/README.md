@@ -1,43 +1,22 @@
 # Taste: Selenium With Style
 
-`taste` is a toolkit for spicing up your Selenium Tests. It includes APIs (DSL-like) for
-writing robust, concise and clear tests, as well as a command-line executable for running
-tests/suites.
+`taste` is a toolkit for spicing up your Selenium Tests. It provides APIs (and DSLs) for
+writing robust, concise and clear tests
 
-`taste` does NOT use any scenario recording stuff : we think this method is mostly inefficient. Instead, we try to encourage clean test code, by making it easy to write and run tests.
+It also includes a simple yet fully functional runner for executing
+tests/suites, and getting back test reports.
 
 ## Fluent, stylish APIs
 
-You need good APIs in order to write good tests. `taste` relies on Findr (TODO link)
+You need good APIs in order to write good tests. `taste` relies on Findr
 in order to express readable DOM selectors and predicates, and make async stuff fully
 transparent.
 
-Here's an example, using regular `Findr` :
+`taste` also provides additional constructs, like "dollar" functions
+(`$` and `$$`) and overloaded operators (`+` and `>>`), in order
+to make test writing as easy as it should be.
 
-	webDriver.get 'http://www.google.com'
-
-	findr()
-		.elem(By.id('gbqfq'))
-		.sendKeys('pojos on the web')
-
-	findr()
-		.elem(By.cssSelector('button.gbqfb'))
-		.click()
-
-	findr()
-		.elem(By.id('search'))
-		.elemList(By.cssSelector('h3.r'))
-		.at(0)
-		.elem(By.tagName('a'))
-		.where(textContains('POJOs on the Web'))
-		.eval()
-
-Pretty good already, but `taste` goes a bit further.
-It adds power features over a plain Java `Findr`, like "dollar" functions
-(`$` and `$$`) and overloaded operators (`+` and `>>`). We try to 
-leave out the more boilerplate we can, and to provide an understandable DSL.
-
-The same example using dollar functions, operators, and other niceties :
+Here's a simple example using dollar functions, operators, and other niceties :
 
 	webDriver.get 'http://www.google.com'
 
