@@ -38,7 +38,7 @@ public class ChromeBuildr {
         if (locales !=null) {
             HashMap<String, String> prefs = new HashMap<String, String>();
             prefs.put("intl.accept_languages", locales);
-            options.setExperimentalOptions("prefs", prefs);
+            options.setExperimentalOption("prefs", prefs);
         }
         return options;
     }
