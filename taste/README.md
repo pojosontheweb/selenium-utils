@@ -1,10 +1,7 @@
 # Taste: Selenium With Style
 
 `taste` is a toolkit for spicing up your Selenium Tests. It provides APIs (and DSLs) for
-writing robust, concise and clear tests
-
-It also includes a simple yet fully functional runner for executing
-tests/suites, and getting back test reports.
+writing robust, concise and clear tests. It also includes a simple yet fully functional runner for executing tests/suites, and getting back test reports.
 
 ## Fluent, stylish APIs
 
@@ -46,7 +43,7 @@ TODO describe the DSLs
 
 There are many test runners already available on the market. JUnit, TestNG... you name it !
 You can of course use Findr (as well as the Groovy enhancements like `$` methods) with these frameworks.
-Findr was even designed before `taste`, and was used in JUnit test suites...
+Findr was even designed before `taste`, and was initially used exclusively in JUnit test suites...
 
 Nonetheless, if you start from scratch, or if you simply don't want to carry the burden of a heavyweight test framework, `taste` has its own test runner. It makes it easy to organize tests, run them, and get test reports.
 

@@ -2,6 +2,8 @@ package com.pojosontheweb.taste
 
 import com.pojosontheweb.selenium.Findrs
 import groovy.json.JsonBuilder
+import org.codehaus.groovy.control.CompilerConfiguration
+import org.codehaus.groovy.tools.GroovyClass
 
 import static com.pojosontheweb.selenium.Findr.logDebug
 import static com.pojosontheweb.selenium.SysProps.*
@@ -27,6 +29,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         cli.j(longOpt:'json', 'output test results as json')
         cli.h(longOpt:'help', 'print this message')
         cli.c(longOpt:'config', args:1, argName:'config_file', 'path to a taste config file')
+        cli.cp(longOpt:'classpath', args:1, argName:'paths', 'path(s) to search for scripts and classes (semicolon separated)')
 
         def invalidArgs = {
             println LOGO
@@ -68,22 +71,6 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             }
         }
 
-        def prettifyKeys = { Map map ->
-            int maxLen = 0
-            def sorted = map.keySet().sort()
-            sorted.each { String k ->
-                maxLen = Math.max(k.length(), maxLen)
-            }
-            Map newMap = [:]
-            sorted.collect { String k ->
-                int nbSpaces = maxLen - k.length()
-                def pk = k + " "*nbSpaces
-                newMap[pk] = map[k]
-            }
-            return newMap
-        }
-
-
         logDebug(LOGO)
 
         if (cfg) {
@@ -118,54 +105,17 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
         logDebug("[Taste] evaluating $fileName")
 
-        Binding b = new Binding()
-        GroovyShell shell = new CustomShell(b)
-        // TODO handle cast in case folks try to do something else than running tests
+        // configure paths of the Groovy loader
+        GroovyClassLoader loader = new GroovyClassLoader()
+        String scriptPaths = options.cp ?: System.getProperty('user.dir')
+        scriptPaths.split(';').each { path ->
+            loader.addClasspath(path)
+            logDebug("[Taste] $path added to scripts paths")
+        }
+
+        // create shell and eval script
+        GroovyShell shell = new CustomShell(loader, fileName)
         def res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
-
-        def toJson = { Map map ->
-            new JsonBuilder(map).toPrettyString()
-        }
-
-        def toTxt = { Map map ->
-            StringBuilder buf = new StringBuilder()
-            def pmap = prettifyKeys(map)
-            def keys = pmap.keySet()
-            for (def it = keys.iterator(); it.hasNext(); ) {
-                def k = it.next(), v = pmap[k]
-                buf << "- $k : $v"
-                if (it.hasNext()) {
-                    buf << "\n"
-                }
-            }
-            buf.toString()
-        }
-
-        def printTestResult = { String fName, TestResult testResult ->
-            Map map = testResult.toMap()
-            map['fileName'] = fName
-            String status
-            String prefix
-            if (testResult instanceof ResultFailure) {
-                status = "FAILED"
-                prefix = "!"
-            } else {
-                status = "SUCCESS"
-                prefix = ">"
-            }
-            "$prefix $testResult.testName : $status\n${toTxt(map)}"
-        }
-
-        def printConfig = {
-            if (cfg) {
-                println "Config :"
-                prettifyKeys(cfg.sysProps).each { k, v->
-                    println "- $k : $v"
-                }
-            } else {
-                println "Config : none."
-            }
-        }
 
         if (res instanceof Test) {
             Test test = (Test) res
@@ -178,7 +128,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                 logDebug("")
                 println "Test '$test.name' executed\n"
                 println printTestResult(fileName, testResult)
-                printConfig()
+                printConfig(cfg)
             }
 
         } else if (res instanceof Suite) {
@@ -225,7 +175,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                 println "Tests : "
                 println sb
                 println ""
-                printConfig()
+                printConfig(cfg)
             }
 
         } else {
@@ -243,18 +193,79 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         new Suite(name: testName, body: c)
     }
 
+    private static def prettifyKeys(Map map) {
+        int maxLen = 0
+        def sorted = map.keySet().sort()
+        sorted.each { String k ->
+            maxLen = Math.max(k.length(), maxLen)
+        }
+        Map newMap = [:]
+        sorted.collect { String k ->
+            int nbSpaces = maxLen - k.length()
+            def pk = k + " "*nbSpaces
+            newMap[pk] = map[k]
+        }
+        return newMap
+    }
+
+    private static def toJson(Map map) {
+        new JsonBuilder(map).toPrettyString()
+    }
+
+    private static def toTxt(Map map) {
+        StringBuilder buf = new StringBuilder()
+        def pmap = prettifyKeys(map)
+        def keys = pmap.keySet()
+        for (def it = keys.iterator(); it.hasNext(); ) {
+            def k = it.next(), v = pmap[k]
+            buf << "- $k : $v"
+            if (it.hasNext()) {
+                buf << "\n"
+            }
+        }
+        buf.toString()
+    }
+
+    private static def printTestResult(String fName, TestResult testResult) {
+        Map map = testResult.toMap()
+        map['fileName'] = fName
+        String status
+        String prefix
+        if (testResult instanceof ResultFailure) {
+            status = "FAILED"
+            prefix = "!"
+        } else {
+            status = "SUCCESS"
+            prefix = ">"
+        }
+        "$prefix $testResult.testName : $status\n${toTxt(map)}"
+    }
+
+    private static def printConfig(Cfg cfg) {
+        if (cfg) {
+            println "Config :"
+            prettifyKeys(cfg.sysProps).each { k, v->
+                println "- $k : $v"
+            }
+        } else {
+            println "Config : none."
+        }
+    }
+
 }
 
 class CustomShell extends GroovyShell {
 
+    private final String scriptName
 
-    CustomShell(Binding binding) {
-        super(binding)
+    CustomShell(GroovyClassLoader loader, String scriptName) {
+        super(loader, new Binding())
+        this.scriptName = scriptName
     }
 
     @Override
     protected synchronized String generateScriptName() {
-        return "Skunk"
+        return scriptName
 
     }
 }

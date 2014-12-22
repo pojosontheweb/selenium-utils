@@ -1,4 +1,5 @@
 import foo.MyHelper
+import pkg.Util
 
 import static com.pojosontheweb.taste.Taste.*
 
@@ -6,6 +7,8 @@ test('Test with a helper') {
 
     String foo = MyHelper.help()
     println "$foo"
+
+    String foo2 = Util.foo()
 
 }
 
