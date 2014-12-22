@@ -2,8 +2,6 @@ package com.pojosontheweb.taste
 
 import com.pojosontheweb.selenium.Findrs
 import groovy.json.JsonBuilder
-import org.codehaus.groovy.control.CompilerConfiguration
-import org.codehaus.groovy.tools.GroovyClass
 
 import static com.pojosontheweb.selenium.Findr.logDebug
 import static com.pojosontheweb.selenium.SysProps.*
