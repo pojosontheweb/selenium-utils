@@ -24,7 +24,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         def cli = new CliBuilder(usage:'taste [options] <file>', posix: false)
         cli.b(longOpt:'browser', args:1, argName:'browser', 'chrome|firefox')
         cli.v(longOpt:'verbose', 'show all logs')
-        cli.j(longOpt:'json', 'output test results as json')
+        cli.o(longOpt:'output-format', args:1, argName:'output_format', 'text|html|json')
         cli.h(longOpt:'help', 'print this message')
         cli.c(longOpt:'config', args:1, argName:'config_file', 'path to a taste config file')
         cli.cp(longOpt:'classpath', args:1, argName:'paths', 'path(s) to search for scripts and classes (semicolon separated)')
@@ -92,92 +92,46 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             System.setProperty(webtests.browser, options.b)
         }
 
-        boolean jsonOutput = cfg ? cfg.json : false
-        if (options.j) {
-            jsonOutput = true
-        }
-
-        // let's go
-
-        String fileName = files[0]
-
-        logDebug("[Taste] evaluating $fileName")
-
-        // configure paths of the Groovy loader
-        GroovyClassLoader loader = new GroovyClassLoader()
-        String scriptPaths = options.cp ?: System.getProperty('user.dir')
-        scriptPaths.split(';').each { path ->
-            loader.addClasspath(path)
-            logDebug("[Taste] $path added to scripts paths")
-        }
-
-        // create shell and eval script
-        GroovyShell shell = new CustomShell(loader, fileName)
-        def res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
-
-        if (res instanceof Test) {
-            Test test = (Test) res
-            TestResult testResult = test.execute(cfg)
-            if (jsonOutput) {
-                Map map = testResult.toMap()
-                map['fileName'] = fileName
-                println toJson(map)
-            } else {
-                logDebug("")
-                println "Test '$test.name' executed\n"
-                println printTestResult(fileName, testResult)
-                printConfig(cfg)
+        Writer out = new PrintWriter(System.out)
+        try {
+            ResultFormatter formatter = new FormatterText()
+            if (options.o) {
+                formatter = OutputFormat.valueOf(options.o).formatter
+                logDebug("[Taste] output format is $options.o")
             }
 
-        } else if (res instanceof Suite) {
-            Suite suite = (Suite)res
-            SuiteResult suiteResult = suite.execute(cfg)
-            if (jsonOutput) {
-                Map map = suiteResult.toMap(true)
-                map['fileName'] = fileName
-                int nbSuccess = 0,
-                    nbFailed = 0,
-                    total = suiteResult.testResults.size()
-                suiteResult.testResults.each { TestResult tr ->
-                    if (tr instanceof ResultFailure) {
-                        nbFailed++
-                    } else if (tr instanceof ResultSuccess) {
-                        nbSuccess++
-                    }
-                }
-                map.total = total
-                map.failed = nbFailed
-                map.success = nbSuccess
-                println toJson(map)
-            } else {
-                Map map = suiteResult.toMap(false)
-                map['fileName'] = fileName
-                logDebug("")
-                int nbSuccess = 0,
-                    nbFailed = 0,
-                    total = suiteResult.testResults.size()
+            // let's go
 
-                StringBuilder sb = new StringBuilder()
-                suiteResult.testResults.each { TestResult tr ->
-                    sb << '\n' << printTestResult(fileName, tr)
-                    if (tr instanceof ResultFailure) {
-                        nbFailed++
-                    } else if (tr instanceof ResultSuccess) {
-                        nbSuccess++
-                    }
-                }
-                def percent = nbSuccess / total * 100
-                println "$suiteResult.name : $total tests, SUCCESS $nbSuccess, FAILED $nbFailed - $percent %\n"
-                println toTxt(map)
-                println ""
-                println "Tests : "
-                println sb
-                println ""
-                printConfig(cfg)
+            String fileName = files[0]
+
+            logDebug("[Taste] evaluating $fileName")
+
+            // configure paths of the Groovy loader
+            GroovyClassLoader loader = new GroovyClassLoader()
+            String scriptPaths = options.cp ?: System.getProperty('user.dir')
+            scriptPaths.split(';').each { path ->
+                loader.addClasspath(path)
+                logDebug("[Taste] $path added to scripts paths")
             }
 
-        } else {
-            throw new IllegalStateException("file $fileName returned invalid Test : $res")
+            // create shell and eval script
+            GroovyShell shell = new CustomShell(loader, fileName)
+            def res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
+
+            if (res instanceof Test) {
+                Test test = (Test) res
+                TestResult testResult = test.execute(cfg)
+                formatter.format(cfg, fileName, testResult, out)
+            } else if (res instanceof Suite) {
+                Suite suite = (Suite) res
+                SuiteResult suiteResult = suite.execute(cfg)
+                formatter.format(cfg, fileName, suiteResult, out)
+            } else {
+                throw new IllegalStateException("file $fileName returned invalid Test : $res")
+            }
+        } finally {
+            out.flush()
+            out.close()
         }
 
         System.exit(0)
@@ -204,50 +158,6 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             newMap[pk] = map[k]
         }
         return newMap
-    }
-
-    private static def toJson(Map map) {
-        new JsonBuilder(map).toPrettyString()
-    }
-
-    private static def toTxt(Map map) {
-        StringBuilder buf = new StringBuilder()
-        def pmap = prettifyKeys(map)
-        def keys = pmap.keySet()
-        for (def it = keys.iterator(); it.hasNext(); ) {
-            def k = it.next(), v = pmap[k]
-            buf << "- $k : $v"
-            if (it.hasNext()) {
-                buf << "\n"
-            }
-        }
-        buf.toString()
-    }
-
-    private static def printTestResult(String fName, TestResult testResult) {
-        Map map = testResult.toMap()
-        map['fileName'] = fName
-        String status
-        String prefix
-        if (testResult instanceof ResultFailure) {
-            status = "FAILED"
-            prefix = "!"
-        } else {
-            status = "SUCCESS"
-            prefix = ">"
-        }
-        "$prefix $testResult.testName : $status\n${toTxt(map)}"
-    }
-
-    private static def printConfig(Cfg cfg) {
-        if (cfg) {
-            println "Config :"
-            prettifyKeys(cfg.sysProps).each { k, v->
-                println "- $k : $v"
-            }
-        } else {
-            println "Config : none."
-        }
     }
 
 }

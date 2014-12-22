@@ -2,7 +2,7 @@ import static com.pojosontheweb.taste.Cfg.*
 
 config {
 
-    json true                               // we output json
+    json false                               // we output json
 
     chrome {                                // we use chrome
         driverPath  "${System.getProperty('user.home')}/chromedriver" // TODO change me !
