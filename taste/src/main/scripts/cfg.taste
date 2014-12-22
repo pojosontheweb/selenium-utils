@@ -1,0 +1,28 @@
+import static com.pojosontheweb.taste.Cfg.*
+
+config {
+
+    json true                               // we output json
+
+    chrome {                                // we use chrome
+        driverPath  "${System.getProperty('user.home')}/chromedriver" // TODO change me !
+    }
+
+    sysProps['foo.bar'] = 'baz'             // this is how you define/override System Properties
+
+    locales "en", "fr"                      // locale(s) to be used
+
+    findr {
+        timeout 10                          // 10s findr timeout
+        verbose true                        // tell me everything
+    }
+
+    video {
+        enabled false                       // enable/disable video recording
+        dir "/tmp/taste-videos"             // where to store videos
+        failuresOnly true                   // record everything/failures only
+    }
+
+
+
+}

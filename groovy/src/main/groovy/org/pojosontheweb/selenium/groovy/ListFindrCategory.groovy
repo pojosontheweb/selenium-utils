@@ -21,10 +21,6 @@ class ListFindrCategory {
         this.at(i)
     }
 
-    public Findr leftShift(int index) {
-        this.at(index)
-    }
-
     public Findr.ListFindr plus(Predicate p) {
         this.where(p)
     }

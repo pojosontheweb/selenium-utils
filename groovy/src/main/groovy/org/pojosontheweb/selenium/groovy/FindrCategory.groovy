@@ -38,6 +38,10 @@ class FindrCategory {
         append(lf)
     }
 
+    Findr plus(Findr f) {
+        append(f)
+    }
+
     def rightShift(Function f) {
         eval(f)
     }

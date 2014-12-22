@@ -3,6 +3,7 @@ package com.pojosontheweb.selenium;
 import java.util.*;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -40,11 +41,11 @@ public final class Findr {
      */
     private final int waitTimeout;
 
-    private static boolean isDebugEnabled() {
-        return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "true"));
+    public static boolean isDebugEnabled() {
+        return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "false"));
     }
 
-    private static void logDebug(String message) {
+    public static void logDebug(String message) {
         if (isDebugEnabled()) {
             System.out.println(message);
         }
@@ -130,9 +131,9 @@ public final class Findr {
                 public WebElement apply(SearchContext input) {
                     WebElement res = newFunction.apply(input);
                     if (res==null) {
-                        logDebug("  ! " + pathElem + " (null)");
+                        logDebug("[Findr]  ! " + pathElem + " (null)");
                     } else {
-                        logDebug("  > " + pathElem + " : " + res);
+                        logDebug("[Findr]  > " + pathElem + " : " + res);
                     }
                     return res;
                 }
@@ -143,14 +144,14 @@ public final class Findr {
                 public WebElement apply(SearchContext input) {
                     WebElement res1 = f.apply(input);
                     if (res1==null) {
-                        logDebug("  - " + pathElem);
+                        logDebug("[Findr]  - " + pathElem);
                         return null;
                     } else {
                         WebElement res2 = newFunction.apply(res1);
                         if (res2==null) {
-                            logDebug("  ! " + pathElem);
+                            logDebug("[Findr]  ! " + pathElem);
                         } else {
-                            logDebug("  > " + pathElem + " : " + res2);
+                            logDebug("[Findr]  > " + pathElem + " : " + res2);
                         }
                         return res2;
                     }
@@ -207,6 +208,14 @@ public final class Findr {
         return new ListFindr(lf.by, lf.filters, lf.waitCount);
     }
 
+    public Findr append(Findr f) {
+        List<String> newPath = new ArrayList<String>(path!=null?path:new ArrayList<String>());
+        if (f.path!=null) {
+            newPath.addAll(f.path);
+        }
+        return compose(f.f, "append[" + Joiner.on(", ").join(f.path) + "]");
+    }
+
     private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
         try {
             return new WebDriverWait(driver, waitTimeout).until(callback);
@@ -239,17 +248,17 @@ public final class Findr {
                 if (f==null) {
                     throw new EmptyFindrException();
                 }
-                logDebug("Findr eval :");
+                logDebug("[Findr] eval");
                 WebElement e = f.apply(input);
                 if (e == null) {
-                    logDebug("  => Chain STOPPED before callback");
+                    logDebug("[Findr]  => Chain STOPPED before callback");
                     return null;
                 }
                 T res = callback.apply(e);
                 if (res==null || (res instanceof Boolean && !((Boolean)res))) {
-                    logDebug("  => " + callback + " result : " + res + ", will try again");
+                    logDebug("[Findr]  => " + callback + " result : " + res + ", will try again");
                 } else {
-                    logDebug("  => " + callback + " result : " + res + ", OK");
+                    logDebug("[Findr]  => " + callback + " result : " + res + ", OK");
                 }
                 return res;
             }
@@ -478,11 +487,11 @@ public final class Findr {
                         return null;
                     }
                     if (waitCount != null && filtered.size() != waitCount) {
-                        logDebug("  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
+                        logDebug("[Findr]  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
                         return null;
                     } else {
                         if (isDebugEnabled() && waitCount!=null) {
-                            logDebug("  > elemCount OK (" + waitCount + ")");
+                            logDebug("[Findr]  > elemCount OK (" + waitCount + ")");
                         }
                     }
                     if (index>=filtered.size()) {
@@ -505,7 +514,7 @@ public final class Findr {
             if (isDebugEnabled() && filters!=null) {
                 int srcSize = source.size();
                 int filteredSize = filtered.size();
-                logDebug("  > [" + by + "]* filter(" + filters + ") : " + srcSize + " -> " + filteredSize);
+                logDebug("[Findr]  > [" + by + "]* filter(" + filters + ") : " + srcSize + " -> " + filteredSize);
             }
             return filtered;
         }
@@ -528,7 +537,7 @@ public final class Findr {
          * @throws TimeoutException if at least one condition in the chain failed
          */
         public <T> T eval(final Function<List<WebElement>, T> callback) throws TimeoutException {
-            logDebug("ListFindr eval :");
+            logDebug("[Findr] ListFindr eval");
             return wrapWebDriverWaitList(wrapAndTrapCatchSeleniumException(new Function<WebDriver, T>() {
                 @Override
                 public T apply(WebDriver input) {
@@ -542,19 +551,19 @@ public final class Findr {
                     }
                     List<WebElement> filtered = filterElements(elements);
                     if (waitCount != null && filtered.size() != waitCount) {
-                        logDebug("  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
-                        logDebug("  => Chain STOPPED before callback");
+                        logDebug("[Findr]  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
+                        logDebug("[Findr]  => Chain STOPPED before callback");
                         return null;
                     } else {
                         if (isDebugEnabled() && waitCount!=null) {
-                            logDebug("  > elemCount OK (" + waitCount + ")");
+                            logDebug("[Findr]  > elemCount OK (" + waitCount + ")");
                         }
                     }
                     T res = callback.apply(filtered);
                     if (res==null || (res instanceof Boolean && !((Boolean)res))) {
-                        logDebug("  => " + callback + " result : " + res + ", will try again");
+                        logDebug("[Findr]  => " + callback + " result : " + res + ", will try again");
                     } else {
-                        logDebug("  => " + callback + " result : " + res + ", OK");
+                        logDebug("[Findr]  => " + callback + " result : " + res + ", OK");
                     }
                     return res;
                 }

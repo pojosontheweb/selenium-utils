@@ -68,7 +68,7 @@ public class ScreenRecordr {
                 screenRecorder.start();
             }
 
-            System.out.println("ScreenRecordr : started video recording");
+            Findr.logDebug("[ScreenRecordr] started video recording");
             return this;
 
         } catch (Exception e) {
@@ -82,12 +82,12 @@ public class ScreenRecordr {
         }
         try {
             if (screenRecorder.getState()!=null && screenRecorder.getState().equals(ScreenRecorder.State.RECORDING)) {
-                System.out.println("SeleniumScreenRecorder : stopping recorder");
+                Findr.logDebug("[ScreenRecordr] stopping recorder");
                 screenRecorder.stop();
             }
-            System.out.println("SeleniumScreenRecorder : stopped video recording. List of created files :");
+            Findr.logDebug("[ScreenRecordr] stopped video recording. List of created files :");
             for (File f : getVideoFiles()) {
-                System.out.println("  * " + f.getAbsolutePath());
+                Findr.logDebug("[ScreenRecordr]  * " + f.getAbsolutePath());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -104,7 +104,7 @@ public class ScreenRecordr {
     public ScreenRecordr moveVideoFilesTo(File destDir, String filePrefix) {
         stop();
         List<File> files = getVideoFiles();
-        System.out.println("ScreenRecordr : copying " + files.size() + " video files to " + destDir +
+        Findr.logDebug("[ScreenRecordr] moving " + files.size() + " video files to " + destDir +
                 " with filePrefix=" + filePrefix);
         int totalCount = 1;
         boolean needsCount = files.size()>1;
@@ -121,7 +121,7 @@ public class ScreenRecordr {
                 File vidFile = new File(destDir, fileName);
                 try {
                     Files.copy(f, vidFile);
-                    System.out.println("ScreenRecordr : " + f.getAbsolutePath() + "=>" + vidFile.getAbsolutePath());
+                    Findr.logDebug("[ScreenRecordr] " + f.getAbsolutePath() + " => " + vidFile.getAbsolutePath());
                 } catch(IOException e) {
                     throw new RuntimeException(e);
                 } finally {
@@ -134,6 +134,7 @@ public class ScreenRecordr {
 
 
     public ScreenRecordr removeVideoFiles() {
+        Findr.logDebug("[ScreenRecordr] removing video files");
         stop();
         List<File> files = getVideoFiles();
         for (File f : files) {
