@@ -103,8 +103,9 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             // let's go
 
             String fileName = files[0]
+            File scriptFile = new File(fileName)
 
-            logDebug("[Taste] evaluating $fileName")
+            logDebug("[Taste] evaluating $scriptFile.absolutePath")
 
             // configure paths of the Groovy loader
             GroovyClassLoader loader = new GroovyClassLoader()
@@ -116,18 +117,18 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
             // create shell and eval script
             GroovyShell shell = new CustomShell(loader, fileName)
-            def res = shell.evaluate(new InputStreamReader(new FileInputStream(fileName)))
+            def res = shell.evaluate(new InputStreamReader(new FileInputStream(scriptFile)))
 
             if (res instanceof Test) {
                 Test test = (Test) res
                 TestResult testResult = test.execute(cfg)
-                formatter.format(cfg, fileName, testResult, out)
+                formatter.format(cfg, scriptFile.absolutePath, testResult, out)
             } else if (res instanceof Suite) {
                 Suite suite = (Suite) res
                 SuiteResult suiteResult = suite.execute(cfg)
-                formatter.format(cfg, fileName, suiteResult, out)
+                formatter.format(cfg, scriptFile.absolutePath, suiteResult, out)
             } else {
-                throw new IllegalStateException("file $fileName returned invalid Test : $res")
+                throw new IllegalStateException("file $scriptFile.absolutePath returned invalid Test : $res")
             }
         } finally {
             out.flush()
