@@ -6,16 +6,12 @@
     <parent>
         <groupId>com.pojosontheweb</groupId>
         <artifactId>selenium-utils</artifactId>
-        <version>LATEST-SNAPSHOT</version>
+        <version>1.4</version>
     </parent>
     <artifactId>selenium-utils-groovy</artifactId>
+    <version>1.4</version>
     <packaging>jar</packaging>
     <name>selenium-utils/groovy</name>
-    <properties>
-        <gmavenVersion>1.5</gmavenVersion>
-        <gmavenProviderSelection>2.0</gmavenProviderSelection>
-        <groovyVersion>2.1.3</groovyVersion>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.pojosontheweb</groupId>
@@ -47,6 +43,7 @@
                 <executions>
                     <execution>
                         <goals>
+                            <goal>generateStubs</goal>
                             <goal>compile</goal>
                             <goal>testCompile</goal>
                         </goals>
@@ -85,8 +82,58 @@
                             <goal>run</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>fix-categ-bug</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <target>
+                                <replace dir="${project.build.directory}/generated-sources/groovy-stubs/"
+                                         value="Findr.ListFindr.class">
+                                    <include name="**/*.java"/>
+                                    <replacetoken>Findr$ListFindr.class</replacetoken>
+                                </replace>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>build-helper-maven-plugin</artifactId>-->
+                <!--<version>1.9.1</version>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>add-groovy-source</id>-->
+                        <!--&lt;!&ndash; before package phase &ndash;&gt;-->
+                        <!--<phase>test</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>add-source</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<sources>-->
+                                <!--<source>${basedir}/src/main/groovy</source>-->
+                            <!--</sources>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                    <!--<execution>-->
+                        <!--<id>add-groovy-test-source</id>-->
+                        <!--&lt;!&ndash; before package phase &ndash;&gt;-->
+                        <!--<phase>test</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>add-test-source</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<sources>-->
+                                <!--<source>${basedir}/src/test/groovy</source>-->
+                            <!--</sources>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
         </plugins>
     </build>
 </project>

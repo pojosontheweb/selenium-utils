@@ -41,6 +41,7 @@ public class FirefoxBuildr {
 
     public static FirefoxProfile createFirefoxProfile(String locales) {
         File tmpDir = new File(System.getProperty("java.io.tmpdir"), "wt-ffprofile");
+        tmpDir.mkdirs();
         FirefoxProfile profile = new FirefoxProfile(tmpDir);
         if (locales !=null) {
             profile.setPreference("intl.accept_languages", locales);

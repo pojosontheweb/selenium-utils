@@ -1,0 +1,26 @@
+import static com.pojosontheweb.taste.Cfg.*
+
+config {
+
+    output {
+        text()                              // we output text
+    }
+
+    firefox()                               // use FF
+
+    // this is how you define/override System Properties
+    sysProps['webdriver.chrome.driver'] = "${System.getProperty('user.home')}/chromedriver"
+
+    locales "en", "fr"                      // locale(s) to be used
+
+    findr {
+        timeout 10                          // 10s findr timeout
+        verbose true                        // tell me everything
+    }
+
+    video {
+        enabled false                       // enable/disable video recording
+        dir "/tmp/taste-videos"             // where to store videos
+        failuresOnly true                   // record everything/failures only
+    }
+}

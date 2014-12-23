@@ -1,6 +1,7 @@
 package org.pojosontheweb.selenium.groovy
 
 import com.pojosontheweb.selenium.Findr
+import static com.pojosontheweb.selenium.Findr.logDebug
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
@@ -28,6 +29,7 @@ class WebDriverCategory {
         try {
             c()
         } finally {
+            logDebug("[WebDriverCategory] quit WebDriver $this")
             quit()
         }
     }
