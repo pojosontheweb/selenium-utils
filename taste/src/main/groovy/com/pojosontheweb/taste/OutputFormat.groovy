@@ -6,7 +6,8 @@ package com.pojosontheweb.taste
 enum OutputFormat {
 
     text(new FormatterText()),
-    json(new FormatterJson())
+    json(new FormatterJson()),
+    html(new FormatterHtml())
 
     private final ResultFormatter formatter
 

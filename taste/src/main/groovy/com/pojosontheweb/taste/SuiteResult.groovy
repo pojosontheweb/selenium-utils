@@ -22,4 +22,8 @@ class SuiteResult {
         return res
     }
 
+    boolean isSuccess() {
+        !testResults?.find { it instanceof ResultFailure }
+    }
+
 }

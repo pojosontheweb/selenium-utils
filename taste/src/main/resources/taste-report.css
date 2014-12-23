@@ -1,0 +1,37 @@
+body {
+    font-family: "courier new", sans-serif;
+}
+
+
+table {
+    border: 1px solid lightgray;
+}
+
+table th {
+    text-align: right;
+    padding: 4px;
+}
+
+table td {
+    text-align: left;
+    padding: 4px;
+}
+
+table th.title {
+    text-align: left;
+    border-bottom: 1px solid lightgray;
+    font-size: 1.2em;
+}
+
+
+table.success th.title {
+    background-color: lightgreen;
+}
+
+table.failure th.title {
+    background-color: lightcoral;
+}
+
+table.test-result {
+    margin-bottom: 16px;
+}

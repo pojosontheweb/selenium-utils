@@ -7,7 +7,7 @@ import static com.pojosontheweb.selenium.SysProps.*
 class Cfg {
 
     Map<String,String> sysProps = [:]
-    boolean json = false
+    OutputFormat output = OutputFormat.text
 
     static Cfg load(File configFile) {
         if (configFile.exists()) {
@@ -29,12 +29,15 @@ class Cfg {
         return cfg
     }
 
-    void locales(String... locales) {
-        sysProps[webtests.locales] = locales.join(",")
+    void output(@DelegatesTo(OutputCfg) Closure c) {
+        OutputCfg cfg = new OutputCfg()
+        def code = c.rehydrate(cfg, this, this)
+        code.resolveStrategy = Closure.DELEGATE_ONLY
+        code()
     }
 
-    void json(boolean json) {
-        this.json = json
+    void locales(String... locales) {
+        sysProps[webtests.locales] = locales.join(",")
     }
 
     void findr(@DelegatesTo(FindrCfg) Closure c) {
@@ -49,6 +52,20 @@ class Cfg {
         return "Cfg{" +
             "sysProps=" + sysProps +
             '}';
+    }
+
+    class OutputCfg {
+        void json() {
+            output = OutputFormat.json
+        }
+
+        void text() {
+            output = OutputFormat.text
+        }
+
+        void html() {
+            output = OutputFormat.html
+        }
     }
 
     class FindrCfg {
