@@ -3,7 +3,7 @@ import static com.pojosontheweb.taste.Cfg.*
 config {
 
     output {
-        html()                              // we output text
+        text()                              // we output text
     }
 
     firefox()                               // use FF
