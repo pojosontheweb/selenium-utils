@@ -1,5 +1,6 @@
 package com.pojosontheweb.taste
 
+import com.pojosontheweb.selenium.Findr
 import com.pojosontheweb.selenium.Findrs
 import groovy.json.JsonBuilder
 
@@ -123,15 +124,23 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             if (res instanceof Test) {
                 Test test = (Test) res
                 TestResult testResult = test.execute(cfg)
-                logDebug("=Taste-Begin-Output=")
+                if (Findr.isDebugEnabled()) {
+                    out << "=Taste-Begin-Output=\n"
+                }
                 formatter.format(cfg, scriptFile.absolutePath, testResult, out)
-                logDebug("=Taste-End-Output=")
+                if (Findr.isDebugEnabled()) {
+                    out << "=Taste-End-Output=\n"
+                }
             } else if (res instanceof Suite) {
                 Suite suite = (Suite) res
                 SuiteResult suiteResult = suite.execute(cfg)
-                logDebug("=Taste-Begin-Output=")
+                if (Findr.isDebugEnabled()) {
+                    out << "=Taste-Begin-Output=\n"
+                }
                 formatter.format(cfg, scriptFile.absolutePath, suiteResult, out)
-                logDebug("=Taste-End-Output=")
+                if (Findr.isDebugEnabled()) {
+                    out << "=Taste-End-Output=\n"
+                }
             } else {
                 throw new IllegalStateException("file $scriptFile.absolutePath returned invalid Test : $res")
             }
