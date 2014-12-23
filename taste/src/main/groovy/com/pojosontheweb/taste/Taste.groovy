@@ -120,19 +120,21 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             GroovyShell shell = new CustomShell(loader, fileName)
             def res = shell.evaluate(new InputStreamReader(new FileInputStream(scriptFile)))
 
-            logDebug("=Taste-Begin-Output=")
             if (res instanceof Test) {
                 Test test = (Test) res
                 TestResult testResult = test.execute(cfg)
+                logDebug("=Taste-Begin-Output=")
                 formatter.format(cfg, scriptFile.absolutePath, testResult, out)
+                logDebug("=Taste-End-Output=")
             } else if (res instanceof Suite) {
                 Suite suite = (Suite) res
                 SuiteResult suiteResult = suite.execute(cfg)
+                logDebug("=Taste-Begin-Output=")
                 formatter.format(cfg, scriptFile.absolutePath, suiteResult, out)
+                logDebug("=Taste-End-Output=")
             } else {
                 throw new IllegalStateException("file $scriptFile.absolutePath returned invalid Test : $res")
             }
-            logDebug("=Taste-End-Output=")
         } finally {
             out.flush()
             out.close()
