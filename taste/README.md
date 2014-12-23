@@ -31,7 +31,9 @@ The `$` functions are inspired from JQuery : they are factories for Findr object
 Additional instructions/constructs are also provided, so that writing `Findr` chains is 
 even easier.
 
-Here below is an explanation of the main Taste functions.
+Here below is an explanation of the main Taste functions. The full JavaDocs can be found here :
+
+http://jdp.rvkb.com/api/selenium-utils-groovy/index.html
 
 ### $ 
 
