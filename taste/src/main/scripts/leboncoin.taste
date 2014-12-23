@@ -12,8 +12,7 @@ test('Le Bon Coin') {
 
     webDriver.windowSize = new Dimension(1400, 1000)
 
-    $('#TableContentBottom') +
-        $$('a') +
+    $$('a') +
         attrEquals('title', 'Alsace') +
         at(0) >> click()
 
