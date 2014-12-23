@@ -1,8 +1,6 @@
-import com.pojosontheweb.selenium.Findr
 import org.openqa.selenium.Dimension
 import org.openqa.selenium.WebElement
 
-import static org.openqa.selenium.By.*
 import static com.pojosontheweb.taste.Taste.*
 
 test('Le Bon Coin') {
@@ -19,10 +17,6 @@ test('Le Bon Coin') {
         attrEquals('title', 'Alsace') +
         at(0) >> click()
 
-    // creates a default Findr for this driver
-    Findr f = d.findr
-
-    // use the Select helper
     $('#search_category').asSelect().selectByVisibleText('Motos')
     $('#searcharea').asSelect().selectByVisibleText('Toute la France')
 
