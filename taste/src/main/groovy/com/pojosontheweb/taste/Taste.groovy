@@ -94,11 +94,12 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
 
         Writer out = new PrintWriter(System.out)
         try {
-            ResultFormatter formatter = new FormatterText()
+            OutputFormat format = cfg?.output ?: OutputFormat.text
             if (options.o) {
-                formatter = OutputFormat.valueOf(options.o).formatter
-                logDebug("[Taste] output format is $options.o")
+                format = OutputFormat.valueOf(options.o)
             }
+            ResultFormatter formatter = format.formatter
+            logDebug("[Taste] will output $format")
 
             // let's go
 
@@ -119,6 +120,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             GroovyShell shell = new CustomShell(loader, fileName)
             def res = shell.evaluate(new InputStreamReader(new FileInputStream(scriptFile)))
 
+            logDebug("=Taste-Begin-Output=")
             if (res instanceof Test) {
                 Test test = (Test) res
                 TestResult testResult = test.execute(cfg)
@@ -130,6 +132,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             } else {
                 throw new IllegalStateException("file $scriptFile.absolutePath returned invalid Test : $res")
             }
+            logDebug("=Taste-End-Output=")
         } finally {
             out.flush()
             out.close()

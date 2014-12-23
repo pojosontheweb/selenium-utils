@@ -66,6 +66,7 @@ class Cfg {
         void html() {
             output = OutputFormat.html
         }
+
     }
 
     class FindrCfg {
