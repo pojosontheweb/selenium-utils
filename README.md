@@ -227,3 +227,9 @@ With sys props :
 ```
 $> mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedriver -Dwebtests.video.enabled=true
 ```
+
+## API Docs
+
+The JavaDocs can be found here :
+
+http://jdp.rvkb.com/api/selenium-utils-core/index.html
