@@ -8,6 +8,7 @@
         <artifactId>selenium-utils</artifactId>
         <version>LATEST-SNAPSHOT</version>
     </parent>
+    <version>1.0-beta</version>
     <artifactId>taste</artifactId>
     <packaging>jar</packaging>
     <name>selenium-utils/taste</name>
@@ -20,11 +21,6 @@
             <groupId>com.pojosontheweb</groupId>
             <artifactId>selenium-utils-groovy</artifactId>
             <version>LATEST-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-            <version>${groovyVersion}</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
