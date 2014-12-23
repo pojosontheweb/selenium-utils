@@ -27,29 +27,24 @@ Here's a simple example using dollar functions, operators, and other niceties :
 		$('a') +
 		textContains('POJOs on the Web') >> eval()
 
-The `$` functions are inspired from JQuery : they are factories for Findr objects. You can add Predicates
-(or Closures) to the Findrs and compose them using `+`. Findr evaluation (or click or sendKeys) is done using
-the right shift `>>` operator.
+The `$` functions are inspired from JQuery : they are factories for Findr objects. You can add Predicates (or Closures) to the Findrs and compose them using `+`. Findr evaluation (or click or sendKeys) is done using the right shift `>>` operator.
 Additional instructions/constructs are also provided, so that writing `Findr` chains is 
 even easier.
 
-All this is strongly typed : if you use a Groovy-capable IDE, you should have editor support (errors, completion etc.).
+Here below is an explanation of the main Taste functions.
 
-### Reference
+### $ 
 
-#### $ 
-
-Function that creates a Findr instance with passed selector. Shortcut for `findr().elem(By.cssSelector(...))`. 
-
-Examples :
+Function that creates a Findr instance with passed selector. Shortcut for `findr().elem(By.cssSelector(...))`. Use `$` when dealing with single elements.
 
     $('#foo').click()
     $('#foo').eval { WebElement e -> ... }
     $('#foo').where { WebElement e -> e.text == 'Hello' }
     
-#### $$
+### $$
 
-Counterpart of `$`, but returns a ListFindr, for list of elements. Shortcut for `findr().elemList(By.cssSelector(...))`.
+Counterpart of `$`, but returns a ListFindr, for list of elements. Shortcut for `findr().elemList(By.cssSelector(...))`. Use `$$` when dealing with selectors/conditions
+on multiple elements.
 
 Examples :
 
@@ -57,33 +52,33 @@ Examples :
     $$('.bar).at(3).where(Findrs.isDisplayed()).eval()
     $$('#foo .bar)[0].click()
     
-The static predicates in Findrs can also be `static import`s for more compact style :
+> The static predicates in `Findrs` can also be `static import`s for more compact style :
 
     $$('.bar).at(3).where(isDisplayed()).eval()
 
-#### +
+### +
 
 Overloaded "plus" operator for adding ListFindrs and Predicates to Findrs. Shortcut for `Findr.elem`, `Findr.where`, or `ListFindr.where`, depending on what you add to what...
 
-Examples : 
-
-    Findr f = $('#foo') + Findrs.isDisplayed()
+    Findr f = $('#foo') + isDisplayed()
     Findr.ListFindr lf = $('#foo') + $$('.bar') + isDisplayed() 
+    Findr f = $('#foo') + $$('.bar') + at(2) + $('.baz') + textEquals('Hi There!')
 
-#### >>
+### >>
 
-"Right shift" operator : allows for more fluent `eval()`, `click()` and `sendKeys()`. Allows to bypass parenthesis and gives the whole chain and evaluation process a more natural look.
-
-Examples :
+_Right shift_ operator : allows for more fluent `eval()`, `click()` and `sendKeys()`. Allows to bypass parenthesis and gives the whole chain and evaluation process a more natural look.
 
     $('#foo').click() 
     $('#foo') >> click()
     $$('#foo .bar')[5] + Findrs.textEquals("clickme") >> click()
     $$('#foo .bar')[5] + { e -> e.text=='clickme' } >> click()
+    $('#foo input.bar') >> sendKeys('This is some text')
+    $(...) + ... >> { WebElement e -> ... }
+    ... + $$(...) >> { List<WebElement> elems -> ... }
 
-#### whereElemCount, at
+### whereElemCount, at
 
-The `whereElemCount` and `at` static funtions can also be used, along with `$$` and `+` :
+The `whereElemCount` and `at` static funtions can also be used, along with `$$` and `+`.
 
     // wait until we have 3 elems with class 'bar', 
     // that the 1st one has text 'clickme', and click it
@@ -94,15 +89,33 @@ The `whereElemCount` and `at` static funtions can also be used, along with `$$` 
 
 ## Test runner
 
-There are many test runners already available on the market. JUnit, TestNG... you name it !
+There are many test runners already available on the market. JUnit, TestNG... you name it.
 You can of course use Findr (as well as the Groovy enhancements like `$` methods) with these frameworks.
 Findr was even designed before `taste`, and was initially used in JUnit test suites...
 
-Nonetheless, if you start from scratch, or if you simply don't want to carry the burden of a heavyweight test framework, `taste` has its own test runner. It makes it easy to organize tests, run them, and get test reports.
+Nonetheless, if you start from scratch, or if you simply don't want to carry the burden of a heavyweight test framework, `taste` has its own runner. It makes it easy to organize tests, run them, and get test reports.
+
+### Groovy everywhere
+
+The runner is implemented in Groovy, and so are your tests. We just use a `.taste` file extension in order to make it even more explicit. 
+
+It's better to use a Groovy-capable IDE (like the excellent Jetbrains' IDEA), so that you have a minimum of support for writing your tests and helpers. Nevertheless, the taste "language" is meant to be simple to use, even without an IDE. A Groovy-highlighting text editor can be sufficient for writing .taste files, at least simple ones.
 
 ### Tests and Suites
 
-There's a DSL for organizing your code into tests and suites. Here's a simple example :
+There's a DSL-like API for organizing your code into tests and suites. A `.taste` file can contain 
+a single test, or a suite (several tests grouped together).
+
+Here's a test (`my-test.taste`):
+
+    import static com.pojosontheweb.taste.Taste.*
+
+    test('My first test') {
+        ...
+    }
+
+
+And a suite (`my-suite.taste`):
 
 	import static com.pojosontheweb.taste.Taste.*
 
@@ -116,9 +129,14 @@ There's a DSL for organizing your code into tests and suites. Here's a simple ex
 			...
 		}
 	}
+	
+The static import `Taste.*` gives you access to `suite()` and `add test()` functions. Those functions actually create the test (or suite) that the runner will execute.
 
-This creates a suite with 2 tests. You only need to static import all functions in `Taste` in 
-order to have the testing "DSL".
+You can run the test or suite with the command line runner :
+
+    $ taste my-test.taste
+
+Command line options are detailed below.
 
 ### Configuration
 
@@ -127,16 +145,18 @@ details out of the tests, and to run the tests on different configurations (e.g.
 The various `Findr` options
 (browser, video, verbosity, etc.) can be fine-tuned, depending on the context.
 
+Again, DSL-like functions are provided, by static importing `Cfg.*`.
+
 Here's a config example :
 
-	import static com.pojosontheweb.taste.Cfg.*
+    import static com.pojosontheweb.taste.Cfg.*
 
-	config {
-
-		json true                               // we output json
+    config {
+        output {
+            json()                              // we output json
+        }
 
 		chrome {                                // we use chrome
-		
 			// GString inside !
 			driverPath  "${System.getProperty('user.home')}/chromedriver"
 		}
@@ -158,12 +178,82 @@ Here's a config example :
 
 	}
 
-Config is evaluated at startup time (when you launch the `taste` executable) from command-line options.
-You can also place a default `~/.taste/cfg.taste` in your user dir, it will then be used as the default
-one.
+The Config script is evaluated at startup time when you launch the `taste` executable with `-c` option.
 
-This file is actually a Groovy script, so you can do whatever you fancy in there in order to create your Taste config.
+> You can also place a default `~/.taste/cfg.taste` in your user dir, it will then be used as the default, unless another one is explicitly specified.
 
-### Command-line
+### Install the taste runner 
 
-See the instructions in INSTALL.md.
+Set the `TASTE_HOME` environment variable to the folder where
+you have expanded `taste` :
+
+    export TASTE_HOME=/path/to/taste
+
+You can also add `$TASTE_HOME/bin` to your PATH, or create a sym link to
+the `taste` script.
+
+### Command line reference
+
+The `taste` runner is launched from a command line like this :
+
+    $ taste [options] <file>
+    
+This runs the test/suite defined in `<file>` with passed options.
+
+<table>
+<tbody>
+<thead>
+<tr>
+    <th>
+        option
+    </th>
+    <th>
+        argument
+    </th>
+    <th>
+        allowed
+    </th>
+    <th>
+        &nbsp;
+    </th>
+</tr>
+</thead>
+<tr>
+    <td>-b,--browser</td>
+    <td>browser</td>
+    <td>firefox | chrome</td>
+    <td>The browser to be used</td>
+</tr>
+<tr>
+    <td>-c,--config</td>
+    <td>config_file</td>
+    <td>path to a valid .taste config</td>
+    <td>The config to be used</td>
+</tr>
+<tr>
+    <td>-cp,--classpath</td>
+    <td>classpath</td>
+    <td></td>
+    <td>
+        A semicolon-separated class/script path. If your tests/suites imports 
+        other classes, then you need to tell `taste` where to find them. Paths 
+        can point to jar files, or folders.
+    </td>
+</tr>
+<tr>
+    <td>-o,--output-format</td>
+    <td>output_format</td>
+    <td>text | html | json</td>
+    <td>The format of the output for the report. Defaults to text.</td>
+</tr>
+<tr>
+    <td>-v,--verbose</td>
+    <td>-</td>
+    <td>-</td>
+    <td>
+    Verbose mode : Taste will then output logs for everything it does.
+    </td>
+</tr>
+
+</tbody>
+</table>
