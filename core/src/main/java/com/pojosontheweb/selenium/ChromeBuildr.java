@@ -7,6 +7,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.io.File;
 import java.util.HashMap;
 
+/**
+ * WebDriver builder for Chrome.
+ */
 public class ChromeBuildr {
 
     private File driverPath;
@@ -32,6 +35,11 @@ public class ChromeBuildr {
         return new ChromeDriver(createChromeOptions(locales));
     }
 
+    /**
+     * Create chrome options from passes locales
+     * @param locales comma-separated locales
+     * @return chrome options
+     */
     public static ChromeOptions createChromeOptions(String locales) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("test-type");
@@ -43,11 +51,21 @@ public class ChromeBuildr {
         return options;
     }
 
+    /**
+     * Set the driver path (webdriver.chrome.driver sys property).
+     * @param driverPath the path to the driver
+     * @return the builder, for chained calls
+     */
     public ChromeBuildr setDriverPath(File driverPath) {
         this.driverPath = driverPath;
         return this;
     }
 
+    /**
+     * Set locales to be used
+     * @param locales a comma-separated list of locales
+     * @return the builder, for chained calls
+     */
     public ChromeBuildr setLocales(String locales) {
         this.locales = locales;
         return this;

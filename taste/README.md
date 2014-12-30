@@ -1,15 +1,14 @@
 # Taste: Selenium With Style
 
-`taste` is a toolkit for spicing up your Selenium Tests. It provides APIs for
-writing robust, concise and clear tests. It also includes a simple yet fully functional runner for executing tests/suites, and getting back test reports.
+Taste is a toolkit for spicing up your Selenium. It provides Groovy sugar over Findr for more  robust, concise and clear tests. It also includes a simple yet fully functional runner for executing tests/suites, and getting back test reports.
 
 ## Fluent, stylish APIs
 
-You need good APIs in order to write good tests. `taste` relies on Findr
+You need good APIs in order to write good tests. Taste relies on Findr
 in order to express readable DOM selectors and predicates, and make async stuff fully
 transparent.
 
-`taste` also provides additional constructs, like "dollar" functions
+Taste also provides additional constructs, like "dollar" functions
 (`$` and `$$`) and overloaded operators (`+` and `>>`), in order
 to make test writing as easy as it should be.
 
@@ -28,17 +27,19 @@ Here's a simple example using dollar functions, operators, and other niceties :
 		textContains('POJOs on the Web') >> eval()
 
 The `$` functions are inspired from JQuery : they are factories for Findr objects. You can add Predicates (or Closures) to the Findrs and compose them using `+`. Findr evaluation (or click or sendKeys) is done using the right shift `>>` operator.
-Additional instructions/constructs are also provided, so that writing `Findr` chains is 
-even easier.
+Additional instructions/constructs are also provided, so that writing Findr selectors and chains is even easier.
 
-Here below is an explanation of the main Taste functions. The full JavaDocs can be found here :
+Here below is an explanation of the main Taste functions. The full API docs are available there :
 
-http://jdp.rvkb.com/api/selenium-utils-groovy/index.html
+* [core Findr API](http://jdp.rvkb.com/api/selenium-utils-core/index.html) 
+* [Groovy extensions](http://jdp.rvkb.com/api/selenium-utils-groovy/index.html).
+
 
 ### $ 
 
-Function that creates a Findr instance with passed selector. Shortcut for `findr().elem(By.cssSelector(...))`. Use `$` when dealing with single elements.
+Creates a Findr instance with passed selector. Shortcut for `findr().elem(By.cssSelector(...))`. Use `$` when dealing with single elements.
 
+	Findr f = $('#foo')
     $('#foo').click()
     $('#foo').eval { WebElement e -> ... }
     $('#foo').where { WebElement e -> e.text == 'Hello' }
@@ -48,10 +49,10 @@ Function that creates a Findr instance with passed selector. Shortcut for `findr
 Counterpart of `$`, but returns a ListFindr, for list of elements. Shortcut for `findr().elemList(By.cssSelector(...))`. Use `$$` when dealing with selectors/conditions
 on multiple elements.
 
-Examples :
-
+	ListFindr lf = $$('.foo')
     $$('.bar).whereElemCount(5).eval()
     $$('.bar).at(3).where(Findrs.isDisplayed()).eval()
+    // you can use index-based [] notation too :
     $$('#foo .bar)[0].click()
     
 > The static predicates in `Findrs` can also be `static import`s for more compact style :
@@ -60,7 +61,7 @@ Examples :
 
 ### +
 
-Overloaded "plus" operator for adding ListFindrs and Predicates to Findrs. Shortcut for `Findr.elem`, `Findr.where`, or `ListFindr.where`, depending on what you add to what...
+Overloaded _plus_ operator for adding ListFindrs and Predicates to Findrs. Shortcut for `Findr.elem`, `Findr.where`, or `ListFindr.where`, depending on what you add to what...
 
     Findr f = $('#foo') + isDisplayed()
     Findr.ListFindr lf = $('#foo') + $$('.bar') + isDisplayed() 
@@ -68,13 +69,18 @@ Overloaded "plus" operator for adding ListFindrs and Predicates to Findrs. Short
 
 ### >>
 
-_Right shift_ operator : allows for more fluent `eval()`, `click()` and `sendKeys()`. Allows to bypass parenthesis and gives the whole chain and evaluation process a more natural look.
+_Right shift_ operator : allows for more readable `eval()`, `click()` and `sendKeys()`. Allows to bypass parenthesis and gives the whole chain and evaluation process a more natural look.
 
+	// dotted notation (invoke click() on Findr)
     $('#foo').click() 
+    // same as this :
     $('#foo') >> click()
+    
     $$('#foo .bar')[5] + Findrs.textEquals("clickme") >> click()
     $$('#foo .bar')[5] + { e -> e.text=='clickme' } >> click()
     $('#foo input.bar') >> sendKeys('This is some text')
+        
+    // you can pass a Closure to eval() as well
     $(...) + ... >> { WebElement e -> ... }
     ... + $$(...) >> { List<WebElement> elems -> ... }
 
@@ -92,10 +98,10 @@ The `whereElemCount` and `at` static funtions can also be used, along with `$$` 
 ## Test runner
 
 There are many test runners already available on the market. JUnit, TestNG... you name it.
-You can of course use Findr (as well as the Groovy enhancements like `$` methods) with these frameworks.
-Findr was even designed before `taste`, and was initially used in JUnit test suites...
+You can of course use Findr (as well as the Groovy enhancements) with these frameworks.
+Findr was initially used in JUnit test suites only.
 
-Nonetheless, if you start from scratch, or if you simply don't want to carry the burden of a heavyweight test framework, `taste` has its own runner. It makes it easy to organize tests, run them, and get test reports.
+Nonetheless, if you start from scratch, or if you simply don't want to carry the burden of a heavyweight test framework, Taste has its own runner. It makes it easy to organize tests, run them, and get test reports.
 
 ### Groovy everywhere
 
@@ -105,8 +111,7 @@ It's better to use a Groovy-capable IDE (like the excellent Jetbrains' IDEA), so
 
 ### Tests and Suites
 
-There's a DSL-like API for organizing your code into tests and suites. A `.taste` file can contain 
-a single test, or a suite (several tests grouped together).
+There's a DSL-like API for organizing your code into tests and suites. A `.taste` file can contain a single test, or a suite (several tests grouped together).
 
 Here's a test (`my-test.taste`):
 
@@ -144,8 +149,7 @@ Command line options are detailed below.
 
 `taste` runs can be parameterized via a config script. This allows to leave all environment
 details out of the tests, and to run the tests on different configurations (e.g. different browsers).
-The various `Findr` options
-(browser, video, verbosity, etc.) can be fine-tuned, depending on the context.
+The various `Findr` options (browser, video recording, verbosity, etc.) can be fine-tuned, depending on the context.
 
 Again, DSL-like functions are provided, by static importing `Cfg.*`.
 
@@ -182,7 +186,7 @@ Here's a config example :
 
 The Config script is evaluated at startup time when you launch the `taste` executable with `-c` option.
 
-> You can also place a default `~/.taste/cfg.taste` in your user dir, it will then be used as the default, unless another one is explicitly specified.
+> You can also place a `~/.taste/cfg.taste` config file in your user dir, it will be used as the default, unless another one is explicitly specified.
 
 ### Install the taste runner 
 

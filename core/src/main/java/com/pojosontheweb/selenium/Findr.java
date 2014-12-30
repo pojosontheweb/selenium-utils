@@ -21,7 +21,7 @@ public final class Findr {
     /** the default wait timeout */
     public static final int WAIT_TIMEOUT_SECONDS = 10; // secs
 
-    /** the sys prop name for enabling debugger in findr eval(s) */
+    /** the sys prop name for enabling logs in findr eval(s) */
     public static final String SYSPROP_VERBOSE = "webtests.findr.verbose";
 
     /** ref to the driver */

@@ -15,6 +15,9 @@ import java.util.List;
 import static org.monte.media.AudioFormatKeys.*;
 import static org.monte.media.VideoFormatKeys.*;
 
+/**
+ * Records the screen to a .mov file.
+ */
 public class ScreenRecordr {
 
     private ScreenRecorder screenRecorder = null;
