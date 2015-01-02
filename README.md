@@ -233,3 +233,7 @@ $> mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedrive
 The JavaDocs can be found here :
 
 http://jdp.rvkb.com/api/selenium-utils-core/index.html
+
+## Groovy
+
+For Groovy users, a set of extensions and additional stuff is available as a [separate module](groovy/README.md).
