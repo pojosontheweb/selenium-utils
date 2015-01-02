@@ -1,6 +1,6 @@
 # Taste: Selenium With Style
 
-Taste is a toolkit for spicing up your Selenium. It provides Groovy sugar over Findr for more  robust, concise and clear tests. It also includes a simple yet fully functional runner for executing tests/suites, and getting back test reports.
+Taste is a toolkit for spicing up your Selenium. It provides Groovy sugar over Findr for more robust, concise and clear tests. It also includes a simple yet fully functional runner for executing tests/suites, and getting back test reports.
 
 ## Fluent, stylish APIs
 

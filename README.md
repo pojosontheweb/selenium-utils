@@ -236,4 +236,5 @@ http://jdp.rvkb.com/api/selenium-utils-core/index.html
 
 ## Groovy
 
-For Groovy users, a set of extensions and additional stuff is available as a [separate module](groovy/README.md).
+For Groovy users, a set of extensions and additional stuff is available as a separate module. Have
+a look at [Taste](taste/README.md) for more infos.
