@@ -16,15 +16,10 @@ public class DriverBuildr {
     }
 
     /**
-     * Builds driver from sys properties.
+     * Builds driver from system properties.
      */
     public static class SysPropsBuildr {
 
-        /**
-         * The "webtests.browser" sys prop.
-         *
-         * @see com.pojosontheweb.selenium.Browsr for available values
-         */
         static final String PROP_WEBTESTS_BROWSER = "webtests.browser";
         static final String PROP_WEBTESTS_LOCALES = "webtests.locales";
         static final String PROP_WEBTESTS_HUB_URL = "webtests.hub.url";
@@ -86,6 +81,9 @@ public class DriverBuildr {
         return new FirefoxBuildr();
     }
 
+    /**
+     * Create and return a RemoteBuildr instance.
+     */
     public static RemoteBuildr remote() {
         return new RemoteBuildr();
     }

@@ -1,5 +1,8 @@
 package com.pojosontheweb.selenium;
 
+/**
+ * All system properties, "strong-typed".
+ */
 public class SysProps {
 
     public static class SPWebTests {
