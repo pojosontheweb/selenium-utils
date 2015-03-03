@@ -6,10 +6,9 @@
     <parent>
         <groupId>com.pojosontheweb</groupId>
         <artifactId>selenium-utils</artifactId>
-        <version>1.4</version>
+        <version>1.4.1</version>
     </parent>
     <artifactId>selenium-utils-groovy</artifactId>
-    <version>1.4</version>
     <packaging>jar</packaging>
     <name>selenium-utils/groovy</name>
     <dependencies>
