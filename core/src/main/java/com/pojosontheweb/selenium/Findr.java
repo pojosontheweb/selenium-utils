@@ -69,6 +69,22 @@ public final class Findr {
     }
 
     /**
+     * Return the web driver passed at construction time
+     * @return the web driver
+     */
+    public WebDriver getDriver() {
+        return driver;
+    }
+
+    /**
+     * Return the timeout for this findr in seconds
+     * @return the timeout in seconds
+     */
+    public int getTimeout() {
+        return waitTimeout;
+    }
+
+    /**
      * Helper for "nested" Findrs. Allows to use a <code>WebElement</code> as the
      * root of a new Findr.
      * @param driver The WebDriver
