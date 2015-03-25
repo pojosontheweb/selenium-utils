@@ -1,8 +1,6 @@
 package com.pojosontheweb.taste
 
-import com.pojosontheweb.selenium.Findr
 import com.pojosontheweb.selenium.Findrs
-import groovy.json.JsonBuilder
 
 import static com.pojosontheweb.selenium.Findr.logDebug
 import static com.pojosontheweb.selenium.SysProps.*
@@ -28,6 +26,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         cli.o(longOpt:'output-format', args:1, argName:'output_format', 'text|html|json')
         cli.h(longOpt:'help', 'print this message')
         cli.c(longOpt:'config', args:1, argName:'config_file', 'path to a taste config file')
+        cli.d(longOpt:'output-dir', args:1, argName:'output_dir', 'directory where the report(s) should be stored')
         cli.cp(longOpt:'classpath', args:1, argName:'paths', 'path(s) to search for scripts and classes (semicolon separated)')
 
         def invalidArgs = {
@@ -102,6 +101,14 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             ResultFormatter formatter = format.formatter
             logDebug("[Taste] will output $format")
 
+            // do we output to file ?
+            String outDir = options.d
+            if (outDir!='false') {
+                new File(outDir).mkdirs()
+            } else {
+                outDir = null
+            }
+
             // let's go
 
             String fileName = files[0]
@@ -124,21 +131,31 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             if (res instanceof Test) {
                 Test test = (Test) res
                 TestResult testResult = test.execute(cfg)
-                if (Findr.isDebugEnabled()) {
+                if (outDir) {
+                    String reportName = test.name + '.' + format.name()
+                    File report = new File(new File(outDir), reportName)
+                    logDebug("Writing test report to $report.absolutePath")
+                    report.withWriter { w ->
+                        formatter.format(cfg, scriptFile.absolutePath, testResult, w)
+                    }
+                } else {
                     out << "=Taste-Begin-Output=\n"
-                }
-                formatter.format(cfg, scriptFile.absolutePath, testResult, out)
-                if (Findr.isDebugEnabled()) {
+                    formatter.format(cfg, scriptFile.absolutePath, testResult, out)
                     out << "=Taste-End-Output=\n"
                 }
             } else if (res instanceof Suite) {
                 Suite suite = (Suite) res
                 SuiteResult suiteResult = suite.execute(cfg)
-                if (Findr.isDebugEnabled()) {
+                if (outDir) {
+                    String reportName = suite.name + '.' + format.name()
+                    File report = new File(new File(outDir), reportName)
+                    logDebug("Writing suite report to $report.absolutePath")
+                    report.withWriter { w ->
+                        formatter.format(cfg, scriptFile.absolutePath, suiteResult, w)
+                    }
+                } else {
                     out << "=Taste-Begin-Output=\n"
-                }
-                formatter.format(cfg, scriptFile.absolutePath, suiteResult, out)
-                if (Findr.isDebugEnabled()) {
+                    formatter.format(cfg, scriptFile.absolutePath, suiteResult, out)
                     out << "=Taste-End-Output=\n"
                 }
             } else {

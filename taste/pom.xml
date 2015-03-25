@@ -8,7 +8,7 @@
         <artifactId>selenium-utils</artifactId>
         <version>1.4</version>
     </parent>
-    <version>1.0-beta3</version>
+    <version>1.0-beta4</version>
     <artifactId>taste</artifactId>
     <packaging>jar</packaging>
     <name>selenium-utils/taste</name>
