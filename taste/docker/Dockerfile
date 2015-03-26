@@ -23,8 +23,8 @@ ADD /taste-1.0-beta4-bin.tar.gz /
 ENV TASTE_HOME /taste
 ENV PATH $PATH:$TASTE_HOME/bin
 
-ADD /run.sh /
-RUN chmod +x /run.sh
+ADD /run-taste.sh /
+RUN chmod +x /run-taste.sh
 
 RUN echo 'Taste is ready to rock !'
 
