@@ -40,5 +40,5 @@ RUN yum -y install firefox
 # TODO
 
 # startup xvfb
-CMD ["/usr/bin/Xvfb", ":99", "-screen", "0", "1024x768x24", "+extension", "RANDR"]
+# ENTRYPOINT ["/usr/bin/Xvfb", ":99", "-screen", "0", "1024x768x24", "+extension", "RANDR"]
 
