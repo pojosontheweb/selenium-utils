@@ -39,3 +39,6 @@ RUN yum -y install firefox
 # chrome
 # TODO
 
+# startup xvfb
+CMD ["/usr/bin/Xvfb", ":99", "-screen", "0", "1024x768x24", "+extension", "RANDR"]
+
