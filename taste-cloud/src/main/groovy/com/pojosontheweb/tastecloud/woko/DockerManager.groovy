@@ -1,24 +1,24 @@
 package com.pojosontheweb.tastecloud.woko
 
-import com.google.common.collect.ImmutableList
 import com.spotify.docker.client.DefaultDockerClient
 import com.spotify.docker.client.DockerClient
-import com.spotify.docker.client.LogMessage
 import com.spotify.docker.client.LogStream
 import com.spotify.docker.client.messages.ContainerConfig
 import com.spotify.docker.client.messages.ContainerCreation
-import com.spotify.docker.client.messages.ContainerInfo
 import com.spotify.docker.client.messages.HostConfig
+import woko.util.WLogger
 
 class DockerManager {
 
+    private static final WLogger logger = WLogger.getLogger(DockerManager.class)
+
     static final String KEY = 'DockerManager'
 
-    def startRun(File dataDir, Closure logHandler) {
+    def startRun(String dockerUrl, File dataDir, Closure logHandler) {
 
-        // Create a client based on DOCKER_HOST and DOCKER_CERT_PATH env vars
-//        final DockerClient docker = DefaultDockerClient.fromEnv().build()
-        final DockerClient docker = new DefaultDockerClient('http://10.211.55.16:2375/')
+        logger.info("Starting run, dockerUrl=$dockerUrl, dataDir=$dataDir")
+
+        final DockerClient docker = new DefaultDockerClient(dockerUrl)
 
         final String image = 'taste'
 
@@ -30,9 +30,10 @@ class DockerManager {
             ContainerConfig
                 .builder()
                 .image(image)
-//                .volumes('/mnt')
                 .cmd("sh", "-c", "while :; do sleep 1; done")
                 .build()
+
+        logger.info("Mounting : ${dataDir.absolutePath}:/mnt")
 
         final HostConfig hostConfig = HostConfig
             .builder()
@@ -42,48 +43,57 @@ class DockerManager {
         final ContainerCreation creation = docker.createContainer(config)
         final String id = creation.id();
 
+        logger.info("$id created")
+
         try {
 
             // Inspect container
-            final ContainerInfo info = docker.inspectContainer(id);
+//            final ContainerInfo info = docker.inspectContainer(id);
 
             // Start container
             docker.startContainer(id, hostConfig);
+
+            logger.info("$id started")
 
             // Exec command inside running container with attached STDOUT and STDERR
             String target = '/mnt/target'
             String cfg = '/mnt/cfg.taste'
             String tests = '/mnt/tests.taste'
-//            final String[] command = ["/run-taste.sh", "-d", target, "-c", cfg, tests]
-            final String[] command = ["ls", "-l", target, "/mnt", cfg, tests]
+            final String[] command = ["/run-taste.sh", "-d", target, "-c", cfg, tests]
             final String execId = docker.execCreate(
                 id,
                 command,
                 DockerClient.ExecParameter.STDOUT,
                 DockerClient.ExecParameter.STDERR);
             final LogStream output = docker.execStart(execId);
+            logger.info("$id exec $execId")
             try {
                 while (output.hasNext()) {
                     logHandler(output.next())
                 }
             } catch (Exception e) {
-                e.printStackTrace()
+                logger.error("Exception caught reading output. Will exit.", e)
             }
         } finally {
 
             // Kill container
+            logger.info("Cleaning up...")
             try {
                 docker.killContainer(id);
+                logger.info("$id killed")
             } catch (Exception e) {
-                e.printStackTrace()
+                logger.error("Exception caught killing $id", e)
             }
 
             // Remove container
             try {
                 docker.removeContainer(id);
+                logger.info("$id removed")
             } catch (Exception e) {
-                e.printStackTrace()
+                logger.error("Exception caught removing $id", e)
             }
+
+            logger.info("...done")
         }
     }
 

@@ -23,7 +23,48 @@
         <w:b3-form-group-css fieldName="taste" var="bCss"/>
         <div class="form-group ${bCss}">
           <label for="taste">Taste</label>
-          <s:textarea name="taste" rows="10" class="form-control"/>
+          <s:textarea name="taste" rows="10" class="form-control">/*
+
+          Taste Examples on google.com.
+
+          Basic Search/Images tests, written in two
+          different styles (plain findr or "dsl").
+
+          */
+
+          import com.google.common.base.Predicate
+          import org.openqa.selenium.By
+          import org.openqa.selenium.Keys
+          import org.openqa.selenium.WebElement
+
+          import static com.pojosontheweb.taste.Taste.*
+
+          suite('Google Tests') {
+
+          add test('search') {
+
+          webDriver.get 'http://www.google.com'
+
+          findr()
+          .elem(By.id('gbqfq'))
+          .sendKeys('pojos on the web')
+
+          findr()
+          .elem(By.cssSelector('button.gbqfb'))
+          .click()
+
+          findr()
+          .elem(By.id('search'))
+          .elemList(By.cssSelector('h3.r'))
+          .at(0)
+          .elem(By.tagName('a'))
+          .where(textContains('POJOs on the Web'))
+          .eval()
+
+          }
+
+          }
+</s:textarea>
         </div>
 
         <s:submit class="btn btn-primary" name="run" value="Run"/>

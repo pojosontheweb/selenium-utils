@@ -35,6 +35,7 @@
                 woko.actions
                 woko.hibernate
                 net.sourceforge.stripes.rpc
+                com.pojosontheweb.tastecloud.actions
             </param-value>
         </init-param>
          <init-param>
