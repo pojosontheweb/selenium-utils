@@ -1,4 +1,4 @@
-package com.pojosontheweb.taste-cloud.facets
+package com.pojosontheweb.tastecloud.facets
 
 import net.sourceforge.jfacets.annotations.FacetKey
 import woko.facets.BaseFacet

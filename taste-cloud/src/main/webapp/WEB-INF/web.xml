@@ -7,7 +7,7 @@
          version="2.4">
 
     <description>My woko app</description>
-    <display-name>taste-cloud</display-name>
+    <display-name>tastecloud</display-name>
 
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
@@ -26,6 +26,7 @@
             <param-name>ActionResolver.Packages</param-name>
             <param-value>
                 woko.actions
+                com.pojosontheweb.tastecloud.actions
             </param-value>
         </init-param>
         <init-param>
@@ -85,20 +86,22 @@
 
     <listener>
         <display-name>WokoInitListener</display-name>
-        <listener-class>com.pojosontheweb.taste-cloud.woko.Taste-cloudInitListener</listener-class>
+        <listener-class>com.pojosontheweb.tastecloud.woko.TasteCloudInitListener</listener-class>
     </listener>
 
     <context-param>
         <param-name>Woko.Hibernate.Packages</param-name>
         <param-value>
-            com.pojosontheweb.taste-cloud.model
+            com.pojosontheweb.tastecloud.model
             woko.ext.usermanagement.hibernate
         </param-value>
     </context-param>
 
     <context-param>
         <param-name>Woko.Facet.Packages</param-name>
-        <param-value>com.pojosontheweb.taste-cloud.facets woko.ext.usermanagement.facets</param-value>
+        <param-value>
+            com.pojosontheweb.tastecloud.facets
+        </param-value>
     </context-param>
 
 </web-app>
