@@ -176,7 +176,7 @@ config {
 
                 // retrieve the results from target dir and
                 // copy to webapp disk
-                File resultsDir = new File(webappDir.absolutePath + File.separator + 'results' + File.separator + runId)
+                File resultsDir = resultsDir(webappDir, runId)
                 if (!resultsDir.exists()) {
                     resultsDir.mkdirs()
                 }
@@ -196,5 +196,9 @@ config {
             logger.info("$runId : done")
         }
 
+    }
+
+    static File resultsDir(File webappDir, String runId) {
+        new File(webappDir.absolutePath + File.separator + 'results' + File.separator + runId)
     }
 }
