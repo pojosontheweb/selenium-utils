@@ -15,7 +15,7 @@ class RenderLinksRunGuest extends RenderLinksImpl implements RenderLinks {
         def all = new ArrayList(super.getLinks())
         Run r = (Run)facetContext.targetObject
         if (r.finishedOn) {
-            all << new Link(LinkUtil.getUrl(woko, facetContext.targetObject, 'results'), 'Results')
+            all.add(0, new Link(LinkUtil.getUrl(woko, facetContext.targetObject, 'results'), 'Results'))
         }
         return all
     }

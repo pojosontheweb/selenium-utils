@@ -10,6 +10,9 @@ class NavBarGuest extends NavBarAll implements NavBar {
 
     @Override
     List<Link> getLinks() {
-        [new Link('/list/Run', 'all runs')]
+        [
+            new Link('/run', 'new run'),
+            new Link('/list/Run', 'all runs')
+        ]
     }
 }
