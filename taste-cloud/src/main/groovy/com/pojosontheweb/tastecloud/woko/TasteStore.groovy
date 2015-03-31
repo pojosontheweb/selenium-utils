@@ -3,9 +3,10 @@ package com.pojosontheweb.tastecloud.woko
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.model.Run
 import woko.hbcompass.HibernateCompassStore
+import woko.hibernate.HibernateStore
 import woko.persistence.TransactionCallbackWithResult
 
-class TasteStore extends HibernateCompassStore {
+class TasteStore extends HibernateStore {
 
     TasteStore(List<String> packageNames) {
         super(packageNames)

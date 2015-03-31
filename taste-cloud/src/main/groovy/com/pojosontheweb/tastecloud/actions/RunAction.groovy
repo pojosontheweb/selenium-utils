@@ -116,6 +116,7 @@ class RunJob extends JobBase {
                 log run, 'Run started...'
                 run.startedOn = new Date()
                 store.save run
+                store.session.flush()
                 run.taste
             }
 
