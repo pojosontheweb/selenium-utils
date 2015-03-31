@@ -6,11 +6,35 @@
 
 <w:facet facetName="<%=WokoFacets.layout%>" />
 <s:layout-render name="${layout.layoutPath}" layout="${layout}" pageTitle="New run">
+
+  <s:layout-component name="customJs">
+
+    <link rel="stylesheet" type="text/css" href="http://eclipse.org/orion/editor/releases/current/built-editor.css"/>
+    <script src="http://eclipse.org/orion/editor/releases/current/built-editor.min.js"></script>
+    <script>
+      require(["orion/editor/edit"], function(edit) {
+        var editor = edit({className: "editor"})[0];
+        $('#runForm').submit(function() {
+          $('#tasteText').val(editor.getText());
+        });
+
+        editor.setText($('#tasteText').val());
+      });
+    </script>
+
+    <style type="text/css">
+      .editor .textview {
+        min-height: 400px;
+      }
+    </style>
+
+  </s:layout-component>
+
   <s:layout-component name="body">
 
     <div class="container">
 
-      <s:form beanclass="<%=RunAction.class%>">
+      <s:form beanclass="<%=RunAction.class%>" id="runForm">
 
         <w:b3-form-group-css fieldName="browsr" var="bCss"/>
         <div class="form-group ${bCss}">
@@ -23,49 +47,54 @@
         <w:b3-form-group-css fieldName="taste" var="bCss"/>
         <div class="form-group ${bCss}">
           <label for="taste">Taste</label>
-          <s:textarea name="taste" rows="10" class="form-control">/*
 
-          Taste Examples on google.com.
+          <pre class="editor" data-editor-lang="js" data-editor-show-annotation-ruler="false"
+                     data-editor-show-overview-ruler="false" data-editor-show-folding-ruler="false">
+          </pre>
 
-          Basic Search/Images tests, written in two
-          different styles (plain findr or "dsl").
+          <s:textarea name="taste" id="tasteText" style="display:none;">/*
 
-          */
+Taste Examples on google.com.
 
-          import com.google.common.base.Predicate
-          import org.openqa.selenium.By
-          import org.openqa.selenium.Keys
-          import org.openqa.selenium.WebElement
+Basic Search/Images tests, written in two
+different styles (plain findr or "dsl").
 
-          import static com.pojosontheweb.taste.Taste.*
+*/
 
-          suite('Google Tests') {
+import com.google.common.base.Predicate
+import org.openqa.selenium.By
+import org.openqa.selenium.Keys
+import org.openqa.selenium.WebElement
 
-          add test('search') {
+import static com.pojosontheweb.taste.Taste.*
 
-          webDriver.get 'http://www.google.com'
+suite('Google Tests') {
 
-          findr()
-          .elem(By.id('gbqfq'))
-          .sendKeys('pojos on the web')
+  add test('search') {
 
-          findr()
-          .elem(By.cssSelector('button.gbqfb'))
-          .click()
+    webDriver.get 'http://www.google.com'
 
-          findr()
-          .elem(By.id('search'))
-          .elemList(By.cssSelector('h3.r'))
-          .at(0)
-          .elem(By.tagName('a'))
-          .where(textContains('POJOs on the Web'))
-          .eval()
+    findr()
+      .elem(By.id('gbqfq'))
+      .sendKeys('pojos on the web')
 
-          }
+    findr()
+      .elem(By.cssSelector('button.gbqfb'))
+      .click()
 
-          }
-</s:textarea>
-        </div>
+    findr()
+      .elem(By.id('search'))
+      .elemList(By.cssSelector('h3.r'))
+      .at(0)
+      .elem(By.tagName('a'))
+      .where(textContains('POJOs on the Web'))
+      .eval()
+
+  }
+
+}</s:textarea>
+
+          </div>
 
         <s:submit class="btn btn-primary" name="run" value="Run"/>
       </s:form>

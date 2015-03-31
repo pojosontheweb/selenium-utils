@@ -47,6 +47,7 @@ class RunAction extends BaseActionBean {
             taste: taste
         )
         store.save(run)
+        store.session.flush()
 
         // start the job in bg...
         Config config = store.config
