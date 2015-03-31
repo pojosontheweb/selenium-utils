@@ -1,6 +1,6 @@
 package com.pojosontheweb.tastecloud.facets.guest
 
-import com.pojosontheweb.tastecloud.actions.RunJob
+import com.pojosontheweb.tastecloud.model.RunJob
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.woko.TasteStore
 import net.sourceforge.jfacets.annotations.FacetKey

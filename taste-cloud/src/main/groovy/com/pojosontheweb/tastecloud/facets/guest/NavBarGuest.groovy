@@ -11,8 +11,9 @@ class NavBarGuest extends NavBarAll implements NavBar {
     @Override
     List<Link> getLinks() {
         [
-            new Link('/run', 'new run'),
-            new Link('/list/Run', 'all runs')
+            new Link('/edit/Taste?createTransient=true', 'new'),
+            new Link('/list/Taste', 'tastes'),
+            new Link('/list/Run', 'runs')
         ]
     }
 }

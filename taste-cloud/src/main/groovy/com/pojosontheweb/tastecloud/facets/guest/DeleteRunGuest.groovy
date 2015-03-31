@@ -1,8 +1,9 @@
 package com.pojosontheweb.tastecloud.facets.guest
 
-import com.pojosontheweb.tastecloud.actions.RunJob
+import com.pojosontheweb.tastecloud.model.RunJob
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.woko.TasteStore
+import net.sourceforge.jfacets.IInstanceFacet
 import net.sourceforge.jfacets.annotations.FacetKey
 import com.pojosontheweb.tastecloud.model.Run
 import net.sourceforge.stripes.action.ActionBeanContext
@@ -11,7 +12,7 @@ import woko.facets.builtin.developer.DeleteImpl
 import woko.facets.builtin.Delete
 
 @FacetKey(name="delete", profileId="guest", targetObjectType=Run.class)
-class DeleteRunGuest extends DeleteImpl implements Delete {
+class DeleteRunGuest extends DeleteImpl implements Delete, IInstanceFacet {
 
     @Override
     protected void doDelete(ActionBeanContext abc) {
@@ -22,5 +23,11 @@ class DeleteRunGuest extends DeleteImpl implements Delete {
         File resultsDir = RunJob.resultsDir(new File(c.webappDir), r.id)
         FileUtils.deleteDirectory(resultsDir)
         super.doDelete(abc)
+    }
+
+    @Override
+    boolean matchesTargetObject(Object targetObject) {
+        Run r = (Run)facetContext.targetObject
+        r.startedOn && r.finishedOn
     }
 }

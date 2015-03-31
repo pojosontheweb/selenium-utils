@@ -1,65 +1,19 @@
-package com.pojosontheweb.tastecloud.actions
+package com.pojosontheweb.tastecloud.model
 
-import com.pojosontheweb.selenium.Browsr
-import com.pojosontheweb.tastecloud.model.Config
-import com.pojosontheweb.tastecloud.model.Run
 import com.pojosontheweb.tastecloud.woko.DockerManager
 import com.pojosontheweb.tastecloud.woko.TasteStore
 import com.spotify.docker.client.LogMessage
-import net.sourceforge.stripes.action.DefaultHandler
-import net.sourceforge.stripes.action.DontValidate
-import net.sourceforge.stripes.action.ForwardResolution
-import net.sourceforge.stripes.action.Resolution
-import net.sourceforge.stripes.action.UrlBinding
-import net.sourceforge.stripes.validation.Validate
 import org.apache.commons.io.FileUtils
 import woko.Woko
-import woko.actions.BaseActionBean
 import woko.async.JobBase
 import woko.async.JobListener
-import woko.async.JobManager
-import woko.persistence.TransactionCallbackWithResult
 import woko.util.WLogger
 
 import java.nio.ByteBuffer
 
-@UrlBinding('/run')
-class RunAction extends BaseActionBean {
-
-    @Validate(required = true)
-    Browsr browsr
-
-    @Validate(required = true)
-    String taste
-
-    @DefaultHandler
-    @DontValidate
-    Resolution display() {
-        new ForwardResolution('/WEB-INF/jsp/run.jsp')
-    }
-
-    Resolution run() {
-        // store the run
-        TasteStore store = (TasteStore)woko.objectStore
-        Run run = new Run(
-            id: UUID.randomUUID().toString(),
-            browsr: browsr,
-            taste: taste
-        )
-        store.save(run)
-        store.session.flush()
-
-        // start the job in bg...
-        Config config = store.config
-        JobManager jobManager = woko.ioc.getComponent(JobManager.KEY)
-        jobManager.submit(new RunJob(woko, run.id, new File(config.webappDir), config.dockerUrl, new File(config.dockerDir)), [])
-
-        // redirect to run view
-        woko.resolutions().redirect('view', run)
-    }
-
-}
-
+/**
+ * Created by vankeisb on 31/03/15.
+ */
 class RunJob extends JobBase {
 
     private static final WLogger logger = WLogger.getLogger(RunJob.class)
@@ -79,7 +33,7 @@ class RunJob extends JobBase {
     }
 
     private def withRun(Closure c) {
-        TasteStore store = (TasteStore)woko.objectStore
+        TasteStore store = (TasteStore) woko.objectStore
         store.inTx {
             Run run = store.getRun(runId)
             c(store, run)
@@ -166,7 +120,8 @@ config {
 
                 // store logs
                 // TODO buffer : for now it's heavy db stress for nothing !
-                File dockerFullDir = new File(dockerDir, runId) // new File('/media/psf/projects/selenium-utils/taste/docker/sample')
+                File dockerFullDir = new File(dockerDir, runId)
+                // new File('/media/psf/projects/selenium-utils/taste/docker/sample')
                 dm.startRun(dockerUrl, dockerFullDir) { LogMessage lm ->
                     withRun { TasteStore s, Run run ->
                         String msg = logToString lm

@@ -20,12 +20,6 @@
         <p>
           Run your taste scripts remotely
         </p>
-        <p>
-          <a class="btn btn-primary btn-lg"
-             href="${cp}/run">
-            Create simple taste
-          </a>
-        </p>
       </div>
 
     </div>
