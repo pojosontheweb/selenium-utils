@@ -3,6 +3,7 @@ package com.pojosontheweb.tastecloud.model
 import com.pojosontheweb.tastecloud.woko.DockerManager
 import com.pojosontheweb.tastecloud.woko.TasteStore
 import com.spotify.docker.client.LogMessage
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
 import woko.Woko
@@ -177,6 +178,8 @@ config {
 
     private Test reportToTest(report) {
         new Test(
+            success: report.success,
+            retVal: report.retVal ? new JsonBuilder(report.retVal).toString() : null,
             name: report.testName,
             startedOn: parseDate(report.startedOn),
             finishedOn: parseDate(report.finishedOn),
@@ -196,8 +199,8 @@ config {
         )
     }
 
-    private Date parseDate(String dateStr) {
-        dateStr ? ISO8601DateParser.parse(dateStr) : null
+    private Date parseDate(dateStr) {
+        dateStr ? ISO8601DateParser.parse((String)dateStr) : null
     }
 
     static File resultsDir(File webappDir, String runId) {

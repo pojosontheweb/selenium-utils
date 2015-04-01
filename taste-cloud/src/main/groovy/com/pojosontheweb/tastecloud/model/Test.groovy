@@ -20,6 +20,9 @@ class Test {
     Date finishedOn
 
     @Column(columnDefinition = "text")
+    String retVal
+
+    @Column(columnDefinition = "text")
     String err
 
     @Column(columnDefinition = "text")
@@ -31,6 +34,5 @@ class Test {
         }
         return (finishedOn.time - startedOn.time) / 1000
     }
-
 
 }

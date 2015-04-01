@@ -1,0 +1,22 @@
+.stack-wrapper {
+    padding-top: 16px;
+    width: 100%;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 0.8em;
+}
+.stack-line {
+    white-space: pre;
+}
+
+.stack-line.hl {
+    font-weight: bold;
+    background-color: #fffcd3;
+}
+
+.err-line {
+    padding-left: 6px;
+}
+
+.err-links {
+    margin-top: 8px;
+}

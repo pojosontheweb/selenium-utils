@@ -21,4 +21,11 @@ class MyLayout extends LayoutBootstrap3 {
     String getLayoutPath() {
         '/WEB-INF/jsp/layout.jsp'
     }
+
+    @Override
+    List<String> getCssIncludes() {
+        def all = new ArrayList(super.getCssIncludes())
+        all << '/css/taste.css'
+        return all
+    }
 }

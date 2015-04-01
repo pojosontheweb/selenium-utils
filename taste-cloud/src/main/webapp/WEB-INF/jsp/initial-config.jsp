@@ -4,7 +4,8 @@
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
 
 <w:facet facetName="<%=WokoFacets.layout%>"/>
-<s:layout-render name="${layout.layoutPath}" layout="${layout}" pageTitle="Initial configuration">
+<s:layout-render name="${layout.layoutPath}" layout="${layout}"
+                 pageTitle="Initial configuration" skipLoginLink="true">
   <s:layout-component name="body">
 
     <div class="container">

@@ -1,5 +1,7 @@
 package com.pojosontheweb.tastecloud.facets.guest
 
+import com.pojosontheweb.tastecloud.model.Config
+import com.pojosontheweb.tastecloud.woko.TasteStore
 import net.sourceforge.jfacets.annotations.FacetKey
 import woko.facets.builtin.all.Link
 import woko.facets.builtin.all.NavBarAll
@@ -10,10 +12,16 @@ class NavBarGuest extends NavBarAll implements NavBar {
 
     @Override
     List<Link> getLinks() {
-        [
-            new Link('/edit/Taste?createTransient=true', 'new'),
-            new Link('/list/Taste', 'tastes'),
-            new Link('/list/Run', 'runs')
-        ]
+        TasteStore store = (TasteStore)woko.objectStore
+        Config c = store.config
+        def res = []
+        if (c) {
+            res << new Link('/edit/Taste?createTransient=true', 'new')
+            res << new Link('/list/Taste', 'tastes')
+            res << new Link('/list/Run', 'runs')
+            String cUrl = woko.facetUrl('view', c)
+            res << new Link(cUrl, 'config')
+        }
+        return res
     }
 }

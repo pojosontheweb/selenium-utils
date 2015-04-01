@@ -8,6 +8,7 @@ import net.sourceforge.stripes.action.ForwardResolution
 import net.sourceforge.stripes.action.RedirectResolution
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.UrlBinding
+import net.sourceforge.stripes.validation.Validate
 import net.sourceforge.stripes.validation.ValidateNestedProperties
 import woko.actions.BaseActionBean
 
@@ -15,7 +16,11 @@ import woko.actions.BaseActionBean
 @UrlBinding("/initial-config")
 class InitialConfigAction extends BaseActionBean {
 
-    @ValidateNestedProperties([])
+    @ValidateNestedProperties([
+        @Validate(field = 'webappDir', required = true),
+        @Validate(field = 'dockerDir', required = true),
+        @Validate(field = 'dockerUrl', required = true)
+    ])
     Config config
 
     @DontValidate
