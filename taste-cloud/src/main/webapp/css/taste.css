@@ -20,3 +20,23 @@
 .err-links {
     margin-top: 8px;
 }
+
+.logs-wrapper {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 0.8em;
+}
+
+.logs-wrapper td {
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+}
+
+.logs-wrapper td.date {
+    white-space: nowrap;
+    padding-right: 8px;
+}
+
+.logs-wrapper td.text {
+    white-space: pre;
+}

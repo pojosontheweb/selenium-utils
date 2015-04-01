@@ -3,10 +3,9 @@ package com.pojosontheweb.tastecloud.facets.guest
 import net.sourceforge.jfacets.annotations.FacetKey
 import com.pojosontheweb.tastecloud.model.Suite
 import woko.facets.builtin.all.RenderPropertyValueImpl
-import woko.facets.builtin.RenderPropertyValue
 
 @FacetKey(name="renderPropertyValue", profileId="guest", targetObjectType=Suite.class)
-class RenderPropertyValueSuiteGuest extends RenderPropertyValueImpl implements RenderPropertyValue {
+class RenderPropertyValueSuiteGuest extends RenderPropertyValueImpl {
 
     @Override
     String getPath() {

@@ -8,6 +8,10 @@ import woko.facets.builtin.RenderProperties
 @FacetKey(name="renderProperties", profileId="guest", targetObjectType=Run.class)
 class RenderPropertiesRunGuest extends RenderPropertiesImpl implements RenderProperties {
 
+    RenderPropertiesRunGuest() {
+        useFlatLayout = true
+    }
+
     @Override
     List<String> getPropertyNames() {
         ['browsr', 'startedOn', 'finishedOn', 'result', 'logs', 'taste']

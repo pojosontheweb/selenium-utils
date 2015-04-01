@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.OneToMany
 import javax.persistence.OneToOne
+import javax.persistence.OrderBy
 import javax.persistence.Table
 import javax.validation.constraints.NotNull
 
@@ -28,11 +29,12 @@ class Run {
     Browsr browsr
 
     @NotNull
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = 'text')
     String taste
 
-    @Column(columnDefinition = "text")
-    String logs
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+    @OrderBy("logDate ASC")
+    List<Log> logs
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     Suite suite
@@ -44,4 +46,23 @@ class Run {
         return suite ?: test
     }
 
+    Log addLog(String text) {
+        logs = logs ?: []
+        Log l = new Log(logDate: new Date(), text: text)
+        logs << l
+        return l
+    }
+
+}
+
+@Entity
+class Log {
+
+    @Id @GeneratedValue
+    Long id
+
+    Date logDate
+
+    @Column(columnDefinition = 'text')
+    String text
 }
