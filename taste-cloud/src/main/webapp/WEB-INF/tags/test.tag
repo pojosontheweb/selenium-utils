@@ -5,6 +5,7 @@
 <%@ attribute name="test" required="true" type="com.pojosontheweb.tastecloud.model.Test" %>
 <%@ attribute name="run" required="true" type="com.pojosontheweb.tastecloud.model.Run" %>
 <div class="test">
+    <h3>
 <%
     boolean success = test.getSuccess()!=null && test.getSuccess();
 %>
@@ -17,7 +18,7 @@
                     <i class="glyphicon glyphicon-time"> </i>
                     <%=test.getElapsed()%> s
                 </span>
-
+    </h3>
 <% if (!success) { %>
 <%
     String err = test.getErr();

@@ -13,7 +13,6 @@ h1 {
     padding-top: 16px;
     width: 100%;
     font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-    font-size: 0.8em;
 }
 .stack-line {
     white-space: pre;
@@ -82,5 +81,9 @@ img.browsr {
 .row.summary {
     text-align: center;
     font-size: 16pt;
+}
+
+.results.table td {
+    border: none;
 }
 

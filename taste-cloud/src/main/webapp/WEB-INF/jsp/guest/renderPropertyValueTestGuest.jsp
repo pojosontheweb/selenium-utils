@@ -9,11 +9,12 @@
     Test test = (Test)renderPropertyValue.getPropertyValue();
     Run run = (Run)renderPropertyValue.getOwningObject();
 %>
-<h2>Test Result</h2>
-<table class="results table table-bordered">
+<table class="results table">
     <tr>
         <td style="white-space: nowrap;">
-            <w:title object="<%=test%>"/>
+            <h2>
+                <w:title object="<%=test%>"/>
+            </h2>
         </td>
         <td>
             <taste:test test="<%=test%>" run="<%=run%>"/>
