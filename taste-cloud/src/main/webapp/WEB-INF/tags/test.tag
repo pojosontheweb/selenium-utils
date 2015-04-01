@@ -30,14 +30,15 @@
                 </span>
 <% } %>
 <div class="err-links">
-    <a href="#" class="btn btn-default stack">
+    <a href="#" class="btn-stack">
         Stack
     </a>
+    |
     <%
         String videoPath = "/results/Run/" + run.getId() + "?facet.file="
                 + URLEncoder.encode(test.getName(), "utf-8") + ".mov&download=true";
     %>
-    <a class="btn btn-default" href="${cp}<%=videoPath%>">
+    <a class="" href="${cp}<%=videoPath%>">
         Video
     </a>
 </div>
@@ -71,7 +72,7 @@
 %>
 <script type="text/javascript">
     $(function() {
-        $('.stack').click(function(e) {
+        $('.btn-stack').click(function(e) {
             var p = $(this).parent().parent();
             p.find('.stack-wrapper').slideToggle();
             e.preventDefault();

@@ -26,7 +26,7 @@ class Run {
     Date finishedOn
 
     @NotNull
-    Browsr browsr
+    Browsr browsr = Browsr.Firefox
 
     @NotNull
     @Column(columnDefinition = 'text')

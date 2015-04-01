@@ -9,6 +9,6 @@ class ListTasteGuest extends ListTabularImpl {
 
     @Override
     List<String> getPropertyNames() {
-        ['id', 'name', 'browsr']
+        ['id', 'name']
     }
 }

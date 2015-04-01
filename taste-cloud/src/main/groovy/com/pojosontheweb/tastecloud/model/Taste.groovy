@@ -17,9 +17,6 @@ class Taste {
     String name
 
     @NotNull
-    Browsr browsr = Browsr.Firefox
-
-    @NotNull
     @Column(columnDefinition = "text")
     String taste
 

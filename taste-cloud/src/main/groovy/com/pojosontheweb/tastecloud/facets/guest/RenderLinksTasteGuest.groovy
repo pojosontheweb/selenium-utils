@@ -13,7 +13,7 @@ class RenderLinksTasteGuest extends RenderLinksImpl implements RenderLinks {
     @Override
     List<Link> getLinks() {
         def all = new ArrayList(super.getLinks())
-        all.add(0, new Link(LinkUtil.getUrl(woko, facetContext.targetObject, 'run'), 'Run'))
+        all.add(0, new Link('#', 'Run (TODO)'))
         return all
     }
 

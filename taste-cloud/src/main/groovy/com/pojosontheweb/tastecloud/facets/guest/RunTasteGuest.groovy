@@ -1,5 +1,6 @@
 package com.pojosontheweb.tastecloud.facets.guest
 
+import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.model.Run
 import com.pojosontheweb.tastecloud.model.RunJob
@@ -8,11 +9,15 @@ import net.sourceforge.jfacets.annotations.FacetKey
 import com.pojosontheweb.tastecloud.model.Taste
 import net.sourceforge.stripes.action.ActionBeanContext
 import net.sourceforge.stripes.action.Resolution
+import net.sourceforge.stripes.validation.Validate
 import woko.async.JobManager
 import woko.facets.BaseResolutionFacet
 
 @FacetKey(name="run", profileId="guest", targetObjectType=Taste.class)
 class RunTasteGuest extends BaseResolutionFacet {
+
+    @Validate(required = true)
+    Browsr browsr
 
     @Override
     Resolution getResolution(ActionBeanContext abc) {
@@ -22,8 +27,9 @@ class RunTasteGuest extends BaseResolutionFacet {
         TasteStore store = (TasteStore)woko.objectStore
         Run run = new Run(
             id: UUID.randomUUID().toString(),
-            browsr: t.browsr,
-            taste: t.taste
+            browsr: browsr,
+            taste: t.taste,
+            startedOn: new Date()
         )
         store.save(run)
         store.session.flush()

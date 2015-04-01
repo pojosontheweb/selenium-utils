@@ -10,6 +10,6 @@ class RenderPropertiesEditTasteGuest extends RenderPropertiesEditImpl implements
 
     @Override
     List<String> getPropertyNames() {
-        ['name', 'browsr', 'taste']
+        ['name', 'taste']
     }
 }
