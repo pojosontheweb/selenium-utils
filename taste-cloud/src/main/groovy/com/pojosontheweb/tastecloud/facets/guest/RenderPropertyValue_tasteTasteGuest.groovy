@@ -7,4 +7,8 @@ import com.pojosontheweb.tastecloud.model.Taste
 @FacetKey(name="renderPropertyValue_taste", profileId="guest", targetObjectType=Taste.class)
 class RenderPropertyValue_tasteTasteGuest extends RenderPropertyValuePre{
 
+    @Override
+    String getCssClass() {
+        'prettyprint'
+    }
 }

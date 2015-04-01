@@ -8,4 +8,8 @@ class RenderPropertyValuePre extends RenderPropertyValueImpl {
     String getPath() {
         '/WEB-INF/jsp/renderPropertyValuePre.jsp'
     }
+
+    String getCssClass() {
+        ""
+    }
 }
