@@ -1,3 +1,14 @@
+.page-header {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
 .stack-wrapper {
     padding-top: 16px;
     width: 100%;
@@ -40,3 +51,36 @@
 .logs-wrapper td.text {
     white-space: pre;
 }
+
+pre.taste-script.prettyprint {
+    font-family: "Consolas", "Monaco", "Vera Mono", monospace;
+    border: none;
+    background: none;
+    font-size: 10pt;
+    line-height: normal;
+}
+
+pre.editor {
+    background: none;
+    margin: 0;
+    padding: 0;
+    min-height: 600px;
+}
+
+pre.editor .textview {
+    min-height: 600px;
+}
+
+img.browsr {
+    width: 60px;
+}
+
+.table.Run img.browsr, .table.Taste img.browsr {
+    width: 20px;
+}
+
+.row.summary {
+    text-align: center;
+    font-size: 16pt;
+}
+

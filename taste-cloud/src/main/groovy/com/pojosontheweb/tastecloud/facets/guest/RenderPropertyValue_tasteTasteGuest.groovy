@@ -1,14 +1,14 @@
 package com.pojosontheweb.tastecloud.facets.guest
 
-import com.pojosontheweb.tastecloud.facets.RenderPropertyValuePre
 import net.sourceforge.jfacets.annotations.FacetKey
 import com.pojosontheweb.tastecloud.model.Taste
+import woko.facets.builtin.all.RenderPropertyValueImpl
 
 @FacetKey(name="renderPropertyValue_taste", profileId="guest", targetObjectType=Taste.class)
-class RenderPropertyValue_tasteTasteGuest extends RenderPropertyValuePre{
+class RenderPropertyValue_tasteTasteGuest extends RenderPropertyValueImpl {
 
     @Override
-    String getCssClass() {
-        'prettyprint'
+    String getPath() {
+        '/WEB-INF/jsp/guest/renderPropertyValueTasteTasteGuest.jsp'
     }
 }

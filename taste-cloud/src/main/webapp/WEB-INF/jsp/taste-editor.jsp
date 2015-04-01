@@ -7,8 +7,6 @@
       data-editor-show-annotation-ruler="false"
       data-editor-show-overview-ruler="false"
       data-editor-show-folding-ruler="false"></pre>
-<link rel="stylesheet" type="text/css" href="http://eclipse.org/orion/editor/releases/current/built-editor.css"/>
-<script src="http://eclipse.org/orion/editor/releases/current/built-editor.min.js"></script>
 <script type="text/taste" id="initTaste">/*
 
 Taste Examples on google.com.
@@ -138,10 +136,3 @@ suite('Google Tests') {
     </c:choose>
   });
 </script>
-
-<style type="text/css">
-  .editor .textview {
-    min-height: 400px;
-  }
-</style>
-

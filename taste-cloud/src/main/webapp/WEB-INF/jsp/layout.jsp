@@ -69,6 +69,9 @@
     <c:forEach items="${layout.jsIncludes}" var="jsLink">
       <script type="text/javascript" src="${cp}${jsLink}?${cacheTokenParams}"></script>
     </c:forEach>
+    <link rel="stylesheet" type="text/css" href="http://eclipse.org/orion/editor/releases/current/built-editor.css"/>
+    <script src="http://eclipse.org/orion/editor/releases/current/built-editor.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 
       <%-- Set the locale to the datepicker --%>
     <% Locale l = request.getLocale(); %>
@@ -94,7 +97,7 @@
   <body>
 
   <div class="navbar navbar-inverse navbar-static-top" role="navigation">
-    <div class="container">
+    <div class="container-fluid">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
           <span class="sr-only">Toggle navigation</span>
@@ -152,8 +155,6 @@
       <%--</div>--%>
     <%--</div>--%>
   <%--</div>--%>
-
-  <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 
   </body>
   </html>

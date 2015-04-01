@@ -14,6 +14,9 @@ class Taste {
     String id
 
     @NotNull
+    String name
+
+    @NotNull
     Browsr browsr = Browsr.Firefox
 
     @NotNull

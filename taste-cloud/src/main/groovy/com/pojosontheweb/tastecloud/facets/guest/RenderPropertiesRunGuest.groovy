@@ -14,6 +14,6 @@ class RenderPropertiesRunGuest extends RenderPropertiesImpl implements RenderPro
 
     @Override
     List<String> getPropertyNames() {
-        ['browsr', 'startedOn', 'finishedOn', 'result', 'logs', 'taste']
+        ['summary', 'result', 'logs', 'taste']
     }
 }

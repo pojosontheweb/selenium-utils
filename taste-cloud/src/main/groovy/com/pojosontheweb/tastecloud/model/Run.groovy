@@ -53,6 +53,16 @@ class Run {
         return l
     }
 
+    RunSummary getSummary() {
+        new RunSummary(browsr: browsr, startedOn: startedOn, finishedOn: finishedOn)
+    }
+
+}
+
+class RunSummary {
+    Browsr browsr
+    Date startedOn
+    Date finishedOn
 }
 
 @Entity

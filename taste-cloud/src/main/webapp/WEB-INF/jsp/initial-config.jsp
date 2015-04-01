@@ -8,7 +8,7 @@
                  pageTitle="Initial configuration" skipLoginLink="true">
   <s:layout-component name="body">
 
-    <div class="container">
+    <div class="container-fluid">
 
       <h1>Initial configuration</h1>
 

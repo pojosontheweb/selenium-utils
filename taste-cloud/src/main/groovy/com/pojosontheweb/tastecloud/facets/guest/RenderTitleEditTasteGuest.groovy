@@ -10,7 +10,15 @@ class RenderTitleEditTasteGuest extends RenderTitleEditImpl implements RenderTit
 
     @Override
     String getTitle() {
-        Taste t = (Taste)facetContext.targetObject
-        t.id ?: 'New'
+        isNew ? 'New Taste' : super.getTitle()
+    }
+
+    boolean getIsNew() {
+        facetContext.targetObject.id==null
+    }
+
+    @Override
+    String getPath() {
+        '/WEB-INF/jsp/guest/renderTitleTasteEditGuest.jsp'
     }
 }
