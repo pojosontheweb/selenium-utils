@@ -2,6 +2,6 @@
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
 <c:set var="v" value="${renderPropertyValue.propertyValue}"/>
 <c:if test="${v!=null && v!=''}">
-    <pre><c:out value="${renderPropertyValue.propertyValue}"/></pre>
+    <pre class="prettyprint"><c:out value="${renderPropertyValue.propertyValue}"/></pre>
 </c:if>
 

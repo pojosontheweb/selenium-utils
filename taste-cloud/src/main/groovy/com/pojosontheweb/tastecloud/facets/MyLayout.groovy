@@ -17,4 +17,8 @@ class MyLayout extends LayoutBootstrap3 {
         return "taste-cloud"
     }
 
+    @Override
+    String getLayoutPath() {
+        '/WEB-INF/jsp/layout.jsp'
+    }
 }
