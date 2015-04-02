@@ -11,6 +11,6 @@ class ListRunGuest extends ListTabularImpl implements ListObjects {
 
     @Override
     List<String> getPropertyNames() {
-        ['id', 'browsr', 'startedOn', 'finishedOn']
+        ['id', 'browsr', 'startedOn', 'finishedOn','resultSummary']
     }
 }

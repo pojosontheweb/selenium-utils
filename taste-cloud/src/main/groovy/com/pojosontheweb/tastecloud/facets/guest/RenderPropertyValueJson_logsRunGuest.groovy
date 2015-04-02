@@ -16,7 +16,7 @@ class RenderPropertyValueJson_logsRunGuest extends RenderPropertyValueJsonCollec
     Object propertyToJson(HttpServletRequest request, Object propertyValue) {
         List<Log> logs = (List<Log>)propertyValue ?: []
         int nbLogs = logs.size()
-        int limit = 50
+        int limit = 25
         if (logs.size()>limit) {
             logs = logs[nbLogs-limit..nbLogs-1]
         }

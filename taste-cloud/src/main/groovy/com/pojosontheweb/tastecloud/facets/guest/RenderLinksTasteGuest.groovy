@@ -13,7 +13,15 @@ class RenderLinksTasteGuest extends RenderLinksImpl implements RenderLinks {
     @Override
     List<Link> getLinks() {
         def all = new ArrayList(super.getLinks())
-        all.add(0, new Link('#', 'Run (TODO)'))
+        Taste t = (Taste)facetContext.targetObject
+        all.add(
+            0,
+            new Link('#', 'Run')
+                .addAttribute('data-toggle', 'modal')
+                .addAttribute('data-target', '#runModal')
+                .addAttribute('data-taste-id', woko.objectStore.getKey(t))
+                .addAttribute('data-taste-name', t.name)
+        )
         return all
     }
 

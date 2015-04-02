@@ -21,7 +21,7 @@ class RenderPropertyValue_logsRunGuest extends RenderPropertyValueImpl {
     }
 
     int getLimit() {
-        50
+        25
     }
 
     @Override

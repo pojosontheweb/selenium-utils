@@ -57,6 +57,22 @@ class Run {
         new RunSummary(browsr: browsr, startedOn: startedOn, finishedOn: finishedOn)
     }
 
+    ResultSummary getResultSummary() {
+        ResultSummary s = new ResultSummary(finished: finishedOn!=null)
+        if (s.finished) {
+            if (test) {
+                test.success ? s.nbSuccess++ : s.nbFailed++
+                s.elapsed = test.elapsed
+            } else if (suite) {
+                for (Test t : suite.testResults) {
+                    t.success ? s.nbSuccess++ : s.nbFailed++
+                }
+                s.elapsed = suite.elapsed
+            }
+        }
+        return s
+    }
+
 }
 
 class RunSummary {
@@ -64,6 +80,14 @@ class RunSummary {
     Date startedOn
     Date finishedOn
 }
+
+class ResultSummary {
+    boolean finished
+    int nbSuccess = 0
+    int nbFailed = 0
+    int elapsed = 0
+}
+
 
 @Entity
 class Log {

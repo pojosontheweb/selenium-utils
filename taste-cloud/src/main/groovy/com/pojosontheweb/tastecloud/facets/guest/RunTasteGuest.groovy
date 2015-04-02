@@ -8,7 +8,10 @@ import com.pojosontheweb.tastecloud.woko.TasteStore
 import net.sourceforge.jfacets.annotations.FacetKey
 import com.pojosontheweb.tastecloud.model.Taste
 import net.sourceforge.stripes.action.ActionBeanContext
+import net.sourceforge.stripes.action.DontValidate
+import net.sourceforge.stripes.action.ForwardResolution
 import net.sourceforge.stripes.action.Resolution
+import net.sourceforge.stripes.action.SimpleMessage
 import net.sourceforge.stripes.validation.Validate
 import woko.async.JobManager
 import woko.facets.BaseResolutionFacet
@@ -38,6 +41,8 @@ class RunTasteGuest extends BaseResolutionFacet {
         Config config = store.config
         JobManager jobManager = woko.ioc.getComponent(JobManager.KEY)
         jobManager.submit(new RunJob(woko, run.id, new File(config.webappDir), config.dockerUrl, new File(config.dockerDir)), [])
+
+        abc.messages.add(new SimpleMessage('Run started. Page will reload when run finishes.'))
 
         // redirect to run view
         woko.resolutions().redirect('view', run)

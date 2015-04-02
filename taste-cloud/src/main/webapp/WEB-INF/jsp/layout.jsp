@@ -18,6 +18,7 @@
 
 <%@ page import="java.util.Locale" %>
 <%@ page import="woko.facets.builtin.WokoFacets" %>
+<%@ page import="com.pojosontheweb.selenium.Browsr" %>
 
 <w:username var="username"/>
 <c:set var="cp" value="${pageContext.request.contextPath}" scope="request"/>
@@ -142,19 +143,63 @@
     <%-- body --%>
   <s:layout-component name="body"/>
 
-    <%-- footer --%>
-  <%--<div class="navbar navbar-fixed-bottom" id="footer">--%>
-    <%--<div class="container">--%>
-      <%--<div class="pull-right" id="woko-powered-by-wrapper">--%>
-                    <%--<span>--%>
-                        <%--Powered by--%>
-                    <%--</span>--%>
-        <%--<a href="http://www.pojosontheweb.com">--%>
-          <%--<img src="${cp}/woko/woko-logo-small.png?${cacheTokenParams}" alt="logo"/>--%>
-        <%--</a>--%>
-      <%--</div>--%>
-    <%--</div>--%>
-  <%--</div>--%>
+  <div class="modal run" id="runModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Run <span class="name"></span></h4>
+        </div>
+        <div class="modal-body">
+          <p>Select a browser and submit</p>
+
+          <select class="image-picker show-html show-labels">
+            <option value=""></option>
+            <%
+              for (Browsr b : Browsr.values()) {
+            %>
+            <option selected data-img-src="${cp}/img/<%=b.name()%>.png" value="<%=b.name()%>"><%=b.name()%></option>
+            <%
+              }
+            %>
+          </select>
+
+        </div>
+        <div class="modal-footer">
+          <form action="" method="POST">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary">Go</button>
+          </form>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+
+  <script type="text/javascript">
+    $(function () {
+      $('#runModal').on('shown.bs.modal', function (e) {
+        var select = $("#runModal select");
+        select.imagepicker({
+//          show_label: true
+        });
+        var button = $(e.relatedTarget);
+        $('#runModal .name').text(button.data('taste-name'));
+        var tasteId = button.data('taste-id');
+
+        var setRunAction = function() {
+          var runUrl = '${cp}/run/Taste/' + tasteId + "?facet.browsr=" + select.val();
+          $('#runModal .modal-footer form').attr('action', runUrl);
+        };
+        select.change(setRunAction)
+
+        setRunAction();
+      });
+    });
+  </script>
 
   </body>
   </html>

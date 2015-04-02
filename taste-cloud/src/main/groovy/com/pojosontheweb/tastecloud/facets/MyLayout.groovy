@@ -26,6 +26,15 @@ class MyLayout extends LayoutBootstrap3 {
     List<String> getCssIncludes() {
         def all = new ArrayList(super.getCssIncludes())
         all << '/css/taste.css'
+        all << '/image-picker/image-picker.css'
         return all
     }
+
+    @Override
+    List<String> getJsIncludes() {
+        def all = new ArrayList(super.getJsIncludes())
+        all << '/image-picker/image-picker.min.js'
+        return all
+    }
+
 }

@@ -11,4 +11,6 @@ class ListTasteGuest extends ListTabularImpl {
     List<String> getPropertyNames() {
         ['id', 'name']
     }
+
+
 }

@@ -87,3 +87,7 @@ img.browsr {
     border: none;
 }
 
+.run.modal .name {
+    font-style: italic;
+}
+
