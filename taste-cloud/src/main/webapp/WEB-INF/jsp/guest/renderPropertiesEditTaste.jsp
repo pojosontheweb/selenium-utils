@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
 <c:set var="taste" value="${renderPropertiesEdit.facetContext.targetObject}"/>
-<s:form action="/save/Taste" class="form-horizontal">
+<s:form action="/save/Taste" class="form-horizontal" id="saveTaste">
 
   <c:choose>
     <c:when test="${taste.id==null}">
@@ -41,7 +41,7 @@
 <script>
   require(["orion/editor/edit"], function(edit) {
     var editor = edit({className: "editor"})[0];
-    $('.w-edit.Taste form').submit(function() {
+    $('#saveTaste').submit(function() {
       $('#tasteText').val(editor.getText());
     });
 
