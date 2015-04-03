@@ -201,6 +201,12 @@
     });
   </script>
 
+  <link href="${cp}/video-js/video-js.min.css" rel="stylesheet">
+  <script src="${cp}/video-js/video.js"></script>
+  <script>
+    videojs.options.flash.swf = "${cp}/video-js/video-js.swf"
+  </script>
+
   </body>
   </html>
 </s:layout-definition>

@@ -33,14 +33,26 @@
     <a href="#" class="btn-stack">
         Stack
     </a>
-    |
     <%
         String videoPath = "/results/Run/" + run.getId() + "?facet.file="
                 + URLEncoder.encode(test.getName(), "utf-8") + ".mov&download=true";
     %>
+    Video :
     <a class="" href="${cp}<%=videoPath%>">
-        Video
+        Download
     </a>
+    |
+    <a class="" href="#">
+        View
+    </a>
+
+    <video id="example_video_1" class="video-js vjs-default-skin"
+           controls preload="auto" width="640" height="264"
+           data-setup='{"example_option":true}'>
+        <source src="${cp}<%=videoPath%>" type='video/quicktime' />
+        <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+    </video>
+
 </div>
 <div class="stack-wrapper" style="display: none;">
     <%
