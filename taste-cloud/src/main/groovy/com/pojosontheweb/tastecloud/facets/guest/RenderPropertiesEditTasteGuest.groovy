@@ -9,7 +9,7 @@ import woko.facets.builtin.RenderProperties
 class RenderPropertiesEditTasteGuest extends RenderPropertiesEditImpl implements RenderProperties {
 
     @Override
-    List<String> getPropertyNames() {
-        ['name', 'taste']
+    String getPath() {
+        '/WEB-INF/jsp/guest/renderPropertiesEditTaste.jsp'
     }
 }

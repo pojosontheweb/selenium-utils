@@ -11,7 +11,7 @@
 <s:layout-render name="${layout.layoutPath}" layout="${layout}" pageTitle="${pageTitle}">
   <s:layout-component name="body">
 
-    <div class="container">
+    <div class="container-fluid">
 
       <div class="jumbotron">
         <h1>
