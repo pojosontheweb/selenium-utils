@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-mkdir ../target/docker
-cp Dockerfile ../target/docker
-cp run-taste.sh ../target/docker
-cp ../target/taste-1.0-beta4-bin.tar.gz ../target/docker
-sudo docker build -t taste ../target/docker
+TARGET=../target
+DOCKER_TARGET=$TARGET/docker
+mkdir $DOCKER_TARGET
+cp Dockerfile $DOCKER_TARGET
+cp $TARGET/taste-cloud.war .$DOCKER_TARGET
+sudo docker build -t taste-cloud $DOCKER_TARGET

@@ -1,42 +1,23 @@
-FROM centos:centos7
+FROM centos
+MAINTAINER VANKEISB@fr.ibm.com
 
-ENV JAVA_VERSION 7u75
-ENV BUILD_VERSION b13
+RUN yum -y install vim wget tar unzip
 
-# Upgrading system
+RUN wget http://i2a-icct1.parislab.fr.ibm.com/VTT/bundles/JDK/linux/jdk-7u76-fcs-bin-b13-linux-x64-18_dec_2014.zip
+RUN mkdir -p /opt/oracle-jdk7;cd /opt/oracle-jdk7;unzip /jdk-7u76-fcs-bin-b13-linux-x64-18_dec_2014.zip
+RUN cd /opt/oracle-jdk7; mv jdk7_76/jdk1.7.0_76/* .; rm -rf jdk7_76
 
-RUN yum -y upgrade
-RUN yum -y install wget
+ENV JAVA_HOME /opt/oracle-jdk7
 
-# Downloading Java
+RUN wget http://www.interior-dsgn.com/apache/tomcat/tomcat-8/v8.0.20/bin/apache-tomcat-8.0.20.tar.gz
+RUN tar zxf apache-tomcat-8.0.20.tar.gz
 
-RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/$JAVA_VERSION-$BUILD_VERSION/jdk-$JAVA_VERSION-linux-x64.rpm" -O /tmp/jdk-linux-x64.rpm
-RUN yum -y install /tmp/jdk-linux-x64.rpm
-RUN alternatives --install /usr/bin/java jar /usr/java/latest/bin/java 200000
-RUN alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/javaws 200000
-RUN alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
-ENV JAVA_HOME /usr/java/latest
+RUN rm apache-tomcat-8.0.20.tar.gz
+RUN rm jdk-7u76-fcs-bin-b13-linux-x64-18_dec_2014.zip
 
-# xvfb
+RUN rm -rf /apache-tomcat-8.0.20/webapps/*
+ADD taste-cloud.war /apache-tomcat-8.0.20/webapps/ROOT.war
 
-RUN yum -y install xorg-x11-server-Xvfb libXtst
-ENV DISPLAY :99
-ENV LD_LIBRARY_PATH=/usr/lib64/
-
-# firefox
-
-RUN yum -y install firefox
-
-# chrome
-# TODO
-
-# Taste
-
-ADD /taste-1.0-beta4-bin.tar.gz /
-ENV TASTE_HOME /taste
-ENV PATH $PATH:$TASTE_HOME/bin
-
-ADD /run-taste.sh /
-RUN chmod +x /run-taste.sh
-
+EXPOSE 8080
+ENTRYPOINT /apache-tomcat-8.0.20/bin/catalina.sh run
 
