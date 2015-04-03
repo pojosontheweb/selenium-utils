@@ -1,4 +1,4 @@
-FROM itdocker01r.parislab.fr.ibm.com:5000/centos-ibmjdk7
+FROM centos-ibmjdk7
 
 MAINTAINER VANKEISB@fr.ibm.com
 
