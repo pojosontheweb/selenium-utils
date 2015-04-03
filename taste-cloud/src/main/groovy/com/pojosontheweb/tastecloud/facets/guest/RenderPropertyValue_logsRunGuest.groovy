@@ -13,10 +13,14 @@ class RenderPropertyValue_logsRunGuest extends RenderPropertyValueImpl {
     @Override
     String getPath() {
         Run r = (Run)facetContext.targetObject
-        if (r.finishedOn) {
-            '/WEB-INF/jsp/guest/renderPropertyValueRunLogs_finished.jsp'
+        if (r.startedOn) {
+            if (r.finishedOn) {
+                '/WEB-INF/jsp/guest/renderPropertyValueRunLogs_finished.jsp'
+            } else {
+                '/WEB-INF/jsp/guest/renderPropertyValueRunLogs_running.jsp'
+            }
         } else {
-            '/WEB-INF/jsp/guest/renderPropertyValueRunLogs_running.jsp'
+            '/WEB-INF/jsp/guest/renderPropertyValueRunLogs_queued.jsp'
         }
     }
 

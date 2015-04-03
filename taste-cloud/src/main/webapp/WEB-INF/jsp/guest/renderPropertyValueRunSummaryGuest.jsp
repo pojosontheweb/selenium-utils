@@ -10,39 +10,70 @@
     RunSummary summary = (RunSummary)renderPropertyValue.getPropertyValue();
 %>
 <div class="row summary">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <h3>Browser</h3>
         <div class="well">
             <img class="browsr" alt="browser" src="${cp}/img/<%=summary.getBrowsr().name()%>.png"/>
         </div>
     </div>
-    <div class="col-sm-4">
-        <h3>Started on</h3>
+    <div class="col-sm-3">
+        <h3>Queued</h3>
         <div class="well">
-            <fmt:formatDate value="<%=summary.getStartedOn()%>" type="date" dateStyle="short"/>
+            <fmt:formatDate value="<%=summary.getQueuedOn()%>" type="date" dateStyle="short"/>
             <br/>
-            <fmt:formatDate value="<%=summary.getStartedOn()%>" type="time" dateStyle="full"/>
+            <fmt:formatDate value="<%=summary.getQueuedOn()%>" type="time" dateStyle="full"/>
         </div>
     </div>
-    <div class="col-sm-4">
-        <h3>Finished on</h3>
+    <div class="col-sm-3">
+        <h3>Started</h3>
         <%
-            Date finishedOn = run.getFinishedOn();
-            if (finishedOn==null) {
+            Date startedOn = summary.getStartedOn();
+            if (startedOn==null) {
         %>
-        <div class="well">
-            Run in progress
-            <br/>
-            <img src="${cp}/img/ajax-loader.gif" alt="loader"/>
-        </div>
+                <div class="well">
+                    Waiting
+                    <br/>
+                    <img src="${cp}/img/ajax-loader.gif" alt="loader"/>
+                </div>
         <%
             } else {
         %>
-            <div class="well">
-                <fmt:formatDate value="<%=finishedOn%>" type="date" dateStyle="short"/>
-                <br/>
-                <fmt:formatDate value="<%=finishedOn%>" type="time" dateStyle="full"/>
-            </div>
+                <div class="well">
+                    <fmt:formatDate value="<%=summary.getStartedOn()%>" type="date" dateStyle="short"/>
+                    <br/>
+                    <fmt:formatDate value="<%=summary.getStartedOn()%>" type="time" dateStyle="full"/>
+                </div>
+        <%
+            }
+        %>
+    </div>
+    <div class="col-sm-3">
+        <h3>Finished</h3>
+        <%
+            Date finishedOn = run.getFinishedOn();
+            if (finishedOn==null) {
+                if (startedOn==null) {
+        %>
+                    <div class="well">
+                        -
+                    </div>
+        <%
+                } else {
+        %>
+                    <div class="well">
+                        Running
+                        <br/>
+                        <img src="${cp}/img/ajax-loader.gif" alt="loader"/>
+                    </div>
+        <%
+                }
+            } else {
+        %>
+                <div class="well">
+                    <fmt:formatDate value="<%=finishedOn%>" type="date" dateStyle="short"/>
+                    <br/>
+                    <fmt:formatDate value="<%=finishedOn%>" type="time" dateStyle="full"/>
+                </div>
         <%
             }
         %>

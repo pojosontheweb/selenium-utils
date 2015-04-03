@@ -13,10 +13,10 @@
 <script type="text/javascript">
     $(function() {
         var poll = function() {
-            setTimeout(function() {
+            var timeout = setTimeout(function() {
                 wokoClient.loadObject('Run', '${runId}', {
                     onSuccess: function(run) {
-                        if (run.finishedOn) {
+                        if (run.summary.finishedOn) {
                             window.location.reload();
                         } else {
                             // update the logs
@@ -39,6 +39,7 @@
                                         )
                                 )
                             });
+                            clearTimeout(timeout);
 
                             poll();
                         }

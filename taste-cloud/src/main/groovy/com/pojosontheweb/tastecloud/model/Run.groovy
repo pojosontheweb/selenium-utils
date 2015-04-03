@@ -21,6 +21,9 @@ class Run {
     @Id
     String id
 
+    @NotNull
+    Date queuedOn
+
     Date startedOn
 
     Date finishedOn
@@ -54,7 +57,12 @@ class Run {
     }
 
     RunSummary getSummary() {
-        new RunSummary(browsr: browsr, startedOn: startedOn, finishedOn: finishedOn)
+        new RunSummary(
+            browsr: browsr,
+            queuedOn: queuedOn,
+            startedOn: startedOn,
+            finishedOn: finishedOn
+        )
     }
 
     ResultSummary getResultSummary() {
@@ -77,6 +85,7 @@ class Run {
 
 class RunSummary {
     Browsr browsr
+    Date queuedOn
     Date startedOn
     Date finishedOn
 }

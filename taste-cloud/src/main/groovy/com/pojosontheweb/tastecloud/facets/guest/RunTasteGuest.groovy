@@ -29,7 +29,6 @@ class RunTasteGuest extends BaseResolutionFacet {
 
         // store the run
         Run run = createAndSubmitRun(woko, browsr, t.taste)
-        abc.messages.add(new SimpleMessage('Run started. Page will reload when run finishes.'))
 
         // redirect to run view
         woko.resolutions().redirect('view', run)
@@ -40,7 +39,7 @@ class RunTasteGuest extends BaseResolutionFacet {
             id: UUID.randomUUID().toString(),
             browsr: b,
             taste: taste,
-            startedOn: new Date()
+            queuedOn: new Date()
         )
         TasteStore store = (TasteStore)woko.objectStore
         store.save(run)
