@@ -1,6 +1,6 @@
 FROM centos-ibmjdk7
 
-MAINTAINER VANKEISB@fr.ibm.com
+MAINTAINER remi@rvkb.com
 
 RUN yum -y install vim wget tar unzip
 
