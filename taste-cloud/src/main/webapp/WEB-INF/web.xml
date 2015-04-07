@@ -85,6 +85,12 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- leaving this here for cleanup -->
+    <listener>
+        <display-name>WokoInitListener</display-name>
+        <listener-class>com.pojosontheweb.tastecloud.woko.TasteCloudInitListener</listener-class>
+    </listener>
+
     <!-- leaving this here for Woko push -->
     <context-param>
         <param-name>Woko.Facet.Packages</param-name>
