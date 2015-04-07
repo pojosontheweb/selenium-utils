@@ -1,11 +1,7 @@
-<%@ page import="woko.facets.builtin.WokoFacets" %>
-<%@ page import="com.pojosontheweb.tastecloud.actions.InitialConfigAction" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.pojosontheweb.tastecloud.actions.InitialConfigAction" %>
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
-
-<w:facet facetName="<%=WokoFacets.layout%>"/>
-<s:layout-render name="${layout.layoutPath}" layout="${layout}"
-                 pageTitle="Initial configuration" skipLoginLink="true">
+<s:layout-render name="/WEB-INF/jsp/layout-initial-config.jsp">
   <s:layout-component name="body">
 
     <div class="container-fluid">
