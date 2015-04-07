@@ -14,13 +14,13 @@ class DockerManager {
 
     static final String KEY = 'DockerManager'
 
-    def startRun(String dockerUrl, File dataDir, Closure logHandler) {
+    def startRun(String imageName, String dockerUrl, File dataDir, Closure logHandler) {
 
         logger.info("Starting run, dockerUrl=$dockerUrl, dataDir=$dataDir")
 
         final DockerClient docker = new DefaultDockerClient(dockerUrl)
 
-        final String image = 'taste'
+        final String image = imageName
 
         // Pull image
 //        docker.pull(image)

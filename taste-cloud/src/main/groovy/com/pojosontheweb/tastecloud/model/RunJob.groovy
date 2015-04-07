@@ -26,13 +26,15 @@ class RunJob extends JobBase {
     private final File webappDir
     private final File dockerDir
     private final String dockerUrl
+    private final String imageName
 
-    RunJob(Woko woko, String runId, File webappDir, String dockerUrl, File dockerDir) {
+    RunJob(Woko woko, String runId, File webappDir, String dockerUrl, File dockerDir, String imageName) {
         this.woko = woko
         this.runId = runId
         this.webappDir = webappDir
         this.dockerUrl = dockerUrl
         this.dockerDir = dockerDir
+        this.imageName = imageName
     }
 
     private def withRun(Closure c) {
@@ -117,7 +119,7 @@ config {
                 // TODO buffer : for now it's heavy db stress for nothing !
                 File dockerFullDir = new File(dockerDir, runId)
                 // new File('/media/psf/projects/selenium-utils/taste/docker/sample')
-                dm.startRun(dockerUrl, dockerFullDir) { LogMessage lm ->
+                dm.startRun(imageName, dockerUrl, dockerFullDir) { LogMessage lm ->
                     withRun { TasteStore s, Run run ->
                         String msg = logToString lm
                         String trimmed = msg?.trim()
@@ -128,6 +130,8 @@ config {
                         }
                     }
                 }
+                // TODO handle docker exception(s)
+                // e.g. com.spotify.docker.client.ImageNotFoundException
 
                 // retrieve the results from target dir and
                 // copy to webapp disk

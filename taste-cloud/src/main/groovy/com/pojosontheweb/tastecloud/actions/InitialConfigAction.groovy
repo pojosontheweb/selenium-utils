@@ -42,19 +42,33 @@ class InitialConfigAction extends BaseActionBean {
     }
 
     Resolution configure() {
-        Woko woko = createWoko()
+        String s = config.webappDir + File.separator + 'db' + File.separator + 'taste'
+        File dbPath = new File(s)
+        dbPath.mkdirs()
+        Woko woko = createWoko(dbPath)
         context.servletContext.setAttribute('woko', woko)
         TasteStore store = (TasteStore)woko.objectStore
         store.inTx {
-            store.save(config)
+            def existingCfg = store.config
+            if (existingCfg) {
+                existingCfg.webappDir = config.webappDir
+                existingCfg.dockerDir = config.dockerDir
+                existingCfg.dockerUrl = config.dockerUrl
+                existingCfg.imageName = config.imageName
+                store.save(existingCfg)
+            } else {
+                store.save(config)
+            }
         }
-        ConfigInterceptor.setConfigured(context.servletContext)
         context.messages.add(new SimpleMessage('Application configured and ready to rock.'))
         new RedirectResolution("/")
     }
 
-    private Woko createWoko() {
-        def store = new TasteStore(['com.pojosontheweb.tastecloud.model', 'woko.ext.usermanagement.hibernate'])
+    private Woko createWoko(File dbPath) {
+        def store = new TasteStore(
+            ['com.pojosontheweb.tastecloud.model', 'woko.ext.usermanagement.hibernate'],
+            dbPath
+        )
         def facetDescriptorManager = new PushFacetDescriptorManager(
             new AnnotatedFacetDescriptorManager(
                 ['com.pojosontheweb.tastecloud.facets', 'facets', 'woko.facets.builtin']

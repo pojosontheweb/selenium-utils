@@ -194,17 +194,11 @@
           var runUrl = '${cp}/run/Taste/' + tasteId + "?facet.browsr=" + select.val();
           $('#runModal .modal-footer form').attr('action', runUrl);
         };
-        select.change(setRunAction)
+        select.change(setRunAction);
 
         setRunAction();
       });
     });
-  </script>
-
-  <link href="${cp}/video-js/video-js.min.css" rel="stylesheet">
-  <script src="${cp}/video-js/video.js"></script>
-  <script>
-    videojs.options.flash.swf = "${cp}/video-js/video-js.swf"
   </script>
 
   </body>

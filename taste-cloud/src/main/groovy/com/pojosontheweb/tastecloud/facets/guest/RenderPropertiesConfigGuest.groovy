@@ -10,6 +10,6 @@ class RenderPropertiesConfigGuest extends RenderPropertiesImpl implements Render
 
     @Override
     List<String> getPropertyNames() {
-        ['webappDir', 'dockerUrl', 'dockerDir']
+        ['imageName', 'webappDir', 'dockerUrl', 'dockerDir']
     }
 }

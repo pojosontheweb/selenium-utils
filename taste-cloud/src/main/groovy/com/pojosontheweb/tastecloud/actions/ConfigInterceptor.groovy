@@ -6,6 +6,7 @@ import net.sourceforge.stripes.controller.ExecutionContext
 import net.sourceforge.stripes.controller.Interceptor
 import net.sourceforge.stripes.controller.Intercepts
 import net.sourceforge.stripes.controller.LifecycleStage
+import woko.Woko
 
 import javax.servlet.ServletContext
 
@@ -13,11 +14,7 @@ import javax.servlet.ServletContext
 class ConfigInterceptor implements Interceptor {
 
     static Boolean isConfigured(ServletContext ctx) {
-        ctx.getAttribute('_taste_configured')
-    }
-
-    static void setConfigured(ServletContext ctx) {
-        ctx.setAttribute('_taste_configured', true)
+        return Woko.getWoko(ctx)!=null
     }
 
     @Override

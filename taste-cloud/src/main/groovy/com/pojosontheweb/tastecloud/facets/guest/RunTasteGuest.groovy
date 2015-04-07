@@ -48,7 +48,14 @@ class RunTasteGuest extends BaseResolutionFacet {
         // start the job in bg...
         Config config = store.config
         JobManager jobManager = woko.ioc.getComponent(JobManager.KEY)
-        jobManager.submit(new RunJob(woko, run.id, new File(config.webappDir), config.dockerUrl, new File(config.dockerDir)), [])
+        jobManager.submit(
+            new RunJob(
+                woko,
+                run.id,
+                new File(config.webappDir),
+                config.dockerUrl, new File(config.dockerDir),
+                config.imageName
+            ), [])
 
         return run
     }

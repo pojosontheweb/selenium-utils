@@ -9,6 +9,6 @@ class RenderPropertiesEditConfigGuest extends RenderPropertiesEditImpl {
 
     @Override
     List<String> getPropertyNames() {
-        ['webappDir', 'dockerUrl', 'dockerDir']
+        ['imageName', 'webappDir', 'dockerUrl', 'dockerDir']
     }
 }

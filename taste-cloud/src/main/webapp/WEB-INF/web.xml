@@ -85,5 +85,13 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- leaving this here for Woko push -->
+    <context-param>
+        <param-name>Woko.Facet.Packages</param-name>
+        <param-value>
+            com.pojosontheweb.tastecloud.facets
+        </param-value>
+    </context-param>
+
 
 </web-app>

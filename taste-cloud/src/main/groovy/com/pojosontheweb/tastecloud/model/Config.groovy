@@ -12,6 +12,9 @@ class Config {
     Long id
 
     @NotNull
+    String imageName
+
+    @NotNull
     String webappDir
 
     @NotNull

@@ -14,7 +14,7 @@
             setTimeout(function() {
                 wokoClient.loadObject('Run', '${runId}', {
                     onSuccess: function(run) {
-                        if (run.summary.startedOn) {
+                        if (run.summary && run.summary.startedOn) {
                             window.location.reload();
                         } else {
                             poll();
