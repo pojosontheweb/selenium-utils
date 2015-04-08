@@ -56,7 +56,7 @@ public class GoogleRawTest {
                     .elem(By.id("lst-ib"))
                     .sendKeys("pojos on the web");
             new Findr(driver)
-                    .elemList(By.cssSelector("button.lsb"))
+                    .elemList(By.className("lsb"))
                     .where(Findrs.attrEquals("value", "Search"))
                     .whereElemCount(1)
                     .at(0)
