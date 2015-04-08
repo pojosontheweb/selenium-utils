@@ -15,11 +15,36 @@
 
       <div class="jumbotron">
         <h1>
-          Taste Cloud
+          Taste
+          <small>
+            Selenium with Style
+          </small>
         </h1>
         <p>
-          Run your taste scripts remotely
+          Taste is a toolkit that makes Selenium easy etc etc.
         </p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Findr</h2>
+          <p>
+            Taste uses Findr in order to provide robust, efficient and simple tests.
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h2>Docker</h2>
+          <p>
+            Taste cloud is Docker-based, and allows to run your tests in parallel,
+            in various browsers.
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h2>Reporting</h2>
+          <p>
+            Monitor your tests over time.
+          </p>
+        </div>
       </div>
 
     </div>
