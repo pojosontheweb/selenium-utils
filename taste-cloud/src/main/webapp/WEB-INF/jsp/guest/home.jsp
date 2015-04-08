@@ -21,28 +21,35 @@
           </small>
         </h1>
         <p>
-          Taste is a toolkit that makes Selenium easy etc etc.
+          Taste is a toolkit that helps writing and running robust, efficient, and
+          simple Selenium tests.
         </p>
       </div>
 
       <div class="row">
         <div class="col-md-4">
-          <h2>Findr</h2>
+          <h2>Neat APIs</h2>
           <p>
-            Taste uses Findr in order to provide robust, efficient and simple tests.
+            Taste relies on <a href="http://pojosontheweb.com#findr">Findr</a>
+            and a few Groovy DSLs in order to provide fluent, easy to use, yet
+            powerful APIs. It allows for async-friendly, reusable and compact
+            test code.
           </p>
         </div>
         <div class="col-md-4">
-          <h2>Docker</h2>
+          <h2>Cloud-ready</h2>
           <p>
-            Taste cloud is Docker-based, and allows to run your tests in parallel,
-            in various browsers.
+            Taste relies on Docker in order to run your tests on demand, in parallel,
+            and in various browsers. We provide pre-configured container images, so
+            you don't have no setup to do.
           </p>
         </div>
         <div class="col-md-4">
-          <h2>Reporting</h2>
+          <h2>Video & Reporting</h2>
           <p>
-            Monitor your tests over time.
+            Taste records your tests as videos, so that you can check out what went
+            wrong in your tests.
+            You can also Monitor your tests over time, using various KPIs.
           </p>
         </div>
       </div>

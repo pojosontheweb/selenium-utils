@@ -4,11 +4,16 @@ import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.model.Run
 import groovy.text.SimpleTemplateEngine
 import groovy.text.Template
+import org.hibernate.Criteria
 import org.hibernate.cfg.Configuration
+import org.hibernate.criterion.Order
+import org.hibernate.criterion.Projections
 import org.w3c.dom.Document
 import org.xml.sax.InputSource
 import woko.hbcompass.HibernateCompassStore
 import woko.hibernate.HibernateStore
+import woko.persistence.ListResultIterator
+import woko.persistence.ResultIterator
 import woko.persistence.TransactionCallbackWithResult
 
 import javax.xml.parsers.DocumentBuilder
@@ -35,6 +40,37 @@ class TasteStore extends HibernateStore {
     Config getConfig() {
         (Config)session.createCriteria(Config.class).uniqueResult()
     }
+
+    public ResultIterator<?> list(String className, Integer start, Integer limit) {
+        Class clazz = getMappedClass(className);
+        int s = start == null ? 0 : start;
+        int l = limit == null ? -1 : limit;
+        if (clazz == null) {
+            return new ListResultIterator<Object>(Collections.emptyList(), s, l, 0);
+        } else {
+            Criteria crit = createListCriteria(clazz);
+
+            // count
+            crit.setProjection(Projections.rowCount());
+            Long count = (Long)crit.uniqueResult();
+
+            // sublist
+            crit.setProjection(null);
+            crit.setFirstResult(s);
+            if (l != -1) {
+                crit.setMaxResults(l);
+            }
+            if (clazz==Run.class) {
+                crit.addOrder(Order.desc("queuedOn"))
+            }
+
+            // TODO optimize with scrollable results ?
+            List<?> objects = crit.list();
+
+            return new ListResultIterator<Object>(objects, s, l, count.intValue());
+        }
+    }
+
 
     @Override
     protected Configuration configure(Configuration config) {
