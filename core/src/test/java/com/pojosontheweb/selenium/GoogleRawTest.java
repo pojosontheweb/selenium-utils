@@ -10,10 +10,10 @@ public class GoogleRawTest {
     public void testChrome() {
         System.out.println("Testing with Chrome");
         performTest(
-                DriverBuildr
-                        .chrome()
-                        .setLocales("en")
-                        .build()
+            DriverBuildr
+                .chrome()
+                .setLocales("en")
+                .build()
         );
     }
 
@@ -21,10 +21,10 @@ public class GoogleRawTest {
     public void testFirefox() {
         System.out.println("Testing with Firefox");
         performTest(
-                DriverBuildr
-                        .firefox()
-                        .setLocales("en")
-                        .build()
+            DriverBuildr
+                .firefox()
+                .setLocales("en")
+                .build()
         );
     }
 
@@ -56,11 +56,11 @@ public class GoogleRawTest {
             new Findr(driver)
                     .setTimeout(5)
                     .elem(By.id("lst-ib"))
-                    .sendKeys("pojos on the web", Keys.ENTER);
+                    .sendKeys("pojos on the web");
             new Findr(driver)
                     .elem(By.cssSelector("button.lsb"))
-                    .where(Findrs.attrEquals("value", "Search"))
-                    .click();
+                    .where(Findrs.attrEquals("name", "btnG"))
+                .click();
 
             // check the results
             new Findr(driver)
