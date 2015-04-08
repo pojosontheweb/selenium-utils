@@ -14,7 +14,7 @@
     <name>taste-cloud</name>
     <properties>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <woko.version>LATEST-SNAPSHOT</woko.version>
+        <woko.version>2.4-beta4</woko.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
