@@ -107,6 +107,12 @@ class InitialConfigAction extends BaseActionBean {
             ).initialize()
         )
         def userManager = new HibernateUserManager<HbUser>(store, HbUser.class).createDefaultUsers()
+        store.inTx {
+            def u = userManager.getUserByUsername(email)
+            if (u) {
+                store.delete(u)
+            }
+        }
         userManager.createUser(email, password, email, ['standard'], AccountStatus.Active)
         def ioc = new SimpleWokoIocContainer(
             store,
