@@ -54,12 +54,10 @@ public class GoogleRawTest {
             new Findr(driver)
                     .setTimeout(5)
                     .elem(By.id("lst-ib"))
-                    .sendKeys("pojos on the web");
+                    .sendKeys("pojos on the web", Keys.ENTER);
             new Findr(driver)
-                    .elemList(By.className("lsb"))
+                    .elem(By.cssSelector("button.lsb"))
                     .where(Findrs.attrEquals("value", "Search"))
-                    .whereElemCount(1)
-                    .at(0)
                     .click();
 
             // check the results
