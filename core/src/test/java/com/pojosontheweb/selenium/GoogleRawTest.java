@@ -53,10 +53,11 @@ public class GoogleRawTest {
             // type in our query
             new Findr(driver)
                     .setTimeout(5)
-                    .elem(By.id("gbqfq"))
+                    .elem(By.id("lst-ib"))
                     .sendKeys("pojos on the web");
             new Findr(driver)
-                    .elem(By.cssSelector("button.gbqfb"))
+                    .elem(By.cssSelector("button.lsb"))
+                    .where(Findrs.attrEquals("value", "Search"))
                     .click();
 
             // check the results
