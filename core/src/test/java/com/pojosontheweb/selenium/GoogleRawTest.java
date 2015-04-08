@@ -10,9 +10,9 @@ public class GoogleRawTest {
     public void testChrome() {
         System.out.println("Testing with Chrome");
         performTest(
-                DriverBuildr
-                        .chrome()
-                        .build()
+            DriverBuildr
+                .chrome()
+                .build()
         );
     }
 
@@ -20,9 +20,9 @@ public class GoogleRawTest {
     public void testFirefox() {
         System.out.println("Testing with Firefox");
         performTest(
-                DriverBuildr
-                        .firefox()
-                        .build()
+            DriverBuildr
+                .firefox()
+                .build()
         );
     }
 
@@ -53,11 +53,12 @@ public class GoogleRawTest {
             // type in our query
             new Findr(driver)
                     .setTimeout(5)
-                    .elem(By.id("gbqfq"))
+                    .elem(By.id("lst-ib"))
                     .sendKeys("pojos on the web");
             new Findr(driver)
-                    .elem(By.cssSelector("button.gbqfb"))
-                    .click();
+                    .elem(By.cssSelector("button.lsb"))
+                    .where(Findrs.attrEquals("name", "btnG"))
+                .click();
 
             // check the results
             new Findr(driver)

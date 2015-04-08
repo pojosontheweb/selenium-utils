@@ -10,12 +10,12 @@ public class Issue10Test extends ManagedDriverJunit4TestBase {
 
     @Test
     public void testElemListWhereElemCount() {
-        getWebDriver().get("http://www.pojosontheweb.com");
+        getWebDriver().get("http://woko.pojosontheweb.com");
 
         findr()
             .elem(id("top-nav"))
             .elemList(cssSelector("li a"))
-            .where(Findrs.textEquals("Home"))
+            .where(Findrs.textEquals("Download"))
             .whereElemCount(1)
             .eval();
 
@@ -27,7 +27,7 @@ public class Issue10Test extends ManagedDriverJunit4TestBase {
                 .elem(id("top-nav"))
                 .elemList(cssSelector("li a"))
                 .whereElemCount(1)
-                .where(Findrs.textEquals("Home"));
+                .where(Findrs.textEquals("Download"));
         } catch(IllegalArgumentException e) {
             // all good
             failed = true;

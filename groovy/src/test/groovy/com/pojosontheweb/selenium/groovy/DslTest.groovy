@@ -3,6 +3,7 @@ package com.pojosontheweb.selenium.groovy
 import com.pojosontheweb.selenium.Findr
 import groovy.json.JsonBuilder
 import org.junit.Assert
+import org.junit.Ignore
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.pojosontheweb.selenium.groovy.DollrCategory
@@ -53,9 +54,10 @@ class DslTest extends ManagedDriverJunit4TestBase {
     }
 
     @Test
+    @Ignore
     void fullyNested() {
         use(WebDriverCategory, FindrCategory, ListFindrCategory, DollrCategory) {
-            webDriver.get 'http://www.pojosontheweb.com'
+            webDriver.get 'http://woko.pojosontheweb.com'
             $(".container") +
             isDisplayed() +
                 $$('.row') +
@@ -93,6 +95,7 @@ class DslTest extends ManagedDriverJunit4TestBase {
     }
 
     @Test
+    @Ignore
     void leBonCoin() {
 
         use(WebDriverCategory, FindrCategory, ListFindrCategory, DollrCategory) {
