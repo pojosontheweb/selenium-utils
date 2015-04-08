@@ -31,10 +31,40 @@
         <div class="form-group ${wadCss}">
           <label for="config.webappDir" class="col-sm-2 control-label">Webapp dir</label>
           <div class="col-sm-10">
-            <s:text name="config.webappDir" class="form-control" placeholder="base directory"/>
+            <s:text name="config.webappDir"
+                    class="form-control"
+                    placeholder="base directory"
+                    value="/mnt"/>
             <span id="helpBlock" class="help-block">
               The taste-cloud front end webapp storage dir. The database and result files
-              are stored there. Must be available to the webapp process.
+              are stored there.
+              <br/>
+              The taste-cloud docker should have been started like this :
+              <br/>
+              <code>
+                docker run -d -p 12345:8080 -v /host/path/to/files:<b>/mnt</b> taste-cloud
+              </code>
+              <br/>
+              In that case, the value if this field is <b>/mnt</b>.
+            </span>
+          </div>
+        </div>
+
+        <w:b3-form-group-css fieldName="config.dockerDir" var="ddCss"/>
+        <div class="form-group ${ddCss}">
+          <label for="config.dockerDir" class="col-sm-2 control-label">Docker dir</label>
+          <div class="col-sm-10">
+            <s:text name="config.dockerDir" class="form-control" placeholder="base directory"/>
+            <span id="helpBlock" class="help-block">
+              The directory that taste dockers will read from/write to.
+              <br/>
+              The taste docker is started like this by the taste-cloud webapp :
+              <br/>
+              <code>
+                docker run ... -v <b>/host/path/to/files</b>:/mnt ...
+              </code>
+              <br/>
+              In that case, the value if this field is <b>/host/path/to/files</b>.
             </span>
           </div>
         </div>
@@ -50,16 +80,23 @@
           </div>
         </div>
 
-        <w:b3-form-group-css fieldName="config.dockerDir" var="ddCss"/>
+
+        <w:b3-form-group-css fieldName="config.parallelJobs" var="prCss"/>
         <div class="form-group ${ddCss}">
-          <label for="config.dockerDir" class="col-sm-2 control-label">Docker dir</label>
+          <label for="config.parallelJobs" class="col-sm-2 control-label">Max parallel runs</label>
           <div class="col-sm-10">
-            <s:text name="config.dockerDir" class="form-control" placeholder="base directory"/>
+            <s:text name="config.parallelJobs"
+                    class="form-control"
+                    placeholder="# of parallel runs"
+                    value="4"/>
             <span id="helpBlock" class="help-block">
-              The directory that taste dockers will read/write to. Must be available to the taste dockers.
+              The maximum parallel taste runs. Each run is triggered in its own docker, and
+              monitored by a thread of its own in the webapp. <br/>
+              Future versions should allow for at least non-blocking, and better scaling webapp.
             </span>
           </div>
         </div>
+
 
         <div class="form-group">
           <div class="col-sm-offset-2 col-sm-10">

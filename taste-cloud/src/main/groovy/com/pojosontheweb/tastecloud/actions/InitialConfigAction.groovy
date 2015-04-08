@@ -23,15 +23,22 @@ import woko.ext.usermanagement.hibernate.HbUser
 import woko.ext.usermanagement.hibernate.HibernateUserManager
 import woko.ioc.SimpleWokoIocContainer
 import woko.push.PushFacetDescriptorManager
+import woko.util.WLogger
+
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 @UrlBinding("/initial-config")
 class InitialConfigAction extends BaseActionBean {
 
+    private static final WLogger logger = WLogger.getLogger(InitialConfigAction.class)
+
     @ValidateNestedProperties([
         @Validate(field = 'webappDir', required = true),
         @Validate(field = 'dockerDir', required = true),
-        @Validate(field = 'dockerUrl', required = true)
+        @Validate(field = 'dockerDir', required = true),
+        @Validate(field = 'parallelJobs', required = true, minvalue = 1.0d, maxvalue = 64.0d)
     ])
     Config config
 
@@ -42,9 +49,11 @@ class InitialConfigAction extends BaseActionBean {
     }
 
     Resolution configure() {
+        logger.info("Configuring...")
         String s = config.webappDir + File.separator + 'db' + File.separator + 'taste'
         File dbPath = new File(s)
         dbPath.mkdirs()
+        logger.info("dbPath=${dbPath.absolutePath}")
         Woko woko = createWoko(dbPath)
         context.servletContext.setAttribute('woko', woko)
         TasteStore store = (TasteStore)woko.objectStore
@@ -55,12 +64,14 @@ class InitialConfigAction extends BaseActionBean {
                 existingCfg.dockerDir = config.dockerDir
                 existingCfg.dockerUrl = config.dockerUrl
                 existingCfg.imageName = config.imageName
+                existingCfg.parallelJobs = config.parallelJobs
                 store.save(existingCfg)
             } else {
                 store.save(config)
             }
         }
         context.messages.add(new SimpleMessage('Application configured and ready to rock.'))
+        logger.info("App configured : $config")
         new RedirectResolution("/")
     }
 
@@ -79,7 +90,7 @@ class InitialConfigAction extends BaseActionBean {
             new HibernateUserManager<HbUser>(store, HbUser.class).createDefaultUsers(),
             new SessionUsernameResolutionStrategy(),
             facetDescriptorManager)
-            .addComponent(JobManager.KEY, new JobManager())
+            .addComponent(JobManager.KEY, new JobManager(Executors.newFixedThreadPool(config.parallelJobs)))
             .addComponent(DockerManager.KEY, new DockerManager())
         return new Woko(ioc, ['guest'])
     }
