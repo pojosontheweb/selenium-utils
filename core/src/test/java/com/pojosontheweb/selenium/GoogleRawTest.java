@@ -12,6 +12,7 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .chrome()
+                        .setLocales("en")
                         .build()
         );
     }
@@ -22,6 +23,7 @@ public class GoogleRawTest {
         performTest(
                 DriverBuildr
                         .firefox()
+                        .setLocales("en")
                         .build()
         );
     }
