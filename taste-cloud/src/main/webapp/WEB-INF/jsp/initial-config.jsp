@@ -15,6 +15,31 @@
 
       <s:form class="form-horizontal" beanclass="<%=InitialConfigAction.class%>">
 
+        <h2>Authentication</h2>
+
+        <w:b3-form-group-css fieldName="email" var="emailCss"/>
+        <div class="form-group ${emailCss}">
+          <label for="email" class="col-sm-2 control-label">Email</label>
+          <div class="col-sm-10">
+            <s:text name="email" class="form-control"
+                    placeholder="email used to authenticate"/>
+          </div>
+        </div>
+
+        <w:b3-form-group-css fieldName="password" var="passwordCss"/>
+        <div class="form-group ${passwordCss}">
+          <label for="password" class="col-sm-2 control-label">Password</label>
+          <div class="col-sm-4">
+            <s:password name="password" class="form-control"/>
+          </div>
+          <label for="confirmPassword" class="col-sm-2 control-label">Confirm</label>
+          <div class="col-sm-4">
+            <s:password name="confirmPassword" class="form-control"/>
+          </div>
+        </div>
+
+        <h2>Docker settings</h2>
+
         <w:b3-form-group-css fieldName="config.imageName" var="inCss"/>
         <div class="form-group ${inCss}">
           <label for="config.imageName" class="col-sm-2 control-label">Image name</label>

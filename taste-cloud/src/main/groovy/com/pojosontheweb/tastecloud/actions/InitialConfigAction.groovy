@@ -12,13 +12,18 @@ import net.sourceforge.stripes.action.RedirectResolution
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.SimpleMessage
 import net.sourceforge.stripes.action.UrlBinding
+import net.sourceforge.stripes.validation.EmailTypeConverter
+import net.sourceforge.stripes.validation.SimpleError
 import net.sourceforge.stripes.validation.Validate
 import net.sourceforge.stripes.validation.ValidateNestedProperties
+import net.sourceforge.stripes.validation.ValidationErrors
+import net.sourceforge.stripes.validation.ValidationMethod
 import woko.Woko
 import woko.actions.BaseActionBean
 import woko.actions.WokoTxInterceptor
 import woko.async.JobManager
 import woko.auth.builtin.SessionUsernameResolutionStrategy
+import woko.ext.usermanagement.core.AccountStatus
 import woko.ext.usermanagement.hibernate.HbUser
 import woko.ext.usermanagement.hibernate.HibernateUserManager
 import woko.ioc.SimpleWokoIocContainer
@@ -42,10 +47,26 @@ class InitialConfigAction extends BaseActionBean {
     ])
     Config config
 
+    @Validate(required = true, converter = EmailTypeConverter.class)
+    String email
+
+    @Validate(required = true)
+    String password
+
+    @Validate(required = true)
+    String confirmPassword
+
     @DontValidate
     @DefaultHandler
     Resolution display() {
         new ForwardResolution('/WEB-INF/jsp/initial-config.jsp')
+    }
+
+    @ValidationMethod
+    public void checkPasswords(ValidationErrors errors) {
+        if (password!=confirmPassword) {
+            errors.add("password", new SimpleError("Passwords don't match"))
+        }
     }
 
     Resolution configure() {
@@ -85,9 +106,11 @@ class InitialConfigAction extends BaseActionBean {
                 ['com.pojosontheweb.tastecloud.facets', 'facets', 'woko.facets.builtin']
             ).initialize()
         )
+        def userManager = new HibernateUserManager<HbUser>(store, HbUser.class).createDefaultUsers()
+        userManager.createUser(email, password, email, ['standard'], AccountStatus.Active)
         def ioc = new SimpleWokoIocContainer(
             store,
-            new HibernateUserManager<HbUser>(store, HbUser.class).createDefaultUsers(),
+            userManager,
             new SessionUsernameResolutionStrategy(),
             facetDescriptorManager)
             .addComponent(JobManager.KEY, new JobManager(Executors.newFixedThreadPool(config.parallelJobs)))
