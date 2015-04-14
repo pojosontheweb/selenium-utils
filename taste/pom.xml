@@ -79,7 +79,7 @@
                     <execution>
                         <id>make-assembly</id>
                         <!-- this is used for inheritance merges -->
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <!-- bind to the packaging phase -->
                         <goals>
                             <goal>single</goal>
@@ -91,27 +91,11 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.7</version>
                 <executions>
-                    <!--<execution>-->
-                        <!--<id>set-taste-version</id>-->
-                        <!--<phase>process-sources</phase>-->
-                        <!--<configuration>-->
-                            <!--<target>-->
-                                <!--<replace file="${project.basedir}/src/main/groovy/com/pojosontheweb/taste/Taste.groovy"-->
-                                         <!--token="@TASTE_VERSION"-->
-                                         <!--value="${project.version}"/>-->
-                            <!--</target>-->
-                        <!--</configuration>-->
-                        <!--<goals>-->
-                            <!--<goal>run</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-
                     <execution>
                         <id>make-dist</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <configuration>
                             <target>
-
                                 <property name="taste.dist" value="${project.build.directory}/dist/taste-${project.version}"/>
                                 <property name="taste.dist.bin" value="${taste.dist}/taste/bin"/>
                                 <property name="taste.dist.lib" value="${taste.dist}/taste/lib"/>
@@ -159,4 +143,39 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-docker</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <imageName>pojosontheweb/taste</imageName>
+                                    <dockerDirectory>${project.basedir}/docker</dockerDirectory>
+                                    <resources>
+                                        <resource>
+                                            <targetPath>/</targetPath>
+                                            <directory>${project.build.directory}</directory>
+                                            <include>taste-${project.version}-bin.tar.gz</include>
+                                        </resource>
+                                    </resources>
+                                    <registryUrl>https://index.docker.io/v1/</registryUrl>
+                                    <serverId>docker-hub</serverId>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

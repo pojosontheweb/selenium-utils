@@ -159,4 +159,39 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-docker</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <imageName>pojosontheweb/taste-cloud</imageName>
+                                    <dockerDirectory>${project.basedir}/docker</dockerDirectory>
+                                    <resources>
+                                        <resource>
+                                            <targetPath>/</targetPath>
+                                            <directory>${project.build.directory}</directory>
+                                            <include>taste-cloud.war</include>
+                                        </resource>
+                                    </resources>
+                                    <registryUrl>https://index.docker.io/v1/</registryUrl>
+                                    <serverId>docker-hub</serverId>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
