@@ -1,17 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
+<c:set var="run" value="${renderTitle.facetContext.targetObject}"/>
 <div class="page-header">
     <h1>
         <c:choose>
-            <c:when test="${renderTitle.facetContext.targetObject.finishedOn==null}">
-                Run in progress
+            <c:when test="${run.finishedOn==null}">
+                Run in progress...
             </c:when>
             <c:otherwise>
                 Run finished
             </c:otherwise>
         </c:choose>
         <small>
-            <c:out value="${renderTitle.title}"/>
+            <c:choose>
+                <c:when test="${run.repositoryRun==null}">
+                    From <w:link object="${run.fromTaste}" facetName="view"/>
+                </c:when>
+                <c:otherwise>
+                    From <w:link object="${run.repositoryRun}" facetName="view"/>
+                </c:otherwise>
+            </c:choose>
         </small>
     </h1>
+
 </div>
+

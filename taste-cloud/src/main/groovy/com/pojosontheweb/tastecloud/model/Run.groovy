@@ -8,6 +8,7 @@ import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 import javax.persistence.OrderBy
@@ -35,6 +36,9 @@ class Run {
     @Column(columnDefinition = 'text')
     String taste
 
+    @NotNull
+    String relativePath = 'tests.taste'
+
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     @OrderBy("logDate ASC")
     List<Log> logs
@@ -44,6 +48,12 @@ class Run {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     Test test
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    RepositoryRun repositoryRun
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    Taste fromTaste
 
     def getResult() {
         return suite ?: test

@@ -71,11 +71,11 @@ class InitialConfigAction extends BaseActionBean {
 
     Resolution configure() {
         logger.info("Configuring...")
-        String s = config.webappDir + File.separator + 'db' + File.separator + 'taste'
+        String s = config.dbPath
         File dbPath = new File(s)
         dbPath.mkdirs()
         logger.info("dbPath=${dbPath.absolutePath}")
-        Woko woko = createWoko(dbPath)
+        Woko woko = TasteCloudInitListener.createWoko(dbPath, email, password, config.parallelJobs)
         context.servletContext.setAttribute('woko', woko)
         TasteStore store = (TasteStore)woko.objectStore
         store.inTx {
@@ -96,32 +96,6 @@ class InitialConfigAction extends BaseActionBean {
         new RedirectResolution("/")
     }
 
-    private Woko createWoko(File dbPath) {
-        def store = new TasteStore(
-            ['com.pojosontheweb.tastecloud.model', 'woko.ext.usermanagement.hibernate'],
-            dbPath
-        )
-        def facetDescriptorManager = new PushFacetDescriptorManager(
-            new AnnotatedFacetDescriptorManager(
-                ['com.pojosontheweb.tastecloud.facets', 'facets', 'woko.facets.builtin']
-            ).initialize()
-        )
-        def userManager = new HibernateUserManager<HbUser>(store, HbUser.class).createDefaultUsers()
-        store.inTx {
-            def u = userManager.getUserByUsername(email)
-            if (u) {
-                store.delete(u)
-            }
-        }
-        userManager.createUser(email, password, email, ['standard'], AccountStatus.Active)
-        def ioc = new SimpleWokoIocContainer(
-            store,
-            userManager,
-            new SessionUsernameResolutionStrategy(),
-            facetDescriptorManager)
-            .addComponent(JobManager.KEY, new JobManager(Executors.newFixedThreadPool(config.parallelJobs)))
-            .addComponent(DockerManager.KEY, new DockerManager())
-        return new Woko(ioc, ['guest'])
-    }
+
 
 }

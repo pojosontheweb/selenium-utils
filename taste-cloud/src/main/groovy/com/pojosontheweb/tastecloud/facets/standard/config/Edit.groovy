@@ -7,4 +7,6 @@ import woko.facets.builtin.developer.EditImpl
 @FacetKey(name="edit", profileId="standard", targetObjectType=Config.class)
 class Edit extends EditImpl {
 
+
+
 }

@@ -9,6 +9,6 @@ class RenderProperties extends RenderPropertiesImpl {
 
     @Override
     List<String> getPropertyNames() {
-        ['imageName', 'webappDir', 'dockerUrl', 'dockerDir']
+        ['imageName', 'webappDir', 'dockerUrl', 'dockerDir', 'parallelJobs']
     }
 }

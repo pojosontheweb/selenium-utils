@@ -16,7 +16,7 @@
             var timeout = setTimeout(function() {
                 wokoClient.loadObject('Run', '${runId}', {
                     onSuccess: function(run) {
-                        if (run.summary.finishedOn) {
+                        if (run.summary && run.summary.finishedOn) {
                             window.location.reload();
                         } else {
                             // update the logs

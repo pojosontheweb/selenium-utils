@@ -14,7 +14,12 @@ class DockerManager {
 
     static final String KEY = 'DockerManager'
 
-    def startRun(String imageName, String dockerUrl, File dataDir, Closure logHandler) {
+    def startRun(
+        String imageName,
+        String dockerUrl,
+        File dataDir,
+        String tasteFileRelativePath,
+        Closure logHandler) {
 
         logger.info("Starting run, dockerUrl=$dockerUrl, dataDir=$dataDir")
 
@@ -58,7 +63,7 @@ class DockerManager {
             // Exec command inside running container with attached STDOUT and STDERR
             String target = '/mnt/target'
             String cfg = '/mnt/cfg.taste'
-            String tests = '/mnt/tests.taste'
+            String tests = '/mnt/' + tasteFileRelativePath
             final String[] command = ["/run-taste.sh", "-d", target, "-c", cfg, tests]
             final String execId = docker.execCreate(
                 id,

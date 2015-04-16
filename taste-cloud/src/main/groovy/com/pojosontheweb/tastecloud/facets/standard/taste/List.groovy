@@ -9,7 +9,7 @@ class List extends ListTabularImpl {
 
     @Override
     java.util.List<String> getPropertyNames() {
-        ['id', 'name']
+        ['name', 'createdOn', 'lastUpdated']
     }
 
 

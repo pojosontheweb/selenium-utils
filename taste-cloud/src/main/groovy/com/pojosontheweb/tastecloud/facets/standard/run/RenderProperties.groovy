@@ -14,6 +14,6 @@ class RenderProperties extends RenderPropertiesImpl implements woko.facets.built
 
     @Override
     java.util.List<String> getPropertyNames() {
-        ['summary', 'result', 'logs', 'taste']
+        ['summary', 'result', 'logs']
     }
 }

@@ -51,7 +51,7 @@
             String line;
             while ((line=r.readLine())!=null) {
                 String css = "stack-line";
-                if (line.contains("tests.taste:")) {
+                if (line.contains(run.getRelativePath() + ":")) {
                     css += " hl";
                     line = "<a href='#'>" + line + "</a>";
                 }

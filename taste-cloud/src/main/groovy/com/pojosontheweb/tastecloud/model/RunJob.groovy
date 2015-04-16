@@ -64,13 +64,18 @@ class RunJob extends JobBase {
         logger.info("$runId : starting, webappDir=$webappDir, dockerDir=$dockerDir")
 
         try {
-            String tasteTxt = withRun { TasteStore store, Run run ->
+            def runData = withRun { TasteStore store, Run run ->
                 log run, 'Run started...'
                 run.startedOn = new Date()
                 store.save run
                 store.session.flush()
-                run.taste
+                [
+                    taste:run.taste,
+                    relativePath:run.relativePath
+                ]
             }
+            String tasteTxt = runData.taste
+            notifyListenersStart(listeners)
 
             // create a folder in tmp dir to store
             // the taste run data
@@ -79,7 +84,9 @@ class RunJob extends JobBase {
             try {
 
                 // store taste script to file
-                File tasteFile = new File(webappFullDir, 'tests.taste')
+                String tasteFileRelativePath = runData.relativePath
+                String tasteFullPath = webappFullDir.absolutePath + File.separator + tasteFileRelativePath
+                File tasteFile = new File(tasteFullPath)
                 tasteFile.text = tasteTxt
 
                 logger.info("$runId : tests file written in $tasteFile.absolutePath")
@@ -119,7 +126,7 @@ config {
                 // TODO buffer : for now it's heavy db stress for nothing !
                 File dockerFullDir = new File(dockerDir, runId)
                 // new File('/media/psf/projects/selenium-utils/taste/docker/sample')
-                dm.startRun(imageName, dockerUrl, dockerFullDir) { LogMessage lm ->
+                dm.startRun(imageName, dockerUrl, dockerFullDir, tasteFileRelativePath) { LogMessage lm ->
                     withRun { TasteStore s, Run run ->
                         String msg = logToString lm
                         String trimmed = msg?.trim()

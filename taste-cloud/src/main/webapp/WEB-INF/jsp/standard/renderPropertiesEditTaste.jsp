@@ -1,59 +1,73 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
+<%@include file="/WEB-INF/woko/jsp/taglibs.jsp" %>
 <c:set var="taste" value="${renderPropertiesEdit.facetContext.targetObject}"/>
 <s:form action="/save/Taste" class="form-horizontal" id="saveTaste">
 
-  <c:choose>
-    <c:when test="${taste.id==null}">
-      <s:hidden name="createTransient" value="true"/>
-    </c:when>
-    <c:otherwise>
-      <s:hidden name="key" value="${taste.id}"/>
-    </c:otherwise>
-  </c:choose>
+    <c:choose>
+        <c:when test="${taste.id==null}">
+            <s:hidden name="createTransient" value="true"/>
+        </c:when>
+        <c:otherwise>
+            <s:hidden name="key" value="${taste.id}"/>
+        </c:otherwise>
+    </c:choose>
 
-  <div class="container-fluid w-properties">
+    <div class="container-fluid w-properties">
 
-    <w:b3-form-group-css fieldName="object.name" var="nameCss"/>
-    <div class="${nameCss}">
-      <div class="col-sm-12">
-        <s:text name="object.name" class="form-control" placeholder="Give a name to your taste"/>
-      </div>
-    </div>
+        <c:if test="${taste.id==null}">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                You are creating a simple Taste script. This is good for
+                basic tests, learning the APIs, or just to try out stuff.
+                If you have actual tests, you should probably better check those into
+                a git repository, and bind this repo in taste-cloud.
+                Your tests will then be versionned, triggered automatically on commit, etc.
+                <br/>
+                <br/>
+                <a class="btn btn-primary" href="${cp}/edit/Repository?createTransient=true">Bind git repo</a>
+                <button type="button" class="btn btn-default" data-dismiss="alert" aria-label="Close">Not now, thanks</button>
+            </div>
+        </c:if>
 
-    <w:b3-form-group-css fieldName="object.taste" var="tasteCss"/>
-    <div class="${tasteCss}">
-      <div class="col-sm-12">
+        <w:b3-form-group-css fieldName="object.name" var="nameCss"/>
+        <div class="${nameCss}">
+            <div class="col-sm-12">
+                <s:text name="object.name" class="form-control" placeholder="Give a name to your taste"/>
+            </div>
+        </div>
+
+        <w:b3-form-group-css fieldName="object.taste" var="tasteCss"/>
+        <div class="${tasteCss}">
+            <div class="col-sm-12">
         <pre class="editor"
              data-editor-lang="js"
              data-editor-show-annotation-ruler="false"
              data-editor-show-overview-ruler="false"
              data-editor-show-folding-ruler="false"></pre>
-      </div>
+            </div>
+        </div>
+        <div class="btns">
+            <s:submit name="save" class="btn btn-primary"/>
+            <s:submit name="saveAndRun" class="btn btn-default" value="Save and run"/>
+        </div>
     </div>
-    <div class="btns">
-      <s:submit name="save" class="btn btn-primary"/>
-      <s:submit name="saveAndRun" class="btn btn-default" value="Save and run"/>
-    </div>
-  </div>
-  <s:textarea name="object.taste" id="tasteText" style="display: none;"/>
+    <s:textarea name="object.taste" id="tasteText" style="display: none;"/>
 </s:form>
 <script>
-  require(["orion/editor/edit"], function(edit) {
-    var editor = edit({className: "editor"})[0];
-    $('#saveTaste').submit(function() {
-      $('#tasteText').val(editor.getText());
-    });
+    require(["orion/editor/edit"], function (edit) {
+        var editor = edit({className: "editor"})[0];
+        $('#saveTaste').submit(function () {
+            $('#tasteText').val(editor.getText());
+        });
 
-    <c:choose>
-    <c:when test="${taste.id==null}">
-    editor.setText($('#initTaste').text());
-    </c:when>
-    <c:otherwise>
-    editor.setText($('#tasteText').text());
-    </c:otherwise>
-    </c:choose>
-  });
+        <c:choose>
+        <c:when test="${taste.id==null}">
+        editor.setText($('#initTaste').text());
+        </c:when>
+        <c:otherwise>
+        editor.setText($('#tasteText').text());
+        </c:otherwise>
+        </c:choose>
+    });
 </script>
 <script type="text/taste" id="initTaste">/*
 
@@ -166,5 +180,6 @@ suite('Google Tests') {
 
     }
 
-}</script>
+}
+</script>
 

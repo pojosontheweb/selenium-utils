@@ -4,6 +4,7 @@ import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.model.Run
 import com.pojosontheweb.tastecloud.model.RunJob
+import com.pojosontheweb.tastecloud.woko.TasteRunner
 import com.pojosontheweb.tastecloud.woko.TasteStore
 import net.sourceforge.jfacets.annotations.FacetKey
 import com.pojosontheweb.tastecloud.model.Taste
@@ -28,35 +29,13 @@ class Run extends BaseResolutionFacet {
         Taste t = (Taste)facetContext.targetObject
 
         // store the run
-        com.pojosontheweb.tastecloud.model.Run run = createAndSubmitRun(woko, browsr, t.taste)
+        com.pojosontheweb.tastecloud.model.Run run = TasteRunner.createAndSubmitRun(woko, browsr, t.taste)
+
+        run.fromTaste = t
+        objectStore.save(run)
 
         // redirect to run view
         woko.resolutions().redirect('view', run)
     }
 
-    static com.pojosontheweb.tastecloud.model.Run createAndSubmitRun(Woko woko, Browsr b, String taste) {
-        com.pojosontheweb.tastecloud.model.Run run = new com.pojosontheweb.tastecloud.model.Run(
-            id: UUID.randomUUID().toString(),
-            browsr: b,
-            taste: taste,
-            queuedOn: new Date()
-        )
-        TasteStore store = (TasteStore)woko.objectStore
-        store.save(run)
-        store.session.flush()
-
-        // start the job in bg...
-        Config config = store.config
-        JobManager jobManager = woko.ioc.getComponent(JobManager.KEY)
-        jobManager.submit(
-            new RunJob(
-                woko,
-                run.id,
-                new File(config.webappDir),
-                config.dockerUrl, new File(config.dockerDir),
-                config.imageName
-            ), [])
-
-        return run
-    }
 }

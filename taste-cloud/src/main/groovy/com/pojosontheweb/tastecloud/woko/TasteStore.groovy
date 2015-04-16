@@ -1,6 +1,7 @@
 package com.pojosontheweb.tastecloud.woko
 
 import com.pojosontheweb.tastecloud.model.Config
+import com.pojosontheweb.tastecloud.model.RepositoryRun
 import com.pojosontheweb.tastecloud.model.Run
 import groovy.text.SimpleTemplateEngine
 import groovy.text.Template
@@ -89,5 +90,9 @@ class TasteStore extends HibernateStore {
         } catch(Exception e) {
             throw new RuntimeException(e)
         }
+    }
+
+    RepositoryRun getRepositoryRun(Long id) {
+        (RepositoryRun)session.load(RepositoryRun.class, id)
     }
 }

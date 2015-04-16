@@ -9,6 +9,11 @@ class RenderPropertiesEdit extends RenderPropertiesEditImpl {
 
     @Override
     List<String> getPropertyNames() {
-        ['imageName', 'webappDir', 'dockerUrl', 'dockerDir']
+        ['imageName', 'webappDir', 'dockerUrl', 'dockerDir', 'parallelJobs']
+    }
+
+    @Override
+    List<String> getReadOnlyPropertyNames() {
+        ['webappDir', 'parallelJobs']
     }
 }

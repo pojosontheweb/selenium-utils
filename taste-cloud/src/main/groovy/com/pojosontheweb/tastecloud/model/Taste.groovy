@@ -15,6 +15,11 @@ class Taste {
     String name
 
     @NotNull
+    Date createdOn = new Date()
+
+    Date lastUpdated
+
+    @NotNull
     @Column(columnDefinition = "text")
     String taste
 

@@ -40,4 +40,8 @@ class Config {
             ", parallelJobs=" + parallelJobs +
             '}';
     }
+
+    String getDbPath() {
+        webappDir + File.separator + 'db' + File.separator + 'taste'
+    }
 }
