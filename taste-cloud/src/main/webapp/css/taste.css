@@ -74,7 +74,7 @@ img.browsr {
     width: 60px;
 }
 
-.table.Run img.browsr, .table.Taste img.browsr {
+.table.Run img.browsr, .table.Taste img.browsr, #stream .browsr {
     width: 20px;
 }
 

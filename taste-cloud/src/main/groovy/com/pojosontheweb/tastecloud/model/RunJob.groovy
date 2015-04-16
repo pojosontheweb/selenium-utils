@@ -1,5 +1,7 @@
 package com.pojosontheweb.tastecloud.model
 
+import com.pojosontheweb.tastecloud.model.activities.ActivityType
+import com.pojosontheweb.tastecloud.model.activities.TasteRunActivity
 import com.pojosontheweb.tastecloud.woko.DockerManager
 import com.pojosontheweb.tastecloud.woko.TasteStore
 import com.spotify.docker.client.LogMessage
@@ -65,10 +67,20 @@ class RunJob extends JobBase {
 
         try {
             def runData = withRun { TasteStore store, Run run ->
+                // prepare run
                 log run, 'Run started...'
                 run.startedOn = new Date()
                 store.save run
                 store.session.flush()
+
+                // post new activity to the stream
+                if (run.fromTaste) {
+                    store.save(TasteRunActivity.make(run, ActivityType.Start))
+                }
+
+                // update stats
+                store.save(store.stats.runStarted())
+
                 [
                     taste:run.taste,
                     relativePath:run.relativePath
@@ -187,6 +199,12 @@ config {
                 log run, 'Run finished'
                 run.finishedOn = new Date()
                 store.save(run)
+
+                if (run.fromTaste) {
+                    store.save(TasteRunActivity.make(run, ActivityType.Finish))
+                }
+
+                store.save(store.stats.runFinished(run))
             }
             logger.info("$runId : done")
         }

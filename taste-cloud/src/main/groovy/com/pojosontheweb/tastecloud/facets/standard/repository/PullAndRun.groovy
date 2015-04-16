@@ -4,6 +4,8 @@ import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.Util
 import com.pojosontheweb.tastecloud.model.Repository
 import com.pojosontheweb.tastecloud.model.RepositoryRun
+import com.pojosontheweb.tastecloud.model.activities.ActivityType
+import com.pojosontheweb.tastecloud.model.activities.RepoRunActivity
 import com.pojosontheweb.tastecloud.woko.RepoDef
 import com.pojosontheweb.tastecloud.woko.RepoRunListener
 import com.pojosontheweb.tastecloud.woko.TasteRunner
@@ -39,6 +41,9 @@ class PullAndRun extends BaseResolutionFacet {
         )
         TasteStore store = (TasteStore)woko.objectStore
         store.save(repositoryRun)
+
+        store.save(RepoRunActivity.make(repositoryRun, ActivityType.Queued))
+
         store.session.flush()
         jobManager.submit(new PullAndRunJob(woko, vcs, repositoryRun.id), [])
         woko.resolutions().redirect('view', repositoryRun)

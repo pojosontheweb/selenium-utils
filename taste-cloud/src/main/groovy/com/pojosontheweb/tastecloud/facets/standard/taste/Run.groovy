@@ -4,6 +4,8 @@ import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.model.Run
 import com.pojosontheweb.tastecloud.model.RunJob
+import com.pojosontheweb.tastecloud.model.activities.ActivityType
+import com.pojosontheweb.tastecloud.model.activities.TasteRunActivity
 import com.pojosontheweb.tastecloud.woko.TasteRunner
 import com.pojosontheweb.tastecloud.woko.TasteStore
 import net.sourceforge.jfacets.annotations.FacetKey
@@ -33,6 +35,8 @@ class Run extends BaseResolutionFacet {
 
         run.fromTaste = t
         objectStore.save(run)
+
+        objectStore.save(TasteRunActivity.make(run, ActivityType.Queued))
 
         // redirect to run view
         woko.resolutions().redirect('view', run)

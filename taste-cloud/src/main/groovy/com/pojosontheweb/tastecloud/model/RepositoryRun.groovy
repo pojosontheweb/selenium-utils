@@ -1,5 +1,7 @@
 package com.pojosontheweb.tastecloud.model
 
+import com.pojosontheweb.selenium.Browsr
+
 import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -32,6 +34,9 @@ class RepositoryRun {
     Date startedOn
 
     Date finishedOn
+
+    @NotNull
+    Browsr browsr = Browsr.Firefox
 
     @Override
     public String toString() {

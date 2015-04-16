@@ -3,6 +3,7 @@ package com.pojosontheweb.tastecloud.woko
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.model.RepositoryRun
 import com.pojosontheweb.tastecloud.model.Run
+import com.pojosontheweb.tastecloud.model.Stats
 import groovy.text.SimpleTemplateEngine
 import groovy.text.Template
 import org.hibernate.Criteria
@@ -40,6 +41,10 @@ class TasteStore extends HibernateStore {
 
     Config getConfig() {
         (Config)session.createCriteria(Config.class).uniqueResult()
+    }
+
+    Stats getStats() {
+        (Stats)session.createCriteria(Stats.class).uniqueResult()
     }
 
     public ResultIterator<?> list(String className, Integer start, Integer limit) {

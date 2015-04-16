@@ -91,6 +91,15 @@ class Run {
         return s
     }
 
+    Long getElapsed() {
+        if (!startedOn) {
+            return 0
+        }
+        def end = finishedOn ? finishedOn.time : System.currentTimeMillis()
+        return end - startedOn.time
+    }
+
+
 }
 
 class RunSummary {

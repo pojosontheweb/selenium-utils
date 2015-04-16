@@ -2,6 +2,8 @@ package com.pojosontheweb.tastecloud.facets.standard.taste
 
 import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.model.Run
+import com.pojosontheweb.tastecloud.model.activities.ActivityType
+import com.pojosontheweb.tastecloud.model.activities.TasteRunActivity
 import com.pojosontheweb.tastecloud.woko.TasteRunner
 import net.sourceforge.jfacets.annotations.FacetKey
 import com.pojosontheweb.tastecloud.model.Taste
@@ -41,6 +43,9 @@ class Save extends SaveImpl {
         Run run = TasteRunner.createAndSubmitRun(woko, browsr, t.taste)
         run.fromTaste = t
         objectStore.save(run)
+
+        objectStore.save(TasteRunActivity.make(run, ActivityType.Queued))
+
         String runUrl = "${request.contextPath}${woko.facetUrl('view', run)}"
         abc.messages.add(
             new SimpleMessage("Taste saved, run started - <a href='$runUrl' target='_blank'>${run.id}</a>")

@@ -2,6 +2,8 @@ package com.pojosontheweb.tastecloud.woko
 
 import com.pojosontheweb.tastecloud.model.RepositoryRun
 import com.pojosontheweb.tastecloud.model.Run
+import com.pojosontheweb.tastecloud.model.activities.ActivityType
+import com.pojosontheweb.tastecloud.model.activities.RepoRunActivity
 import woko.async.Job
 import woko.async.JobListener
 import woko.util.WLogger
@@ -24,10 +26,11 @@ class RepoRunListener implements JobListener {
             Run r = store.getRun(runId)
             RepositoryRun rr = r.repositoryRun
             if (rr && !rr.finishedOn) {
-                if (!rr.startedOn) {
+                if (!rr.startedOn && r.startedOn) {
                     rr.startedOn = r.startedOn
                     store.save(rr)
                     logger.info("repo run $rr started")
+                    store.save(RepoRunActivity.make(rr, ActivityType.Start))
                 }
                 // all runs must finish...
                 boolean atLeastOneRunPending = rr?.runs?.find { it.finishedOn==null }
@@ -35,6 +38,7 @@ class RepoRunListener implements JobListener {
                     rr.finishedOn = r.finishedOn
                     store.save(rr)
                     logger.info("repo run $rr finished")
+                    store.save(RepoRunActivity.make(rr, ActivityType.Finish))
                 }
             }
         }

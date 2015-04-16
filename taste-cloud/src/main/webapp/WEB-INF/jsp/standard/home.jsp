@@ -14,13 +14,13 @@
     <div class="container-fluid">
 
       <div class="page-header">
-        <h1>Your dashboard</h1>
+        <h1>Dashboard</h1>
       </div>
 
     <div class="dashboard">
         
         <c:choose>
-          <c:when test="${home.nbRuns==0}">
+          <c:when test="${home.stats.totalRuns==0}">
             <p>
               You have not yet ran any Taste yet !
               Get started :
@@ -40,47 +40,69 @@
           <c:otherwise>
 
             <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="well text-center">
-                  ${home.nbRuns}
-                  <br/>
+                    <span id="nbRunning">...</span> running,
+                  <span id="nbQueued">...</span> in queue
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="well text-center">
+                  <span id="totalRuns">...</span>
                   total runs
                 </div>
               </div>
-              <div class="col-md-4 text-center">
+              <div class="col-md-3 text-center">
                 <div class="well">
-                  TODO
-                  <br/>
+                  <span id="totalTime">...</span>
                   total time
                 </div>
               </div>
-              <div class="col-md-4 text-center">
+              <div class="col-md-3 text-center">
                 <div class="well">
-                  TODO
-                  <br/>
+                  <span id="successRate">...</span>
                   success rate
                 </div>
               </div>
             </div>
 
-            <h2>Job Queue</h2>
-            <p>
-              TODO show the currently running jobs somewhere
-            </p>
-
-            <h2>Recent runs</h2>
-            <p>
-              TODO show the last X runs
-            </p>
-
+            <h2>Live activity stream</h2>
+            <table class="table-condensed table-bordered">
+              <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>From</th>
+                <th>&nbsp;</th>
+              </tr>
+              </thead>
+              <tbody id="stream"></tbody>
+            </table>
 
           </c:otherwise>
         </c:choose>
-
-
       </div>
-
     </div>
+
+    <script type="text/javascript">
+      $(function() {
+        function update() {
+          $.get('${cp}/home?activitiesFragment', function(frag) {
+            var rtInfo = $('#stream').html(frag).find('.rtinfo');
+            var nbRunning = rtInfo.data('nb-running');
+            var nbSubmitted = rtInfo.data('nb-submitted');
+            var nbQueued = nbSubmitted - nbRunning;
+            $('#nbRunning').text(nbRunning);
+            $('#nbQueued').text(nbQueued);
+            $('#totalRuns').text(rtInfo.data('total-runs'));
+            $('#totalTime').text(rtInfo.data('total-time'));
+            $('#successRate').text(rtInfo.data('success-rate'));
+            setTimeout(update, 1000);
+          });
+        }
+        update();
+      });
+    </script>
 
   </s:layout-component>
 </s:layout-render>

@@ -2,8 +2,12 @@ package com.pojosontheweb.tastecloud.woko
 
 import com.pojosontheweb.tastecloud.model.Config
 import com.pojosontheweb.tastecloud.model.Repository
+import com.pojosontheweb.tastecloud.model.RunJob
+import com.pojosontheweb.tastecloud.model.Stats
 import net.sourceforge.jfacets.annotations.AnnotatedFacetDescriptorManager
 import woko.Woko
+import woko.async.Job
+import woko.async.JobListener
 import woko.async.JobManager
 import woko.auth.builtin.SessionUsernameResolutionStrategy
 import woko.ext.usermanagement.core.AccountStatus
@@ -14,6 +18,7 @@ import woko.push.PushFacetDescriptorManager
 
 import javax.servlet.ServletContextEvent
 import javax.servlet.ServletContextListener
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class TasteCloudInitListener implements ServletContextListener {
@@ -67,7 +72,7 @@ class TasteCloudInitListener implements ServletContextListener {
                 store.delete(u)
             }
             // create a sample repo
-            if (store.list(store.getClassMapping(Repository.class), 0, 10).totalSize==0) {
+            if (store.list(store.getClassMapping(Repository.class), 0, 1).totalSize==0) {
                 store.save(
                     new Repository(
                         url:'https://github.com/pojosontheweb/taste-sample-repo.git',
@@ -75,6 +80,15 @@ class TasteCloudInitListener implements ServletContextListener {
                     )
                 )
             }
+            // create the stats object
+            if (store.list(store.getClassMapping(Stats.class), 0, 1).totalSize==0) {
+                store.save(
+                    new Stats()
+                )
+            }
+            store.stats.nbRunning = 0
+            store.stats.nbSubmitted = 0
+            store.save(store.stats)
         }
         userManager.createUser(email, password, email, ['standard'], AccountStatus.Active)
         def ioc = new SimpleWokoIocContainer(
@@ -82,9 +96,27 @@ class TasteCloudInitListener implements ServletContextListener {
             userManager,
             new SessionUsernameResolutionStrategy(),
             facetDescriptorManager)
-            .addComponent(JobManager.KEY, new JobManager(Executors.newFixedThreadPool(parallelJobs)))
+            .addComponent(JobManager.KEY, new TasteJobManager(Executors.newFixedThreadPool(parallelJobs), store))
             .addComponent(DockerManager.KEY, new DockerManager())
             .addComponent(Vcs.KEY, new Vcs())
         return new Woko(ioc, ['guest'])
+    }
+}
+
+class TasteJobManager extends JobManager {
+
+    private final TasteStore store
+
+    TasteJobManager(ExecutorService pool, TasteStore store) {
+        super(pool)
+        this.store = store
+    }
+
+    @Override
+    void submit(Job job, List<JobListener> listeners) {
+        if (job instanceof RunJob) {
+            store.save(store.stats.runSubmitted())
+        }
+        super.submit(job, listeners)
     }
 }
