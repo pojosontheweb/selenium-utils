@@ -72,8 +72,18 @@
         </dependency>
         <dependency>
             <groupId>com.pojosontheweb</groupId>
-            <artifactId>selenium-utils-groovy</artifactId>
+            <artifactId>selenium-utils-core</artifactId>
             <version>1.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.seleniumhq.selenium</groupId>
+                    <artifactId>org.seleniumhq.selenium:selenium-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.pojosontheweb</groupId>
+                    <artifactId>monte-repack</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.pojosontheweb</groupId>
