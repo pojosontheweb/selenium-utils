@@ -10,7 +10,7 @@
         // finished : display labels
         int nbFailed = summary.getNbFailed();
         int nbSuccess = summary.getNbSuccess();
-        int elapsed = summary.getElapsed();
+        long elapsed = summary.getElapsed();
         if (nbSuccess>0) {
 %>
             <span class="label label-success"><%=nbSuccess%></span>
