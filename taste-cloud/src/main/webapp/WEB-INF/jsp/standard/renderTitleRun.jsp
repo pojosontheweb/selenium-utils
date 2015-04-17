@@ -14,10 +14,10 @@
         <small>
             <c:choose>
                 <c:when test="${run.repositoryRun==null}">
-                    From <w:link object="${run.fromTaste}" facetName="view"/>
+                    From simple taste <w:link object="${run.fromTaste}" facetName="edit"/>
                 </c:when>
                 <c:otherwise>
-                    From <w:link object="${run.repositoryRun}" facetName="view"/>
+                    From repository <w:link object="${run.repositoryRun}" facetName="view"/>
                 </c:otherwise>
             </c:choose>
         </small>

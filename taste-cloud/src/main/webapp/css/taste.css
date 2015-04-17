@@ -63,15 +63,13 @@ pre.editor {
     background: none;
     margin: 0;
     padding: 0;
-    min-height: 600px;
 }
 
 pre.editor .textview {
-    min-height: 600px;
 }
 
 img.browsr {
-    width: 60px;
+    width: 50px;
 }
 
 .table.Run img.browsr, .table.Taste img.browsr, #stream .browsr {
@@ -80,7 +78,10 @@ img.browsr {
 
 .row.summary {
     text-align: center;
-    font-size: 16pt;
+}
+
+.row.summary small {
+    color: grey;
 }
 
 .results.table td {
@@ -104,3 +105,6 @@ img.browsr {
     margin-bottom: 0;
 }
 
+body {
+    padding: 0;
+}

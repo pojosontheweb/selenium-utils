@@ -16,22 +16,35 @@
 
         <c:if test="${taste.id==null}">
             <div class="alert alert-info alert-dismissible" role="alert">
-                You are creating a simple Taste script. This is good for
+                <b>You are creating a simple Taste script !</b> This is good for
                 basic tests, learning the APIs, or just to try out stuff.
-                If you have actual tests, you should probably better check those into
-                a git repository, and bind this repo in taste-cloud.
-                Your tests will then be versionned, triggered automatically on commit, etc.
+                For more involved scenarios, you can bind a Git repository, and
+                have your Tastes automatically triggered for you on commit.
                 <br/>
                 <br/>
-                <a class="btn btn-primary" href="${cp}/edit/Repository?createTransient=true">Bind git repo</a>
-                <button type="button" class="btn btn-default" data-dismiss="alert" aria-label="Close">Not now, thanks</button>
+                <a class="btn btn-primary" href="${cp}/edit/Repository?createTransient=true">Bind a Git repo</a>
+                <button type="button" class="btn btn-default dismiss-alert" data-dismiss="alert" aria-label="Close">Not now, thanks</button>
             </div>
         </c:if>
 
         <w:b3-form-group-css fieldName="object.name" var="nameCss"/>
         <div class="${nameCss}">
             <div class="col-sm-12">
-                <s:text name="object.name" class="form-control" placeholder="Give a name to your taste"/>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <s:text id="tasteName"
+                                    name="object.name"
+                                    class="form-control"
+                                    placeholder="Give a name to your taste"/>
+                        </td>
+                        <td>
+                            &nbsp;
+                            <s:submit name="save" class="btn btn-primary"/>
+                            <s:submit name="saveAndRun" class="btn btn-default" value="Save and run"/>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
 
@@ -45,28 +58,66 @@
              data-editor-show-folding-ruler="false"></pre>
             </div>
         </div>
-        <div class="btns">
-            <s:submit name="save" class="btn btn-primary"/>
-            <s:submit name="saveAndRun" class="btn btn-default" value="Save and run"/>
-        </div>
     </div>
     <s:textarea name="object.taste" id="tasteText" style="display: none;"/>
 </s:form>
 <script>
-    require(["orion/editor/edit"], function (edit) {
-        var editor = edit({className: "editor"})[0];
-        $('#saveTaste').submit(function () {
-            $('#tasteText').val(editor.getText());
+    $(function() {
+        var editor;
+        require(["orion/editor/edit"], function (edit) {
+            editor = edit({className: "editor"})[0];
+            $('#saveTaste').submit(function () {
+                $('#tasteText').val(editor.getText());
+            });
+
+            <c:choose>
+            <c:when test="${taste.id==null}">
+            editor.setText($('#initTaste').text());
+            </c:when>
+            <c:otherwise>
+            editor.setText($('#tasteText').text());
+            </c:otherwise>
+            </c:choose>
+            // ugly but better UX
+            <c:if test="${taste.id==null}">
+                setTimeout(function() {
+                    $('#tasteName').trigger('focus');
+                }, 500);
+            </c:if>
+
+            // initial resize
+            resizeEditor(false);
         });
 
-        <c:choose>
-        <c:when test="${taste.id==null}">
-        editor.setText($('#initTaste').text());
-        </c:when>
-        <c:otherwise>
-        editor.setText($('#tasteText').text());
-        </c:otherwise>
-        </c:choose>
+        function resizeEditor(animate) {
+            // redraw the editor to accomodate vert space
+            var ed = $('.editor'),
+                    tasteName = $('#tasteName')[0],
+                    top = tasteName.getBoundingClientRect().bottom,
+                    winH = $(window).height(),
+                    h = winH - top - 45;
+
+            if (!animate) {
+                ed.height(h);
+                editor.resize();
+            } else {
+                ed.animate({height:h + 'px'}, 500, function() {
+                    editor.resize();
+                });
+            }
+        }
+
+        $( window ).resize(function() {
+            resizeEditor();
+        });
+
+        $('.dismiss-alert, .close').click(function() {
+            setTimeout(function() {
+                resizeEditor(true);
+                $('#tasteName').trigger('focus');
+            }, 200);
+        });
+
     });
 </script>
 <script type="text/taste" id="initTaste">/*

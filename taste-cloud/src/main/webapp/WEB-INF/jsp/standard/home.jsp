@@ -76,7 +76,7 @@
                             </div>
                         </div>
 
-                        <h3>Live activity stream</h3>
+                        <h3>Activity stream</h3>
                         <table class="table table-condensed">
                             <tbody id="stream"></tbody>
                         </table>

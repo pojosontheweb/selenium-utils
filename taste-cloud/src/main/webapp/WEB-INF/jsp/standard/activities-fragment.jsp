@@ -43,7 +43,7 @@
           Run
         --%>
         <td>
-            <a href="${cp}/view/Taste/<%=ta.getTasteId()%>">
+            <a href="${cp}/edit/Taste/<%=ta.getTasteId()%>">
                 <c:out value="<%=ta.getTasteName()%>"/>
             </a>
             /
