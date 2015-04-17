@@ -34,6 +34,7 @@ class MyLayout extends LayoutBootstrap3 {
     List<String> getJsIncludes() {
         def all = new ArrayList(super.getJsIncludes())
         all << '/image-picker/image-picker.min.js'
+        all << '/momentjs/moment.min.js'
         return all
     }
 

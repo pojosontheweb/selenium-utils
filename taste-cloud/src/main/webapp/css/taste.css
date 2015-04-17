@@ -91,3 +91,16 @@ img.browsr {
     font-style: italic;
 }
 
+.stats .stat {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.stats .stat small {
+    color: grey;
+}
+
+.stats .stat h3 {
+    margin-bottom: 0;
+}
+

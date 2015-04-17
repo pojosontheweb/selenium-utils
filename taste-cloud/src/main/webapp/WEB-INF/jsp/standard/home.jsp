@@ -14,7 +14,7 @@
         <div class="container-fluid">
 
             <div class="page-header">
-                <h1>Dashboard</h1>
+                <h1>Status</h1>
             </div>
 
             <div class="dashboard">
@@ -39,35 +39,40 @@
                     </c:when>
                     <c:otherwise>
 
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="well text-center">
-                                    <span id="nbRunning">...</span> running,
-                                    <span id="nbQueued">...</span> tastes in queue,
-                                    <span id="nbReposQueued">...</span> repos in queue
-                                </div>
+                        <div class="row stats">
+                            <div class="col-xs-4 stat">
+                                <h3>
+                                    <span id="nbRunning"></span> /
+                                    ${home.woko.objectStore.config.parallelJobs}
+                                </h3>
+                                <small>Running / Max jobs</small>
                             </div>
-                            <div class="col-md-3">
-                                <div class="well text-center">
-                                    <span id="totalRuns">...</span>
-                                    total runs
-                                </div>
+                            <div class="col-xs-4 stat">
+                                <h3 id="nbReposQueued"></h3>
+                                <small>Repos in queue</small>
                             </div>
-                            <div class="col-md-3 text-center">
-                                <div class="well">
-                                    <span id="totalTime">...</span>
-                                    total time
-                                </div>
-                            </div>
-                            <div class="col-md-3 text-center">
-                                <div class="well">
-                                    <span id="successRate">...</span>
-                                    success rate
-                                </div>
+                            <div class="col-xs-4 stat">
+                                <h3 id="nbQueued"></h3>
+                                <small>Tastes in queue</small>
                             </div>
                         </div>
 
-                        <h2>Live activity stream</h2>
+                        <div class="row stats">
+                            <div class="col-xs-4 stat">
+                                <h3 id="totalRuns"></h3>
+                                <small>Total runs</small>
+                            </div>
+                            <div class="col-xs-4 stat">
+                                <h3 id="totalTime"></h3>
+                                <small>Total time</small>
+                            </div>
+                            <div class="col-xs-4 stat">
+                                <h3><span id="successRate"></span> %</h3>
+                                <small>Success rate</small>
+                            </div>
+                        </div>
+
+                        <h3>Live activity stream</h3>
                         <table class="table table-condensed">
                             <tbody id="stream"></tbody>
                         </table>
