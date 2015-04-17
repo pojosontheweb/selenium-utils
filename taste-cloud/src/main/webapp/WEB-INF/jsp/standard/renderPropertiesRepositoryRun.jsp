@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp" %>
+<%@taglib prefix="taste" tagdir="/WEB-INF/tags" %>
 <c:set var="rr" value="${renderProperties.facetContext.targetObject}"/>
 <div class="container-fluid">
     <div class="row summary">
@@ -53,24 +54,24 @@
                     </c:if>
                 </c:when>
                 <c:otherwise>
-                    <table width="100%">
-                        <tr>
-                            <td style="text-align: right; padding-right: 1px;">
-                                <span class="label label-danger">TODO</span>
-                            </td>
-                            <td style="text-align: left; padding-left: 1px;">
-                                <span class="label label-danger">TODO</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: right; padding-right: 1px;">
-                                <span class="label label-danger">TODO</span>
-                            </td>
-                            <td style="text-align: left; padding-left: 1px;">
-                                <span class="label label-danger">TODO</span>
-                            </td>
-                        </tr>
-                    </table>
+                    <c:set var="s" value="${rr.resultSummary}"/>
+                    <c:if test="${s.nbSuccess>0}">
+                        <span class="label label-success">${s.nbSuccess}</span>
+                    </c:if>
+                    <c:if test="${s.nbFailed>0}">
+                        <span class="label label-danger">${s.nbFailed}</span>
+                    </c:if>
+                    <c:choose>
+                        <c:when test="${s.successRatio<100.0}">
+                            <span class="label label-danger">${s.successRatio} %</span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="label label-success">${s.successRatio} %</span>
+                        </c:otherwise>
+                    </c:choose>
+                    <br/>
+                    <span class="label label-info">${s.nbFailed+s.nbSuccess}</span>
+                    <span class="label label-info"><taste:prettyDuration millis="${s.elapsed*1000}"/></span>
                 </c:otherwise>
             </c:choose>
         </div>
