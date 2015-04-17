@@ -109,6 +109,6 @@ body {
     padding: 0;
 }
 
-.repo-run-summary {
-    margin-bottom: 24px;
+small.revision {
+    width: 40px;
 }
