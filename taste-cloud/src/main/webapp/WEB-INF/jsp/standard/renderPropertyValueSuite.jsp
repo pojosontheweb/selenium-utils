@@ -24,7 +24,9 @@
                 SuiteCounts counts = suite.getCounts();
                 double ratio = Math.ceil(counts.getRatio() * 100) / 100;
             %>
-                <span class="label label-success"><%=counts.getNbSuccess()%></span>
+                <% if (counts.getNbSuccess()>0) { %>
+                    <span class="label label-success"><%=counts.getNbSuccess()%></span>
+                <% } %>
                 <% if (ratio==100) { %>
                     <span class="label label-success"><%=ratio%> %</span>
                 <% } else if (ratio==0) { %>

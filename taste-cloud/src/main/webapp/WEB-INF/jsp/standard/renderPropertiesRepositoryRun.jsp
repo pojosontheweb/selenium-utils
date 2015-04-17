@@ -6,7 +6,9 @@
     <div class="row summary">
         <div class="col-sm-3">
             <h3>Repository</h3>
-            <c:out value="${rr.branch}"/>@<w:link object="${rr.repository}" facetName="view"/>
+            <w:link object="${rr.repository}" facetName="view"/>
+            <br/>
+            <c:out value="${rr.branch}"/>
             <br/>
             <small class="revision"><c:out value="${rr.revision}"/></small>
         </div>

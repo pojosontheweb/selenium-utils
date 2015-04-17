@@ -6,6 +6,13 @@
 <c:set var="rr" value="${renderTitle.facetContext.targetObject}"/>
 <div class="page-header">
     <h1>
-        Repository Run
+        <c:choose>
+            <c:when test="${rr.finishedOn==null}">
+                Repo Run in progress...
+            </c:when>
+            <c:otherwise>
+                Repo Run finished
+            </c:otherwise>
+        </c:choose>
     </h1>
 </div>

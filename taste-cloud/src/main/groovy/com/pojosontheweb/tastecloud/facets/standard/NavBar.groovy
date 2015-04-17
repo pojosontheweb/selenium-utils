@@ -16,12 +16,11 @@ class NavBar extends NavBarAll implements woko.facets.builtin.NavBar {
         Config c = store.config
         def res = []
         if (c) {
-            res << new Link('/list/Repository', 'repos')
             res << new Link('/edit/Taste?createTransient=true', 'new')
             res << new Link('/list/Taste', 'tastes')
+            res << new Link('/list/Repository', 'repos')
             res << new Link('/list/Run', 'runs')
-            String cUrl = woko.facetUrl('view', c)
-            res << new Link(cUrl, 'config')
+            res << new Link(woko.facetUrl('view', c), 'config')
         }
         return res
     }
