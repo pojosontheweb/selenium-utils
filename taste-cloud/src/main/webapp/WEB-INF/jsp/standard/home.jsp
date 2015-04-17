@@ -13,14 +13,14 @@
 
         <div class="container-fluid">
 
-            <div class="page-header">
-                <h1>Status</h1>
-            </div>
-
             <div class="dashboard">
 
                 <c:choose>
                     <c:when test="${home.stats.totalRuns==0}">
+
+                        <div class="page-header">
+                            <h1>Welcome to Taste</h1>
+                        </div>
                         <p>
                             You have not yet ran any Taste yet !
                             Get started :
@@ -39,21 +39,25 @@
                     </c:when>
                     <c:otherwise>
 
+                        <div class="page-header">
+                            <h1>Cloud status</h1>
+                        </div>
+
                         <div class="row stats">
                             <div class="col-xs-4 stat">
                                 <h3>
                                     <span id="nbRunning"></span> /
-                                    ${home.woko.objectStore.config.parallelJobs}
+                                        ${home.woko.objectStore.config.parallelJobs}
                                 </h3>
                                 <small>Running / Max jobs</small>
                             </div>
                             <div class="col-xs-4 stat">
-                                <h3 id="nbReposQueued"></h3>
-                                <small>Repos in queue</small>
+                                <h3 id="nbQueued"></h3>
+                                <small>Runs in queue</small>
                             </div>
                             <div class="col-xs-4 stat">
-                                <h3 id="nbQueued"></h3>
-                                <small>Tastes in queue</small>
+                                <h3 id="nbReposQueued"></h3>
+                                <small>Repos in queue</small>
                             </div>
                         </div>
 
@@ -64,7 +68,7 @@
                             </div>
                             <div class="col-xs-4 stat">
                                 <h3 id="totalTime"></h3>
-                                <small>Total time</small>
+                                <small>Total test time</small>
                             </div>
                             <div class="col-xs-4 stat">
                                 <h3><span id="successRate"></span> %</h3>

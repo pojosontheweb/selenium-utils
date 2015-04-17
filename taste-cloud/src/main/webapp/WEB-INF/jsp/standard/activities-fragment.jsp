@@ -8,6 +8,7 @@
 <%@ page import="com.pojosontheweb.tastecloud.model.RepositoryRun" %>
 <%@ page import="com.pojosontheweb.tastecloud.model.ResultSummary" %>
 <%@ page import="com.pojosontheweb.tastecloud.model.Run" %>
+<%@ page import="com.pojosontheweb.tastecloud.Util" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp" %>
 <c:set var="cp" value="${pageContext.request.contextPath}"/>
@@ -23,7 +24,7 @@
       Date
     --%>
     <td>
-        <fmt:formatDate value="<%=a.getTstamp()%>" type="both" timeStyle="full"/>
+        <%=Util.prettyTime(a.getTstamp(), request.getLocale())%>
     </td>
 
     <%--
@@ -158,7 +159,7 @@
     data-nb-running="<%=stats.getNbRunning()%>"
     data-nb-submitted="<%=stats.getNbTastesSubmitted()%>"
     data-total-runs="<%=stats.getTotalRuns()%>"
-    data-total-time="<%=stats.getTotalTime()/1000%>"
+    data-total-time="<%=Util.prettyDuration(stats.getTotalTime())%>"
     data-success-rate="<%=stats.getSuccessRate()%>"
     data-nb-repos-queued="<%=stats.getNbReposQueued()%>"></tr>
 
