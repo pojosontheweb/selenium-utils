@@ -38,6 +38,16 @@ class RepositoryRun {
     @NotNull
     Browsr browsr = Browsr.Firefox
 
+    ResultSummary getResultSummary() {
+        ResultSummary s = new ResultSummary(finished: finishedOn!=null)
+        if (s.finished) {
+            runs?.each { Run run ->
+                s = s + run.resultSummary
+            }
+        }
+        return s
+    }
+
     @Override
     public String toString() {
         return "RepositoryRun{" +

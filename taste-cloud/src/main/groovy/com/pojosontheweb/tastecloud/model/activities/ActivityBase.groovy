@@ -21,4 +21,8 @@ abstract class ActivityBase {
 
     Browsr browsr
 
+    String runId
+
+    String relativePath
+
 }

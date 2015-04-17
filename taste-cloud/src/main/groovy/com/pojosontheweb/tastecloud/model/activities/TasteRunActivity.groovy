@@ -1,6 +1,5 @@
 package com.pojosontheweb.tastecloud.model.activities
 
-import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.model.Run
 import com.pojosontheweb.tastecloud.model.Taste
 
@@ -18,7 +17,9 @@ class TasteRunActivity extends ActivityBase {
             tasteName: taste.name,
             tasteId: taste.id,
             browsr: run.browsr,
-            type: type
+            type: type,
+            runId: run.id,
+            relativePath: run.relativePath
         )
     }
 }

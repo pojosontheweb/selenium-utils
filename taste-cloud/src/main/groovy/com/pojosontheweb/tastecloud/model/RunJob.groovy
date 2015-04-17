@@ -1,6 +1,7 @@
 package com.pojosontheweb.tastecloud.model
 
 import com.pojosontheweb.tastecloud.model.activities.ActivityType
+import com.pojosontheweb.tastecloud.model.activities.RepoRunActivity
 import com.pojosontheweb.tastecloud.model.activities.TasteRunActivity
 import com.pojosontheweb.tastecloud.woko.DockerManager
 import com.pojosontheweb.tastecloud.woko.TasteStore
@@ -202,6 +203,8 @@ config {
 
                 if (run.fromTaste) {
                     store.save(TasteRunActivity.make(run, ActivityType.Finish))
+                } else if (run.repositoryRun) {
+                    store.save(RepoRunActivity.make(run.repositoryRun, ActivityType.Finish, run))
                 }
 
                 store.save(store.stats.runFinished(run))

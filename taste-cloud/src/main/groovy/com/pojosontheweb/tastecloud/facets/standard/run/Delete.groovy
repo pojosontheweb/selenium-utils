@@ -12,7 +12,7 @@ import woko.facets.builtin.developer.DeleteImpl
 import woko.facets.builtin.Delete
 
 @FacetKey(name="delete", profileId="standard", targetObjectType=Run.class)
-class Delete extends DeleteImpl implements woko.facets.builtin.Delete, IInstanceFacet {
+class Delete extends DeleteImpl implements woko.facets.builtin.Delete {
 
     @Override
     protected void doDelete(ActionBeanContext abc) {
@@ -25,9 +25,4 @@ class Delete extends DeleteImpl implements woko.facets.builtin.Delete, IInstance
         super.doDelete(abc)
     }
 
-    @Override
-    boolean matchesTargetObject(Object targetObject) {
-        Run r = (Run)facetContext.targetObject
-        r.startedOn && r.finishedOn
-    }
 }

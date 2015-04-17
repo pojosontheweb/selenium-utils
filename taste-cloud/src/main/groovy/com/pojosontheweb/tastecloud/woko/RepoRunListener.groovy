@@ -30,7 +30,7 @@ class RepoRunListener implements JobListener {
                     rr.startedOn = r.startedOn
                     store.save(rr)
                     logger.info("repo run $rr started")
-                    store.save(RepoRunActivity.make(rr, ActivityType.Start))
+                    store.save(RepoRunActivity.make(rr, ActivityType.Start, r))
                 }
                 // all runs must finish...
                 boolean atLeastOneRunPending = rr?.runs?.find { it.finishedOn==null }

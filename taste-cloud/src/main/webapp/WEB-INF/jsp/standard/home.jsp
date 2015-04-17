@@ -68,14 +68,6 @@
 
             <h2>Live activity stream</h2>
             <table class="table-condensed table-bordered">
-              <thead>
-              <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>From</th>
-                <th>&nbsp;</th>
-              </tr>
-              </thead>
               <tbody id="stream"></tbody>
             </table>
 

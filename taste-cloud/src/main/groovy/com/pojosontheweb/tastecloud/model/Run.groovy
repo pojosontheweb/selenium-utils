@@ -102,20 +102,6 @@ class Run {
 
 }
 
-class RunSummary {
-    Browsr browsr
-    Date queuedOn
-    Date startedOn
-    Date finishedOn
-}
-
-class ResultSummary {
-    boolean finished
-    int nbSuccess = 0
-    int nbFailed = 0
-    int elapsed = 0
-}
-
 
 @Entity
 class Log {

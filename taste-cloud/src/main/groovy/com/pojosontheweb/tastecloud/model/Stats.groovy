@@ -43,7 +43,7 @@ class Stats {
             } else {
                 nbFailure = nbFailure + 1
             }
-        } else {
+        } else if (run.suite) {
             def counts = run.suite.counts
             nbSuccess = nbSuccess + counts.nbSuccess
             nbFailure = nbFailure + counts.nbFailed
