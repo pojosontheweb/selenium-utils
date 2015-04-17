@@ -14,6 +14,7 @@ class RenderLinks extends RenderLinksImpl implements woko.facets.builtin.RenderL
         def all = new ArrayList(super.getLinks())
         Repository t = (Repository)facetContext.targetObject
         all.add(0, new Link(LinkUtil.getUrl(woko, t, 'pullAndRun'), 'Pull and run'))
+        all.add(1, new Link("list/RepositoryRun?facet.repo=$t.id", 'Run history'))
         return all
     }
 

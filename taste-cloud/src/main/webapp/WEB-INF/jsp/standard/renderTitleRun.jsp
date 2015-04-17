@@ -17,7 +17,7 @@
                     From simple taste <w:link object="${run.fromTaste}" facetName="edit"/>
                 </c:when>
                 <c:otherwise>
-                    From repository <w:link object="${run.repositoryRun}" facetName="view"/>
+                    From repository <w:link object="${run.repositoryRun.repository}" facetName="view"/>
                 </c:otherwise>
             </c:choose>
         </small>

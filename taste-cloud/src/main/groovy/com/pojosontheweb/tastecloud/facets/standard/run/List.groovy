@@ -11,6 +11,6 @@ class List extends ListTabularImpl implements ListObjects {
 
     @Override
     java.util.List<String> getPropertyNames() {
-        ['id', 'browsr', 'startedOn', 'finishedOn','resultSummary']
+        ['runSource', 'browsr', 'startedOn', 'finishedOn','resultSummary']
     }
 }

@@ -77,8 +77,25 @@ class TasteStore extends HibernateStore {
         }
     }
 
+    public ResultIterator<?> list(Criteria crit, Integer start, Integer limit) {
+        int s = start == null ? 0 : start
+        int l = limit == null ? -1 : limit
 
-    @Override
+        // count
+        crit.setProjection(Projections.rowCount())
+        Long count = (Long)crit.uniqueResult()
+
+        // sublist
+        crit.setProjection(null)
+        crit.setFirstResult(s)
+        if (l != -1) {
+            crit.setMaxResults(l)
+        }
+        return new ListResultIterator<Object>(crit.list(), s, l, count.intValue())
+    }
+
+
+        @Override
     protected Configuration configure(Configuration config) {
         // load config template
         try {

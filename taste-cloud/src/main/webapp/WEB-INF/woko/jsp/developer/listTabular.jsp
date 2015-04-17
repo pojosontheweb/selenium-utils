@@ -40,14 +40,16 @@
                     <w:includeFacet facetName="<%=WokoFacets.renderListTitle%>" targetObjectClass="<%=woko.getObjectStore().getMappedClass(className)%>"/>
                 </c:when>
                 <c:otherwise>
-                    <h1 class="page-header"><%=overridenH1%></h1>
+                    <div class="page-header">
+                        <h1><%=overridenH1%></h1>
+                    </div>
                 </c:otherwise>
             </c:choose>
 
             <c:if test="<%=nbPages>1%>">
                 <div class="row w-list-form hidden-xs">
                     <div class="col-lg-4 col-sm-4">
-                        <s:form action="/list" class="form-inline">
+                        <s:form action="/list" class="form-inline" method="GET">
                             <s:hidden name="className"/>
                             <input type="hidden"name="facet.page" value="1"/>
                             <s:select name="facet.resultsPerPage" onchange="this.form.submit()" class="form-control">

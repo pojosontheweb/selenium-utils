@@ -99,6 +99,10 @@ class Run {
         return end - startedOn.time
     }
 
+    // return the Taste or the RepositoryRun
+    def getRunSource() {
+        fromTaste ?: repositoryRun
+    }
 
 }
 
