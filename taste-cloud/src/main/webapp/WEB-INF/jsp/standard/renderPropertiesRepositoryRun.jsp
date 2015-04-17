@@ -80,6 +80,7 @@
     </div>
 
     <h2>Runs</h2>
-    TODO
+    <w:includeFacet facetName="runsFragment" targetObject="${rr}"/>
+
 </div>
 
