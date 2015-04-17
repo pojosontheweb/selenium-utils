@@ -44,6 +44,8 @@ class PullAndRun extends BaseResolutionFacet {
 
         store.save(RepoRunActivity.make(repositoryRun, ActivityType.Queued))
 
+        store.save(store.stats.repoRunSubmitted())
+
         store.session.flush()
         jobManager.submit(new PullAndRunJob(woko, vcs, repositoryRun.id), [])
         woko.resolutions().redirect('view', repositoryRun)
@@ -69,6 +71,7 @@ class PullAndRunJob extends JobBase {
         Util.withTmpDir { File tmpDir ->
 
             RepoDef repository = store.inTx {
+                store.save(store.stats.repoRunStarted())
                 RepositoryRun rr = store.getRepositoryRun(repositoryRunId)
                 return new RepoDef(url:rr.repository.url, branch: rr.repository.branch)
             }

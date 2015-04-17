@@ -87,7 +87,7 @@ class TasteCloudInitListener implements ServletContextListener {
                 )
             }
             store.stats.nbRunning = 0
-            store.stats.nbSubmitted = 0
+            store.stats.nbTastesSubmitted = 0
             store.save(store.stats)
         }
         userManager.createUser(email, password, email, ['standard'], AccountStatus.Active)

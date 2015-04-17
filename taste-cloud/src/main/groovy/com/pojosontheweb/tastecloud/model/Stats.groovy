@@ -16,14 +16,16 @@ class Stats {
 
     Integer nbRunning = 0
 
-    Integer nbSubmitted = 0
+    Integer nbTastesSubmitted = 0
+
+    Integer nbReposQueued = 0
 
     Integer nbSuccess = 0
 
     Integer nbFailure = 0
 
     Stats runSubmitted() {
-        nbSubmitted = nbSubmitted + 1
+        nbTastesSubmitted = nbTastesSubmitted + 1
         this
     }
 
@@ -35,7 +37,7 @@ class Stats {
 
     Stats runFinished(Run run) {
         nbRunning = nbRunning - 1
-        nbSubmitted = nbSubmitted - 1
+        nbTastesSubmitted = nbTastesSubmitted - 1
         totalTime = totalTime + run.elapsed
         if (run.test) {
             if (run.test.success) {
@@ -48,6 +50,16 @@ class Stats {
             nbSuccess = nbSuccess + counts.nbSuccess
             nbFailure = nbFailure + counts.nbFailed
         }
+        this
+    }
+
+    Stats repoRunSubmitted() {
+        nbReposQueued++
+        this
+    }
+
+    Stats repoRunStarted() {
+        nbReposQueued--
         this
     }
 

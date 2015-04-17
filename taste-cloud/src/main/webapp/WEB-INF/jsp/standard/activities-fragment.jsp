@@ -156,10 +156,11 @@
 <tr style="display: none;"
     class="rtinfo"
     data-nb-running="<%=stats.getNbRunning()%>"
-    data-nb-submitted="<%=stats.getNbSubmitted()%>"
+    data-nb-submitted="<%=stats.getNbTastesSubmitted()%>"
     data-total-runs="<%=stats.getTotalRuns()%>"
     data-total-time="<%=stats.getTotalTime()/1000%>"
-    data-success-rate="<%=stats.getSuccessRate()%>"></tr>
+    data-success-rate="<%=stats.getSuccessRate()%>"
+    data-nb-repos-queued="<%=stats.getNbReposQueued()%>"></tr>
 
 
 
