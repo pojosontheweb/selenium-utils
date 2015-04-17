@@ -8,7 +8,12 @@ import woko.facets.builtin.all.RenderPropertiesImpl
 class RenderProperties extends RenderPropertiesImpl {
 
     @Override
-    List<String> getPropertyNames() {
+    java.util.List<String> getPropertyNames() {
         ['repository', 'branch', 'revision', 'queuedOn', 'startedOn', 'finishedOn', 'runs']
+    }
+
+    @Override
+    String getPath() {
+        '/WEB-INF/jsp/standard/renderPropertiesRepositoryRun.jsp'
     }
 }

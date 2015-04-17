@@ -7,7 +7,7 @@
 <div class="page-header">
     <h1>
         Repo Run
-        <small></small>
+        <small>From <w:link object="${rr.repository}" facetName="view"/></small>
     </h1>
 </div>
 <div class="container-fluid repo-run-summary">
