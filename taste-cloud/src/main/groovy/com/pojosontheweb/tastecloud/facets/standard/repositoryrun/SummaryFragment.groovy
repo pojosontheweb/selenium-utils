@@ -8,12 +8,12 @@ import net.sourceforge.stripes.action.Resolution
 import woko.facets.BaseFragmentFacet
 import woko.facets.ResolutionFacet
 
-@FacetKey(name="runsFragment",profileId = "standard", targetObjectType = RepositoryRun.class)
-class RunsFragment extends BaseFragmentFacet implements ResolutionFacet {
+@FacetKey(name="summaryFragment", profileId = "standard", targetObjectType = RepositoryRun.class)
+class SummaryFragment extends BaseFragmentFacet implements ResolutionFacet {
 
     @Override
     String getPath() {
-        '/WEB-INF/jsp/standard/repoRunsFragment.jsp'
+        '/WEB-INF/jsp/standard/renderRepoRunSummary.jsp'
     }
 
     @Override

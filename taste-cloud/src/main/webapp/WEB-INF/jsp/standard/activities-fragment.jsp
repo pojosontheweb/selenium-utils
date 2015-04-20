@@ -31,7 +31,7 @@
       Browser
     --%>
     <td>
-        <img class="browsr" alt="browser" src="/taste-cloud/img/<%=a.getBrowsr().name()%>.png">
+        <img class="browsr" alt="browser" src="<%=request.getContextPath()%>/img/<%=a.getBrowsr().name()%>.png">
     </td>
 
     <%
@@ -91,14 +91,14 @@
         --%>
 
         <td>
-            <a href="${cp}/view/Repository/<%=ra.getRepoId()%>">
+            <a href="${cp}/view/RepositoryRun/<%=ra.getRepoRunId()%>">
                 <c:out value="<%=ra.getRepoName()%>"/>
             </a>
             <%
                 if (ra.getRelativePath() != null) {
             %>
                 /
-                <a href="${cp}/view/RepositoryRun/<%=ra.getRunId()%>">
+                <a href="${cp}/view/Run/<%=ra.getRunId()%>">
                     <c:out value="<%=ra.getRelativePath()%>"/>
                 </a>
             <%

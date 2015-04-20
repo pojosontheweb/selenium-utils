@@ -28,5 +28,5 @@
         </span>
 <%
     } else  { %>
-<img src="${cp}/img/ajax-loader.gif" alt="loader" width="20">
+<img src="<%=request.getContextPath()%>/img/ajax-loader.gif" alt="loader" width="20">
 <% } %>

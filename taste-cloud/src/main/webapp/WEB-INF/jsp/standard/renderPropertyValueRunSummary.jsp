@@ -13,7 +13,7 @@
 <div class="row summary">
     <div class="col-sm-3">
         <h3>Browser</h3>
-        <img class="browsr" alt="browser" src="${cp}/img/<%=summary.getBrowsr().name()%>.png"/>
+        <img class="browsr" alt="browser" src="<%=request.getContextPath()%>/img/<%=summary.getBrowsr().name()%>.png"/>
     </div>
     <div class="col-sm-3">
         <h3>Queued</h3>
@@ -45,7 +45,7 @@
             if (finishedOn==null) {
                 if (startedOn!=null) {
         %>
-                    <img src="${cp}/img/ajax-loader.gif" alt="loader"/>
+                    <img src="<%=request.getContextPath()%>/img/ajax-loader.gif" alt="loader"/>
         <%
                 }
             } else {
