@@ -72,7 +72,6 @@ class RunJob extends JobBase {
                 log run, 'Run started...'
                 run.startedOn = new Date()
                 store.save run
-                store.session.flush()
 
                 // post new activity to the stream
                 if (run.fromTaste) {
@@ -81,6 +80,8 @@ class RunJob extends JobBase {
 
                 // update stats
                 store.save(store.stats.runStarted())
+
+                store.session.flush()
 
                 [
                     taste:run.taste,
@@ -121,7 +122,7 @@ config {
 //    locales "en", "fr"                      // locale(s) to be used
 
     findr {
-        timeout 10
+        timeout 30
         verbose true
     }
 
@@ -208,6 +209,7 @@ config {
                 }
 
                 store.save(store.stats.runFinished(run))
+                store.session.flush()
             }
             logger.info("$runId : done")
         }
