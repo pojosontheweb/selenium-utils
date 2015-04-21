@@ -10,7 +10,7 @@
     Run run = (Run)renderPropertyValue.getOwningObject();
     RunSummary summary = (RunSummary)renderPropertyValue.getPropertyValue();
 %>
-<div class="row summary">
+<div class="row run-summary">
     <div class="col-sm-3">
         <h3>Browser</h3>
         <img class="browsr" alt="browser" src="<%=request.getContextPath()%>/img/<%=summary.getBrowsr().name()%>.png"/>
@@ -60,3 +60,90 @@
         %>
     </div>
 </div>
+<%
+    if (startedOn==null && finishedOn==null) {
+        // queued
+%>
+        <w:objectKey var="runId" object="<%=run%>"/>
+        <div class="run-queued">
+            <h2>Run in queue</h2>
+            <p>
+                The run is in the queue. It will start automatically...
+            </p>
+        </div>
+        <script type="text/javascript">
+            $(function() {
+                var poll = function() {
+                    setTimeout(function() {
+                        wokoClient.loadObject('Run', '${runId}', {
+                            onSuccess: function(run) {
+                                if (run.summary && run.summary.startedOn) {
+                                    window.location.reload();
+                                } else {
+                                    poll();
+                                }
+                            }
+                        })
+                    }, 1000);
+                };
+                poll();
+            });
+        </script>
+
+<%
+    } else {
+        if (finishedOn==null) {
+            // started
+%>
+            <div class="logs">
+                <h2>Logs</h2>
+                <p>
+                    Logs are updating live.
+                </p>
+                <table class="logs-wrapper">
+                </table>
+            </div>
+            <script type="text/javascript">
+                <w:objectKey var="runId" object="<%=run%>"/>
+                $(function() {
+                    var poll = function() {
+                        var timeout = setTimeout(function() {
+                            wokoClient.loadObject('Run', '${runId}', {
+                                onSuccess: function(run) {
+                                    clearTimeout(timeout);
+                                    if (run.summary && run.summary.finishedOn) {
+                                        window.location.reload();
+                                    } else {
+                                        // update the logs
+                                        $('.logs-wrapper').append($('<span>').text('TODO'));
+                                        poll();
+                                    }
+                                }
+                            })
+                        }, 1000);
+                    };
+
+                    poll();
+
+                });
+            </script>
+
+<%
+        } else {
+            // finished
+%>
+            <w:objectKey var="runId" object="<%=run%>"/>
+            <div class="logs">
+                <h2>Logs</h2>
+                <p>
+                    Only the last XYZ log messages are shown.
+                    Get <a href="#">full logs</a> (TODO)
+                </p>
+                <table class="logs-wrapper">
+                    LOGS here !
+                </table>
+            </div>
+<%
+        }
+    }
+%>

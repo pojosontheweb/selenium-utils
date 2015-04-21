@@ -20,7 +20,7 @@ config {
 
     video {
         enabled true                       // enable/disable video recording
-        dir "/mnt/target"             // where to store videos
+        dir "/Users/vankeisb/projects/selenium-utils/taste/docker/sample/target"             // where to store videos
         failuresOnly true                   // record everything/failures only
     }
 }

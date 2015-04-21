@@ -1,5 +1,7 @@
 package com.pojosontheweb.taste
 
+import com.google.common.base.Function
+import com.pojosontheweb.selenium.Findr
 import com.pojosontheweb.selenium.Findrs
 
 import static com.pojosontheweb.selenium.Findr.logDebug
@@ -48,6 +50,28 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
         def files = options.arguments()
         if (!files) {
             invalidArgs()
+        }
+
+        // taste file to run
+        String fileName = files[0]
+
+        // do we output to file ?
+        String outDir = options.d
+        if (outDir!='false') {
+            File outDirF = new File(outDir)
+            outDirF.mkdirs()
+            // redirect Findr logging to file
+            File logFile = new File(outDir + File.separator + "${new File(fileName).name}.output.txt")
+            logFile.text = ''
+            Findr.setDebugHandler(new Function<String, Object>() {
+                @Override
+                Object apply(String input) {
+                    println input
+                    logFile.append(input + '\n')
+                }
+            })
+        } else {
+            outDir = null
         }
 
         // load config from file
@@ -101,17 +125,8 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
             ResultFormatter formatter = format.formatter
             logDebug("[Taste] will output $format")
 
-            // do we output to file ?
-            String outDir = options.d
-            if (outDir!='false') {
-                new File(outDir).mkdirs()
-            } else {
-                outDir = null
-            }
-
             // let's go
 
-            String fileName = files[0]
             File scriptFile = new File(fileName)
 
             logDebug("[Taste] evaluating $scriptFile.absolutePath")

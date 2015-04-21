@@ -1,6 +1,5 @@
 package com.pojosontheweb.tastecloud.facets.standard.run
 
-import com.pojosontheweb.tastecloud.model.Log
 import com.pojosontheweb.tastecloud.model.Run
 import com.pojosontheweb.tastecloud.model.Taste
 import net.sourceforge.jfacets.annotations.FacetKey

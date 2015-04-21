@@ -48,19 +48,6 @@ class RunJob extends JobBase {
         }
     }
 
-    private def log(Run run, String msg) {
-        def l = run.addLog(msg)
-        woko.objectStore.save(l)
-        woko.objectStore.save(run)
-    }
-
-    private static String logToString(LogMessage lm) {
-        ByteBuffer bb = lm.content()
-        byte[] b = new byte[bb.remaining()]
-        bb.get(b)
-        new String(b, 'utf-8')
-    }
-
     @Override
     protected void doExecute(List<JobListener> listeners) {
 
@@ -69,7 +56,6 @@ class RunJob extends JobBase {
         try {
             def runData = withRun { TasteStore store, Run run ->
                 // prepare run
-                log run, 'Run started...'
                 run.startedOn = new Date()
                 store.save run
 
@@ -140,17 +126,7 @@ config {
                 // TODO buffer : for now it's heavy db stress for nothing !
                 File dockerFullDir = new File(dockerDir, runId)
                 // new File('/media/psf/projects/selenium-utils/taste/docker/sample')
-                dm.startRun(imageName, dockerUrl, dockerFullDir, tasteFileRelativePath) { LogMessage lm ->
-                    withRun { TasteStore s, Run run ->
-                        String msg = logToString lm
-                        String trimmed = msg?.trim()
-                        if (trimmed) {
-                            def log = run.addLog(trimmed)
-                            s.save log
-                            s.save run
-                        }
-                    }
-                }
+                dm.startRun(imageName, dockerUrl, dockerFullDir, tasteFileRelativePath)
                 // TODO handle docker exception(s)
                 // e.g. com.spotify.docker.client.ImageNotFoundException
 
@@ -198,7 +174,6 @@ config {
 
         } finally {
             withRun { TasteStore store, Run run ->
-                log run, 'Run finished'
                 run.finishedOn = new Date()
                 store.save(run)
 
