@@ -2,6 +2,7 @@ package com.pojosontheweb.tastecloud.woko
 
 import com.spotify.docker.client.DefaultDockerClient
 import com.spotify.docker.client.DockerClient
+import com.spotify.docker.client.DockerRequestException
 import com.spotify.docker.client.LogStream
 import com.spotify.docker.client.messages.ContainerConfig
 import com.spotify.docker.client.messages.ContainerCreation
@@ -70,7 +71,7 @@ class DockerManager {
                 command,
                 DockerClient.ExecParameter.STDOUT,
                 DockerClient.ExecParameter.STDERR);
-            final LogStream output = docker.execStart(execId);
+            final LogStream output = docker.execStart(execId)
             logger.info("$id exec $execId")
             try {
                 while (output.hasNext()) {
@@ -78,6 +79,12 @@ class DockerManager {
                 }
             } catch (Exception e) {
                 logger.error("Exception caught reading output. Will exit.", e)
+                if (e instanceof DockerRequestException) {
+                    DockerRequestException dre = (DockerRequestException)e
+                    logger.error(dre.message())
+                }
+            } finally {
+                output.close()
             }
         } finally {
 
