@@ -71,7 +71,7 @@ class DockerManager {
             logger.info("$id done : $exit")
 
             LogStream logStream = docker.logs(id, DockerClient.LogsParameter.STDOUT, DockerClient.LogsParameter.STDERR)
-            logger.info("Docker log : \n${logStream.readFully()}")
+            logger.debug("Docker logs $id : \n${logStream.readFully()}")
             logStream.close()
 
             def info = docker.inspectContainer(id);

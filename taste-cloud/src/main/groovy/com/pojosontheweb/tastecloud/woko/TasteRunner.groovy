@@ -18,7 +18,7 @@ class TasteRunner {
 
     static Run createAndSubmitRun(
         Woko woko,
-        Browsr b,
+        Browsr browsr,
         String taste,
         String fileName,
         RepositoryRun repositoryRun,
@@ -26,7 +26,7 @@ class TasteRunner {
 
         Run run = new Run(
             id: UUID.randomUUID().toString(),
-            browsr: b,
+            browsr: browsr,
             taste: taste,
             queuedOn: new Date(),
             repositoryRun: repositoryRun,
@@ -51,8 +51,9 @@ class TasteRunner {
                 woko,
                 run.id,
                 new File(config.webappDir),
-                config.dockerUrl, new File(config.dockerDir),
-                config.imageName
+                config.dockerUrl,
+                new File(config.dockerDir),
+                config.imageName,
             ), listeners)
         return run
     }

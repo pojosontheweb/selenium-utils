@@ -25,25 +25,25 @@ class Stats {
     Integer nbFailure = 0
 
     Stats runSubmitted() {
-        nbTastesSubmitted = nbTastesSubmitted + 1
+        nbTastesSubmitted++
         this
     }
 
     Stats runStarted() {
-        nbRunning = nbRunning + 1
+        nbRunning++
+        nbTastesSubmitted--
         this
     }
 
     Stats runFinished(Run run) {
-        totalRuns = totalRuns + 1
-        nbRunning = nbRunning - 1
-        nbTastesSubmitted = nbTastesSubmitted - 1
+        totalRuns++
+        nbRunning--
         totalTime = totalTime + run.elapsed
         if (run.test) {
             if (run.test.success) {
-                nbSuccess = nbSuccess + 1
+                nbSuccess++
             } else {
-                nbFailure = nbFailure + 1
+                nbFailure++
             }
         } else if (run.suite) {
             def counts = run.suite.counts

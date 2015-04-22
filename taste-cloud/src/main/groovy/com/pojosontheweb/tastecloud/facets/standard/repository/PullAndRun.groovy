@@ -93,7 +93,7 @@ class PullAndRunJob extends JobBase {
                         RepositoryRun repositoryRun = store.getRepositoryRun(repositoryRunId)
                         TasteRunner.createAndSubmitRun(
                             woko,
-                            Browsr.Firefox,
+                            Browsr.Chrome,
                             f.text,
                             f.name,
                             repositoryRun,

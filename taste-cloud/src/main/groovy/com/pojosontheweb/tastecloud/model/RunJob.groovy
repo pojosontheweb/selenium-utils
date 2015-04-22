@@ -1,5 +1,6 @@
 package com.pojosontheweb.tastecloud.model
 
+import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.model.activities.ActivityType
 import com.pojosontheweb.tastecloud.model.activities.RepoRunActivity
 import com.pojosontheweb.tastecloud.model.activities.TasteRunActivity
@@ -31,7 +32,12 @@ class RunJob extends JobBase {
     private final String dockerUrl
     private final String imageName
 
-    RunJob(Woko woko, String runId, File webappDir, String dockerUrl, File dockerDir, String imageName) {
+    RunJob(Woko woko,
+           String runId,
+           File webappDir,
+           String dockerUrl,
+           File dockerDir,
+           String imageName) {
         this.woko = woko
         this.runId = runId
         this.webappDir = webappDir
@@ -67,8 +73,9 @@ class RunJob extends JobBase {
                 // update stats
                 store.save(store.stats.runStarted())
                 [
-                    taste:run.taste,
-                    relativePath:run.relativePath
+                    taste: run.taste,
+                    relativePath: run.relativePath,
+                    browsr: run.browsr
                 ]
             }
             String tasteTxt = runData.taste
@@ -90,7 +97,8 @@ class RunJob extends JobBase {
 
                 // create a config file
                 File cfgFile = new File(webappFullDir, 'cfg.taste')
-                cfgFile.text = '''import static com.pojosontheweb.taste.Cfg.*
+                String browserMeth = runData.browsr.name().toLowerCase()
+                cfgFile.text = """import static com.pojosontheweb.taste.Cfg.*
 
 config {
 
@@ -98,7 +106,7 @@ config {
         json()
     }
 
-    chrome()
+    $browserMeth()
 
     sysProps['webdriver.chrome.driver'] = '/chromedriver'
 
@@ -114,7 +122,7 @@ config {
         dir '/mnt/target'
         failuresOnly false
     }
-}'''
+}"""
 
                 // run the taste file into a docker of its own !
                 DockerManager dm = woko.ioc.getComponent(DockerManager.KEY)

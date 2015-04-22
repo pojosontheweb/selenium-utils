@@ -16,7 +16,7 @@
             <div class="dashboard">
 
                 <c:choose>
-                    <c:when test="${home.stats.nbSuccess+home.stats.nbFailure==0}">
+                    <c:when test="${home.noRuns}">
 
                         <div class="page-header">
                             <h1>Welcome to Taste</h1>

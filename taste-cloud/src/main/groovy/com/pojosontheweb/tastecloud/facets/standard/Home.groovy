@@ -1,5 +1,6 @@
 package com.pojosontheweb.tastecloud.facets.standard
 
+import com.pojosontheweb.tastecloud.model.Run
 import com.pojosontheweb.tastecloud.model.Stats
 import com.pojosontheweb.tastecloud.model.activities.ActivityBase
 import com.pojosontheweb.tastecloud.woko.TasteStore
@@ -20,6 +21,10 @@ class Home extends HomeImpl {
     Stats getStats() {
         TasteStore s = (TasteStore)woko.objectStore
         s.stats
+    }
+
+    Boolean getNoRuns() {
+        objectStore.list(objectStore.getClassMapping(Run.class), 0, 1).totalSize==0
     }
 
     List<ActivityBase> getActivities() {
