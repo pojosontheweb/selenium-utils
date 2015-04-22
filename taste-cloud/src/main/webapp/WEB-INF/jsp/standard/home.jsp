@@ -93,9 +93,8 @@
                         var rtInfo = $('#stream').html(frag).find('.rtinfo');
                         var nbRunning = rtInfo.data('nb-running');
                         var nbSubmitted = rtInfo.data('nb-submitted');
-                        var nbQueued = nbSubmitted - nbRunning;
                         $('#nbRunning').text(nbRunning);
-                        $('#nbQueued').text(nbQueued);
+                        $('#nbQueued').text(nbSubmitted);
                         $('#totalRuns').text(rtInfo.data('total-runs'));
                         $('#totalTime').text(rtInfo.data('total-time'));
                         $('#successRate').text(rtInfo.data('success-rate'));

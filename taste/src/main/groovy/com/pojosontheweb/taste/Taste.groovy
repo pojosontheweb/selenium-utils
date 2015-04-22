@@ -164,7 +164,7 @@ _/      _/_/_/  _/_/_/        _/_/    _/_/_/
                 if (outDir) {
                     String reportName = suite.name + '.' + format.name()
                     File report = new File(new File(outDir), reportName)
-                    logDebug("Writing suite report to $report.absolutePath")
+                    logDebug("[Taste] Writing suite report to $report.absolutePath")
                     report.withWriter { w ->
                         formatter.format(cfg, scriptFile.absolutePath, suiteResult, w)
                     }

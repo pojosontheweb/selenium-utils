@@ -227,7 +227,12 @@ config {
     private static def DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
     private static Date parseDate(dateStr) {
-        dateStr ? DATE_FORMAT.parse((String)dateStr) : null
+        try {
+            dateStr ? DATE_FORMAT.parse((String)dateStr) : null
+        } catch(NumberFormatException e) {
+            logger.error("Unable to format date $dateStr", e)
+            return null
+        }
     }
 
     static File resultsDir(File webappDir, String runId) {
