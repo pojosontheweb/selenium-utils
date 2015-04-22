@@ -1,5 +1,6 @@
 package com.pojosontheweb.tastecloud.model
 
+import com.pojosontheweb.selenium.Browsr
 import com.pojosontheweb.tastecloud.model.activities.ActivityType
 import com.pojosontheweb.tastecloud.model.activities.RepoRunActivity
 import com.pojosontheweb.tastecloud.model.activities.TasteRunActivity
@@ -31,7 +32,12 @@ class RunJob extends JobBase {
     private final String dockerUrl
     private final String imageName
 
-    RunJob(Woko woko, String runId, File webappDir, String dockerUrl, File dockerDir, String imageName) {
+    RunJob(Woko woko,
+           String runId,
+           File webappDir,
+           String dockerUrl,
+           File dockerDir,
+           String imageName) {
         this.woko = woko
         this.runId = runId
         this.webappDir = webappDir
@@ -48,19 +54,6 @@ class RunJob extends JobBase {
         }
     }
 
-    private def log(Run run, String msg) {
-        def l = run.addLog(msg)
-        woko.objectStore.save(l)
-        woko.objectStore.save(run)
-    }
-
-    private static String logToString(LogMessage lm) {
-        ByteBuffer bb = lm.content()
-        byte[] b = new byte[bb.remaining()]
-        bb.get(b)
-        new String(b, 'utf-8')
-    }
-
     @Override
     protected void doExecute(List<JobListener> listeners) {
 
@@ -69,7 +62,6 @@ class RunJob extends JobBase {
         try {
             def runData = withRun { TasteStore store, Run run ->
                 // prepare run
-                log run, 'Run started...'
                 run.startedOn = new Date()
                 store.save run
 
@@ -80,12 +72,10 @@ class RunJob extends JobBase {
 
                 // update stats
                 store.save(store.stats.runStarted())
-
-                store.session.flush()
-
                 [
-                    taste:run.taste,
-                    relativePath:run.relativePath
+                    taste: run.taste,
+                    relativePath: run.relativePath,
+                    browsr: run.browsr
                 ]
             }
             String tasteTxt = runData.taste
@@ -107,7 +97,8 @@ class RunJob extends JobBase {
 
                 // create a config file
                 File cfgFile = new File(webappFullDir, 'cfg.taste')
-                cfgFile.text = '''import static com.pojosontheweb.taste.Cfg.*
+                String browserMeth = runData.browsr.name().toLowerCase()
+                cfgFile.text = """import static com.pojosontheweb.taste.Cfg.*
 
 config {
 
@@ -115,11 +106,11 @@ config {
         json()
     }
 
-    firefox()
+    $browserMeth()
 
-//    sysProps['webdriver.chrome.driver'] = "${System.getProperty('user.home')}/chromedriver"
+    sysProps['webdriver.chrome.driver'] = '/chromedriver'
 
-//    locales "en", "fr"                      // locale(s) to be used
+    locales 'en', 'fr'
 
     findr {
         timeout 30
@@ -128,29 +119,25 @@ config {
 
     video {
         enabled true
-        dir "/mnt/target"
+        dir '/mnt/target'
         failuresOnly false
     }
-}'''
+}"""
 
                 // run the taste file into a docker of its own !
                 DockerManager dm = woko.ioc.getComponent(DockerManager.KEY)
+                dm.onStart = { id ->
+                    withRun { store, Run r ->
+                        r.dockerId = id
+                        store.save(r)
+                    }
+                }
 
                 // store logs
                 // TODO buffer : for now it's heavy db stress for nothing !
                 File dockerFullDir = new File(dockerDir, runId)
                 // new File('/media/psf/projects/selenium-utils/taste/docker/sample')
-                dm.startRun(imageName, dockerUrl, dockerFullDir, tasteFileRelativePath) { LogMessage lm ->
-                    withRun { TasteStore s, Run run ->
-                        String msg = logToString lm
-                        String trimmed = msg?.trim()
-                        if (trimmed) {
-                            def log = run.addLog(trimmed)
-                            s.save log
-                            s.save run
-                        }
-                    }
-                }
+                dm.startRun(imageName, dockerUrl, dockerFullDir, tasteFileRelativePath)
                 // TODO handle docker exception(s)
                 // e.g. com.spotify.docker.client.ImageNotFoundException
 
@@ -198,7 +185,6 @@ config {
 
         } finally {
             withRun { TasteStore store, Run run ->
-                log run, 'Run finished'
                 run.finishedOn = new Date()
                 store.save(run)
 
@@ -209,7 +195,6 @@ config {
                 }
 
                 store.save(store.stats.runFinished(run))
-                store.session.flush()
             }
             logger.info("$runId : done")
         }
@@ -242,7 +227,12 @@ config {
     private static def DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
 
     private static Date parseDate(dateStr) {
-        dateStr ? DATE_FORMAT.parse((String)dateStr) : null
+        try {
+            dateStr ? DATE_FORMAT.parse((String)dateStr) : null
+        } catch(NumberFormatException e) {
+            logger.error("Unable to format date $dateStr", e)
+            return null
+        }
     }
 
     static File resultsDir(File webappDir, String runId) {

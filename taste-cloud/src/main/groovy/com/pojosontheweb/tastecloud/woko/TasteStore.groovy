@@ -117,4 +117,6 @@ class TasteStore extends HibernateStore {
     RepositoryRun getRepositoryRun(Long id) {
         (RepositoryRun)session.load(RepositoryRun.class, id)
     }
+
+
 }

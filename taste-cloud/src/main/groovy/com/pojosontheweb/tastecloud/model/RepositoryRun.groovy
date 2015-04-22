@@ -36,7 +36,7 @@ class RepositoryRun {
     Date finishedOn
 
     @NotNull
-    Browsr browsr = Browsr.Firefox
+    Browsr browsr = Browsr.Chrome
 
     ResultSummary getResultSummary() {
         ResultSummary s = new ResultSummary(finished: finishedOn!=null)

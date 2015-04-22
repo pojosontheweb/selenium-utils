@@ -6,12 +6,9 @@ import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.ManyToOne
-import javax.persistence.OneToMany
 import javax.persistence.OneToOne
-import javax.persistence.OrderBy
 import javax.persistence.Table
 import javax.validation.constraints.NotNull
 
@@ -39,10 +36,6 @@ class Run {
     @NotNull
     String relativePath = 'tests.taste'
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-    @OrderBy("logDate ASC")
-    List<Log> logs
-
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     Suite suite
 
@@ -55,15 +48,10 @@ class Run {
     @ManyToOne(fetch = FetchType.LAZY)
     Taste fromTaste
 
+    String dockerId
+
     def getResult() {
         return suite ?: test
-    }
-
-    Log addLog(String text) {
-        logs = logs ?: []
-        Log l = new Log(logDate: new Date(), text: text)
-        logs << l
-        return l
     }
 
     RunSummary getSummary() {
@@ -104,17 +92,4 @@ class Run {
         fromTaste ?: repositoryRun
     }
 
-}
-
-
-@Entity
-class Log {
-
-    @Id @GeneratedValue
-    Long id
-
-    Date logDate
-
-    @Column(columnDefinition = 'text')
-    String text
 }

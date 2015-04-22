@@ -56,8 +56,8 @@
                 ActivityType type = a.getType();
                 if (type == ActivityType.Finish) {
                     Run run = store.getRun(a.getRunId());
-                    ResultSummary s = run.getResultSummary();
-                    if (s.getSuccessRatio()==null) {
+                    ResultSummary s = run!=null ? run.getResultSummary() : null;
+                    if (s==null || s.getSuccessRatio()==null) {
                         // BUG !
             %>
             <span class="label label-warning">BUG !</span>
@@ -111,8 +111,8 @@
                     RepositoryRun rr = store.getRepositoryRun(ra.getRepoRunId());
                     if (ra.getRunId() != null) {
                         Run r = store.getRun(ra.getRunId());
-                        ResultSummary s = r.getResultSummary();
-                        if (s.getSuccessRatio()==null) {
+                        ResultSummary s = r!=null ? r.getResultSummary() : null;
+                        if (s!=null && s.getSuccessRatio()==null) {
             %>
                             <span class="label label-warning">BUG !</span>
             <%
@@ -160,7 +160,7 @@
     data-nb-submitted="<%=stats.getNbTastesSubmitted()%>"
     data-total-runs="<%=stats.getTotalRuns()%>"
     data-total-time="<%=Util.prettyDuration(stats.getTotalTime())%>"
-    data-success-rate="<%=stats.getSuccessRate()%>"
+    data-success-rate="<%=stats.getSuccessRate()!=null ? stats.getSuccessRate() : 0d%>"
     data-nb-repos-queued="<%=stats.getNbReposQueued()%>"></tr>
 
 

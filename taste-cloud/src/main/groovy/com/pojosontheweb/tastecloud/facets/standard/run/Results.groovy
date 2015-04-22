@@ -52,11 +52,13 @@ class Results extends BaseResolutionFacet {
         Config c = s.config
         File resultsDir = RunJob.resultsDir(new File(c.webappDir), r.id)
         def res = []
-        resultsDir.eachFile { File f ->
-            String fileName = f.name
-            String href = request.contextPath + woko.facetUrl('results', r)
-            href += "?facet.file=${URLEncoder.encode(fileName, 'utf-8')}&download=true"
-            res << new Link(href, f.name)
+        if (resultsDir.exists()) {
+            resultsDir.eachFile { File f ->
+                String fileName = f.name
+                String href = request.contextPath + woko.facetUrl('results', r)
+                href += "?facet.file=${URLEncoder.encode(fileName, 'utf-8')}&download=true"
+                res << new Link(href, f.name)
+            }
         }
         return res
     }

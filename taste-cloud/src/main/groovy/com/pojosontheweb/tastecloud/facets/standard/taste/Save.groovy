@@ -15,7 +15,7 @@ import woko.facets.builtin.developer.SaveImpl
 @FacetKey(name="save", profileId="standard", targetObjectType=Taste.class)
 class Save extends SaveImpl {
 
-    Browsr browsr = Browsr.Firefox
+    Browsr browsr = Browsr.Chrome
 
     private boolean savenrun = false
 

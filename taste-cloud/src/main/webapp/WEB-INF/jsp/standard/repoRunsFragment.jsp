@@ -6,7 +6,6 @@
 <table class="table Run">
     <thead>
     <tr>
-        <th>Browser</th>
         <th>File</th>
         <th>Queued</th>
         <th>Started</th>
@@ -18,9 +17,6 @@
     <tbody>
     <c:forEach items="${rr.runs}" var="run">
         <tr>
-            <td>
-                <img class="browsr" alt="browser" src="${cp}/img/${run.browsr}.png"/>
-            </td>
             <td><c:out value="${run.relativePath}"/></td>
             <td><taste:fullDate date="${run.queuedOn}"/></td>
             <td><taste:fullDate date="${run.startedOn}"/></td>

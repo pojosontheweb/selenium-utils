@@ -4,7 +4,7 @@
 <c:set var="rr" value="${renderProperties.facetContext.targetObject}"/>
 <div class="container-fluid">
 
-    <div id="summary">
+    <div id="summary" class="run-summary">
         <w:includeFacet facetName="summaryFragment" targetObject="${rr}"/>
     </div>
 

@@ -1,5 +1,6 @@
 package com.pojosontheweb.selenium;
 
+import java.io.OutputStream;
 import java.util.*;
 
 import com.google.common.base.Function;
@@ -45,9 +46,26 @@ public final class Findr {
         return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "false"));
     }
 
+    private static Function<String,?> debugHandler = new Function<String, Object>() {
+        @Override
+        public Object apply(String input) {
+            System.out.println(input);
+            return null;
+        }
+    };
+
+    /**
+     * Pass a function that gets called-back with the logs. By default, logs
+     * messages to stdout.
+     * @param h the debug log handler function
+     */
+    public static void setDebugHandler(Function<String,?> h) {
+        debugHandler = h;
+    }
+
     public static void logDebug(String message) {
         if (isDebugEnabled()) {
-            System.out.println(message);
+            debugHandler.apply(message);
         }
     }
 

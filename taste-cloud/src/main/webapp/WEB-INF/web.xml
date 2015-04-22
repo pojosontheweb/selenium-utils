@@ -85,6 +85,15 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>HttpCacheFilter</filter-name>
+        <filter-class>woko.util.httpcaching.WokoHttpCacheFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HttpCacheFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- leaving this here for cleanup -->
     <listener>
         <display-name>WokoInitListener</display-name>

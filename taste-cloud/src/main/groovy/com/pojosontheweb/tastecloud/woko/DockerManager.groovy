@@ -2,6 +2,7 @@ package com.pojosontheweb.tastecloud.woko
 
 import com.spotify.docker.client.DefaultDockerClient
 import com.spotify.docker.client.DockerClient
+import com.spotify.docker.client.DockerRequestException
 import com.spotify.docker.client.LogStream
 import com.spotify.docker.client.messages.ContainerConfig
 import com.spotify.docker.client.messages.ContainerCreation
@@ -14,12 +15,13 @@ class DockerManager {
 
     static final String KEY = 'DockerManager'
 
+    Closure onStart
+
     def startRun(
         String imageName,
         String dockerUrl,
         File dataDir,
-        String tasteFileRelativePath,
-        Closure logHandler) {
+        String tasteFileRelativePath) {
 
         logger.info("Starting run, dockerUrl=$dockerUrl, dataDir=$dataDir")
 
@@ -30,12 +32,15 @@ class DockerManager {
         // Pull image
 //        docker.pull(image)
 
-        // Create container with exposed ports
+        String target = '/mnt/target'
+        String cfg = '/mnt/cfg.taste'
+        String tests = '/mnt/' + tasteFileRelativePath
+        final String[] command = ["/run-taste.sh", "-d", target, "-c", cfg, tests]
         final ContainerConfig config =
             ContainerConfig
                 .builder()
                 .image(image)
-                .cmd("sh", "-c", "while :; do sleep 1; done")
+                .cmd(command)
                 .build()
 
         logger.info("Mounting : ${dataDir.absolutePath}:/mnt")
@@ -57,28 +62,23 @@ class DockerManager {
 
             // Start container
             docker.startContainer(id, hostConfig);
-
             logger.info("$id started")
-
-            // Exec command inside running container with attached STDOUT and STDERR
-            String target = '/mnt/target'
-            String cfg = '/mnt/cfg.taste'
-            String tests = '/mnt/' + tasteFileRelativePath
-            final String[] command = ["/run-taste.sh", "-d", target, "-c", cfg, tests]
-            final String execId = docker.execCreate(
-                id,
-                command,
-                DockerClient.ExecParameter.STDOUT,
-                DockerClient.ExecParameter.STDERR);
-            final LogStream output = docker.execStart(execId);
-            logger.info("$id exec $execId")
-            try {
-                while (output.hasNext()) {
-                    logHandler(output.next())
-                }
-            } catch (Exception e) {
-                logger.error("Exception caught reading output. Will exit.", e)
+            if (onStart) {
+                onStart(id)
             }
+
+            def exit = docker.waitContainer(id)
+            logger.info("$id done : $exit")
+
+            LogStream logStream = docker.logs(id, DockerClient.LogsParameter.STDOUT, DockerClient.LogsParameter.STDERR)
+            logger.debug("Docker logs $id : \n${logStream.readFully()}")
+            logStream.close()
+
+            def info = docker.inspectContainer(id);
+            logger.info("Exit status: ${info.state().exitCode()}")
+
+            return info
+
         } finally {
 
             // Kill container
