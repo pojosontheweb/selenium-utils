@@ -5,6 +5,7 @@
 <%@ page import="com.pojosontheweb.tastecloud.Util" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/WEB-INF/woko/jsp/taglibs.jsp"%>
+<c:set var="cp" value="${pageContext.request.contextPath}"/>
 <%
     RenderPropertyValue renderPropertyValue = (RenderPropertyValue)request.getAttribute(RenderPropertyValue.FACET_NAME);
     Run run = (Run)renderPropertyValue.getOwningObject();
@@ -100,26 +101,23 @@
                 <p>
                     Logs are updating live.
                 </p>
-                <table class="logs-wrapper">
-                </table>
+                <div class="logs-wrapper" id="live-logs">
+                </div>
             </div>
             <script type="text/javascript">
-                <w:objectKey var="runId" object="<%=run%>"/>
+                <w:url var="logsFragmentUrl" facetName="logsFragment" object="<%=run%>"/>
                 $(function() {
                     var poll = function() {
                         var timeout = setTimeout(function() {
-                            wokoClient.loadObject('Run', '${runId}', {
-                                onSuccess: function(run) {
-                                    clearTimeout(timeout);
-                                    if (run.summary && run.summary.finishedOn) {
-                                        window.location.reload();
-                                    } else {
-                                        // update the logs
-                                        $('.logs-wrapper').append($('<span>').text('TODO'));
-                                        poll();
-                                    }
+                            clearTimeout(timeout);
+                            $.get('${logsFragmentUrl}', function(frag) {
+                                var rtInfo = $('#live-logs').html(frag).find('.rtinfo');
+                                if (rtInfo.data('finished')) {
+                                    window.location.reload();
+                                } else {
+                                    poll();
                                 }
-                            })
+                            });
                         }, 1000);
                     };
 
@@ -139,9 +137,9 @@
                     Only the last XYZ log messages are shown.
                     Get <a href="#">full logs</a> (TODO)
                 </p>
-                <table class="logs-wrapper">
-                    LOGS here !
-                </table>
+                <div class="logs-wrapper">
+                    <w:includeFacet facetName="logsFragment" targetObject="<%=run%>"/>
+                </div>
             </div>
 <%
         }

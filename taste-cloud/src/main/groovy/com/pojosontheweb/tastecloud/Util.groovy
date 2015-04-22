@@ -61,4 +61,15 @@ class Util {
         sb.toString()
     }
 
+    static List<String> tail(File file, int nbLines) {
+        // TODO use RandomFileAccess this is gonna be very expensive on large files...
+        List lines = file.readLines('utf-8')
+        int totalLines = lines.size()
+        if (totalLines<=nbLines) {
+            return lines
+        } else {
+            return lines[totalLines-nbLines..-1]
+        }
+    }
+
 }

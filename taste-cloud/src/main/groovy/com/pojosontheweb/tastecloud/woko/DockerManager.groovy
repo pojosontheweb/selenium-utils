@@ -67,6 +67,7 @@ class DockerManager {
 
             LogStream logStream = docker.logs(id, DockerClient.LogsParameter.STDOUT, DockerClient.LogsParameter.STDERR)
             logger.info("Docker log : \n${logStream.readFully()}")
+            logStream.close()
 
             def info = docker.inspectContainer(id);
             logger.info("Exit status: ${info.state().exitCode()}")
@@ -96,11 +97,4 @@ class DockerManager {
         }
     }
 
-}
-
-class MyOutStream extends OutputStream {
-    @Override
-    void write(int b) throws IOException {
-        print((char)b)
-    }
 }

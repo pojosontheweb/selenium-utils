@@ -36,27 +36,9 @@ h1 {
     font-size: 0.8em;
 }
 
-.logs-wrapper td {
-    padding-top: 0;
-    padding-bottom: 0;
-    border: none;
-}
-
-.logs-wrapper td.date {
-    white-space: nowrap;
-    padding-right: 8px;
-}
-
-.logs-wrapper td.text {
+.logs-wrapper li {
+    list-style: none;
     white-space: pre;
-}
-
-pre.taste-script.prettyprint {
-    font-family: "Consolas", "Monaco", "Vera Mono", monospace;
-    border: none;
-    background: none;
-    font-size: 10pt;
-    line-height: normal;
 }
 
 pre.editor {

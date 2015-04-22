@@ -3,7 +3,7 @@ FROM nimmis/java-centos:openjdk-7-jdk
 # xvfb
 
 RUN yum -y upgrade
-RUN yum -y install xorg-x11-server-Xvfb libXtst
+RUN yum -y install xorg-x11-server-Xvfb libXtst xdpyinfo
 ENV DISPLAY :99
 ENV LD_LIBRARY_PATH=/usr/lib64/
 
