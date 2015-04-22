@@ -66,9 +66,6 @@ class RunJob extends JobBase {
 
                 // update stats
                 store.save(store.stats.runStarted())
-
-                store.session.flush()
-
                 [
                     taste:run.taste,
                     relativePath:run.relativePath
@@ -101,11 +98,11 @@ config {
         json()
     }
 
-    firefox()
+    chrome()
 
-//    sysProps['webdriver.chrome.driver'] = "${System.getProperty('user.home')}/chromedriver"
+    sysProps['webdriver.chrome.driver'] = '/chromedriver'
 
-//    locales "en", "fr"                      // locale(s) to be used
+    locales 'en', 'fr'
 
     findr {
         timeout 30
@@ -114,13 +111,19 @@ config {
 
     video {
         enabled true
-        dir "/mnt/target"
+        dir '/mnt/target'
         failuresOnly false
     }
 }'''
 
                 // run the taste file into a docker of its own !
                 DockerManager dm = woko.ioc.getComponent(DockerManager.KEY)
+                dm.onStart = { id ->
+                    withRun { store, Run r ->
+                        r.dockerId = id
+                        store.save(r)
+                    }
+                }
 
                 // store logs
                 // TODO buffer : for now it's heavy db stress for nothing !
@@ -184,7 +187,6 @@ config {
                 }
 
                 store.save(store.stats.runFinished(run))
-                store.session.flush()
             }
             logger.info("$runId : done")
         }

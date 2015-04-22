@@ -15,6 +15,8 @@ class DockerManager {
 
     static final String KEY = 'DockerManager'
 
+    Closure onStart
+
     def startRun(
         String imageName,
         String dockerUrl,
@@ -61,6 +63,9 @@ class DockerManager {
             // Start container
             docker.startContainer(id, hostConfig);
             logger.info("$id started")
+            if (onStart) {
+                onStart(id)
+            }
 
             def exit = docker.waitContainer(id)
             logger.info("$id done : $exit")

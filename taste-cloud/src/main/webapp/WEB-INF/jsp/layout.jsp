@@ -70,9 +70,7 @@
     <c:forEach items="${layout.jsIncludes}" var="jsLink">
       <script type="text/javascript" src="${cp}${jsLink}?${cacheTokenParams}"></script>
     </c:forEach>
-    <link rel="stylesheet" type="text/css" href="http://eclipse.org/orion/editor/releases/current/built-editor.css"/>
-    <script src="http://eclipse.org/orion/editor/releases/current/built-editor.min.js"></script>
-    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <s:layout-component name="customJs"/>
 
       <%-- Set the locale to the datepicker --%>
     <% Locale l = request.getLocale(); %>

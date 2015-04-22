@@ -48,6 +48,8 @@ class Run {
     @ManyToOne(fetch = FetchType.LAZY)
     Taste fromTaste
 
+    String dockerId
+
     def getResult() {
         return suite ?: test
     }

@@ -27,6 +27,7 @@ class MyLayout extends LayoutBootstrap3 {
         def all = new ArrayList(super.getCssIncludes())
         all << '/css/taste.css'
         all << '/image-picker/image-picker.css'
+        all << '/orion/built-editor.css'
         return all
     }
 
@@ -34,6 +35,7 @@ class MyLayout extends LayoutBootstrap3 {
     List<String> getJsIncludes() {
         def all = new ArrayList(super.getJsIncludes())
         all << '/image-picker/image-picker.min.js'
+        all << '/orion/built-editor.min.js'
         return all
     }
 

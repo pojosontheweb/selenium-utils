@@ -30,12 +30,12 @@ class Stats {
     }
 
     Stats runStarted() {
-        totalRuns = totalRuns + 1
         nbRunning = nbRunning + 1
         this
     }
 
     Stats runFinished(Run run) {
+        totalRuns = totalRuns + 1
         nbRunning = nbRunning - 1
         nbTastesSubmitted = nbTastesSubmitted - 1
         totalTime = totalTime + run.elapsed
