@@ -7,6 +7,7 @@ while [ $ACTIVE -ne 0 ] ; do
         ACTIVE=$?
 done
 echo "XVFB started, calling taste executable"
+dbus-uuidgen > /var/lib/dbus/machine-id
 taste $*
 echo "Killing XVFB"
 kill `pidof Xvfb`
