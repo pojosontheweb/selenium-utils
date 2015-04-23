@@ -8,6 +8,7 @@ while [ $ACTIVE -ne 0 ] ; do
 done
 echo "XVFB started, calling taste executable"
 dbus-uuidgen > /var/lib/dbus/machine-id
+export CHROME_DEVEL_SANDBOX=
 taste $*
 echo "Killing XVFB"
 kill `pidof Xvfb`
