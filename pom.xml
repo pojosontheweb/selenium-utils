@@ -17,8 +17,6 @@
         <!--module>monte</module-->
         <module>core</module>
         <module>groovy</module>
-        <module>taste</module>
-        <module>taste-cloud</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
     <description>Utilities for selenium testing</description>
@@ -132,6 +130,13 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>taste</id>
+            <modules>
+                <module>taste</module>
+                <module>taste-cloud</module>
+            </modules>
         </profile>
     </profiles>
 </project>

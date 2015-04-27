@@ -9,6 +9,7 @@
         <version>1.4.1</version>
     </parent>
     <artifactId>taste-cloud</artifactId>
+    <name>selenium-utils/taste-cloud</name>
     <version>1.0-beta4</version>
     <packaging>war</packaging>
     <name>taste-cloud</name>
