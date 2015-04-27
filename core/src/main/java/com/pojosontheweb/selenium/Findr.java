@@ -627,6 +627,23 @@ public final class Findr {
             }
         }
 
+        /**
+         * Evaluates this ListFindr and invokes passed callback if the whole chain suceeded. Throws
+         * a TimeoutException with passed failure message if the condition chain didn't match.
+         * @param callback the callback to call if the chain succeeds
+         * @param <T> the rturn type of the callback
+         * @return the result of the callback
+         * @throws TimeoutException if at least one condition in the chain failed
+         */
+        public <T> T eval(Function<List<WebElement>, T> callback, String failureMessage) throws TimeoutException {
+            try {
+                return eval(callback);
+            } catch(TimeoutException e) {
+                throw new TimeoutException(failureMessage, e);
+            }
+
+        }
+
         @Override
         public String toString() {
             return "ListFindr{" +
