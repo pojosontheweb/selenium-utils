@@ -17,6 +17,7 @@
         <!--module>monte</module-->
         <module>core</module>
         <module>groovy</module>
+        <module>gridvideo</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
     <description>Utilities for selenium testing</description>
@@ -45,6 +46,7 @@
         <gmavenVersion>1.5</gmavenVersion>
         <gmavenProviderSelection>2.0</gmavenProviderSelection>
         <groovyVersion>2.3.9</groovyVersion>
+        <seleniumVersion>2.45.0</seleniumVersion>
     </properties>
     <build>
         <pluginManagement>
