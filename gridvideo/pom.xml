@@ -12,18 +12,19 @@
     <packaging>jar</packaging>
     <name>selenium-utils/gridvideo</name>
     <dependencies>
+        <!--
+        TODO scope should be "provided"
+        -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-server</artifactId>
             <version>${seleniumVersion}</version>
-            <scope>provided</scope>
         </dependency>
-        <!-- to workaround bug in selenium ? -->
+
         <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-            <version>1.4.01</version>
-            <scope>provided</scope>
+            <groupId>com.pojosontheweb</groupId>
+            <artifactId>selenium-utils-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
