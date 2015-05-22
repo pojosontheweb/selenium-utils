@@ -1,6 +1,8 @@
 package com.pojosontheweb.selenium.groovy
 
 import com.pojosontheweb.selenium.Findr
+import org.junit.Ignore
+
 import static com.pojosontheweb.selenium.Findrs.*
 import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase
 import groovy.json.JsonBuilder
@@ -19,6 +21,7 @@ import static org.openqa.selenium.By.tagName
 class CategsTest extends ManagedDriverJunit4TestBase {
 
     @Test
+    @Ignore
     void categsLeBonCoin() {
 
         use(WebDriverCategory,FindrCategory,ListFindrCategory) {

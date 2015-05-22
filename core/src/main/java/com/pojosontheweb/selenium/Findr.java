@@ -1,5 +1,6 @@
 package com.pojosontheweb.selenium;
 
+import java.io.OutputStream;
 import java.util.*;
 
 import com.google.common.base.Function;
@@ -45,9 +46,26 @@ public final class Findr {
         return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "false"));
     }
 
+    private static Function<String,?> debugHandler = new Function<String, Object>() {
+        @Override
+        public Object apply(String input) {
+            System.out.println(input);
+            return null;
+        }
+    };
+
+    /**
+     * Pass a function that gets called-back with the logs. By default, logs
+     * messages to stdout.
+     * @param h the debug log handler function
+     */
+    public static void setDebugHandler(Function<String,?> h) {
+        debugHandler = h;
+    }
+
     public static void logDebug(String message) {
         if (isDebugEnabled()) {
-            System.out.println(message);
+            debugHandler.apply(message);
         }
     }
 
@@ -607,6 +625,23 @@ public final class Findr {
             } catch(TimeoutException e) {
                 throw new TimeoutException(failureMessage, e);
             }
+        }
+
+        /**
+         * Evaluates this ListFindr and invokes passed callback if the whole chain suceeded. Throws
+         * a TimeoutException with passed failure message if the condition chain didn't match.
+         * @param callback the callback to call if the chain succeeds
+         * @param <T> the rturn type of the callback
+         * @return the result of the callback
+         * @throws TimeoutException if at least one condition in the chain failed
+         */
+        public <T> T eval(Function<List<WebElement>, T> callback, String failureMessage) throws TimeoutException {
+            try {
+                return eval(callback);
+            } catch(TimeoutException e) {
+                throw new TimeoutException(failureMessage, e);
+            }
+
         }
 
         @Override
