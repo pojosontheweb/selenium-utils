@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo docker run -d -p 4444:4444 selgrid /grid/run-hub.sh
+./start-hub.sh
 
 if [ -z "$1" ]
   then
@@ -14,7 +14,7 @@ MAX=$[${PORT} + ${NB_NODES} - 1]
 
 for i in `seq ${PORT} ${MAX}`;
 do
-	sudo docker run -d -p ${i}:${i} selgrid /grid/run-node.sh ${i}
+	./start-node.sh ${i}
 done
 
 echo "Grid started with ${NB_NODES} nodes"
