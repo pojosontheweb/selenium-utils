@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 cd /grid
-java -cp *:. org.openqa.grid.selenium.GridLauncher -role hub
+java -Djava.security.egd=file:///dev/urandom -cp *:. org.openqa.grid.selenium.GridLauncher -role hub -debug

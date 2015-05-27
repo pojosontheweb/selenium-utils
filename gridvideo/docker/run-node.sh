@@ -22,5 +22,5 @@ HUB_URL="http://${HOST_IP}:4444/grid/register"
 echo "XVFB started, starting node and registering to ${HUB_URL}"
 
 cd /grid
-java -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -proxy com.pojosontheweb.selenium.NodeProxy
+java -Djava.security.egd=file:///dev/urandom -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -debug
 
