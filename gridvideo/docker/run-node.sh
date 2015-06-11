@@ -21,6 +21,13 @@ if [ -z "$3" ]
     HUB_URL=$3
 fi
 
+if [ -z "$4" ]
+  then
+    MAX_SESSIONS=1
+  else
+    MAX_SESSIONS=$4
+fi
+
 echo "Starting XVFB"
 /usr/bin/Xvfb :99 -screen 0 1024x768x24 +extension RANDR &
 ACTIVE=9999
@@ -34,5 +41,5 @@ export CHROME_DEVEL_SANDBOX=
 echo "XVFB started, starting node and registering to ${HUB_URL}"
 
 cd /grid
-java -Djava.security.egd=file:///dev/urandom -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -debug -host ${HOST_IP}
+java -Djava.security.egd=file:///dev/urandom -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession ${MAX_SESSIONS} -port ${NODE_PORT} -debug -host ${HOST_IP}
 

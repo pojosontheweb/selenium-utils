@@ -14,7 +14,7 @@ MAX=$[${PORT} + ${NB_NODES} - 1]
 
 for i in `seq ${PORT} ${MAX}`;
 do
-	./start-node.sh ${i} $2
+	./start-node.sh ${i} $2 $3 $4
 done
 
 echo "Grid started with ${NB_NODES} nodes"
