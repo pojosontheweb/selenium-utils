@@ -71,6 +71,41 @@ public class GoogleRawTest {
 
             System.out.println("OK !");
 
+            // any() and all()
+            new Findr(driver)
+                    .elem(By.id("search"))
+                    .elemList(By.cssSelector("h3.r"))
+                    .whereAny(Findrs.textContains("POJOs on the Web"))
+                    .whereAll(Findrs.hasClass("r"))
+                    .eval();
+
+            try {
+                new Findr(driver)
+                        .setTimeout(5)
+                        .elem(By.id("search"))
+                        .elemList(By.cssSelector("h3.r"))
+                        .whereAll(Findrs.textContains("POJOs on the Web"))
+                        .eval();
+                fail = false;
+            } catch(TimeoutException e) {
+                fail = true;
+            }
+            Assert.assertTrue("All search hits on Woko ? I'm famous ! Oh but wait, something must be wrong ...", fail);
+
+            try {
+                new Findr(driver)
+                        .setTimeout(5)
+                        .elem(By.id("search"))
+                        .elemList(By.cssSelector("h3.r"))
+                        .whereAny(Findrs.textContains("Hot babes playing with each other in space"))
+                        .eval();
+                fail = false;
+            } catch(TimeoutException e) {
+                fail = true;
+            }
+            Assert.assertTrue("We're pulling some strange hits ...", fail);
+
+
             // regexp matching
             new Findr(driver)
                     .elem(By.id("search"))

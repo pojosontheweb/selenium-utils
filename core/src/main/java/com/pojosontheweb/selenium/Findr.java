@@ -1,6 +1,5 @@
 package com.pojosontheweb.selenium;
 
-import java.io.OutputStream;
 import java.util.*;
 
 import com.google.common.base.Function;
@@ -239,7 +238,7 @@ public final class Findr {
     }
 
     public ListFindr append(ListFindr lf) {
-        return new ListFindr(lf.by, lf.filters, lf.waitCount);
+        return new ListFindr(lf.by, lf.filters, lf.checkers);
     }
 
     public Findr append(Findr f) {
@@ -418,22 +417,22 @@ public final class Findr {
 
         private final By by;
         private final Predicate<WebElement> filters;
-        private final Integer waitCount;
+        private final Predicate<List<WebElement>> checkers;
 
         private ListFindr(By by) {
             this(by, null, null);
         }
 
-        private ListFindr(By by, Predicate<WebElement> filters, Integer waitCount) {
+        private ListFindr(By by, Predicate<WebElement> filters, Predicate<List<WebElement>> checkers) {
             this.by = by;
             this.filters = filters;
-            this.waitCount = waitCount;
+            this.checkers = checkers;
         }
 
-        private Predicate<WebElement> wrapAndTrap(final Predicate<? super WebElement> predicate) {
-            return new Predicate<WebElement>() {
+        private <T> Predicate<T> wrapAndTrap(final Predicate<T> predicate) {
+            return new Predicate<T>() {
                 @Override
-                public boolean apply(WebElement input) {
+                public boolean apply(T input) {
                     if (input==null) {
                         return false;
                     }
@@ -473,10 +472,10 @@ public final class Findr {
          * @throws java.lang.IllegalArgumentException if called after <code>whereElemCount</code>.
          */
         public ListFindr where(final Predicate<? super WebElement> predicate) {
-            if (waitCount!=null) {
-                throw new IllegalArgumentException("It's forbidden to call ListFindr.where() after whereElemCount() has been called.");
+            if (checkers != null) {
+                throw new IllegalArgumentException("It's forbidden to call ListFindr.where() after a whereXXX() method has been called.");
             }
-            return new ListFindr(by, composeFilters(predicate), waitCount);
+            return new ListFindr(by, composeFilters(predicate), checkers);
         }
 
         private Predicate<WebElement> composeFilters(final Predicate<? super WebElement> predicate) {
@@ -497,7 +496,23 @@ public final class Findr {
             };
         }
 
+        private Predicate<List<WebElement>> composeCheckers(final Predicate<List<WebElement>> predicate) {
+            return new Predicate<List<WebElement>>() {
+                @Override
+                public boolean apply(List<WebElement> input) {
+                    return (checkers == null || checkers.apply(input)) && wrapAndTrap(predicate).apply(input);
+                }
 
+                @Override
+                public String toString() {
+                    if (filters!=null) {
+                        return filters.toString() + " + " + predicate.toString();
+                    } else {
+                        return predicate.toString();
+                    }
+                }
+            };
+        }
 
         /**
          * Index-based access to the list of elements in this ListFindr. Allows
@@ -520,12 +535,13 @@ public final class Findr {
                     if (elements==null) {
                         return null;
                     }
-                    if (waitCount != null && filtered.size() != waitCount) {
-                        logDebug("[Findr]  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
+                    if (checkers != null && !checkers.apply(filtered)) {
+                        logDebug("[Findr]  ! checkList KO: " + checkers);
+                        logDebug("[Findr]  => Chain STOPPED before callback");
                         return null;
                     } else {
-                        if (isDebugEnabled() && waitCount!=null) {
-                            logDebug("[Findr]  > elemCount OK (" + waitCount + ")");
+                        if (isDebugEnabled() && checkers!=null) {
+                            logDebug("[Findr]  > checkList OK: " + checkers);
                         }
                     }
                     if (index>=filtered.size()) {
@@ -559,7 +575,80 @@ public final class Findr {
          * @return a new ListFindr with updated chain
          */
         public ListFindr whereElemCount(int elemCount) {
-            return new ListFindr(by, filters, elemCount);
+            return new ListFindr(by, filters, composeCheckers(checkElemCount(elemCount)));
+        }
+
+        /**
+         * Wait for the list findr so that at least one of its element match the specified predicate. Check is OK if list is empty.
+         * @param predicate the element predicate to match
+         * @return a new ListFindr with updated chain
+         */
+        public ListFindr whereAny(final Predicate<? super WebElement> predicate) {
+            return new ListFindr(by, filters, composeCheckers(checkAny(predicate)));
+        }
+
+        /**
+         * Wait for the list findr so that all of its element match the specified predicate. Check is OK if list is empty.
+         * @param predicate the element predicate to match
+         * @return a new ListFindr with updated chain
+         */
+        public ListFindr whereAll(final Predicate<? super WebElement> predicate) {
+            return new ListFindr(by, filters, composeCheckers(checkAll(predicate)));
+        }
+
+        private Predicate<List<WebElement>> checkAny(final Predicate<? super WebElement> predicate) {
+            return new Predicate<List<WebElement>>() {
+                @Override
+                public boolean apply(List<WebElement> elements) {
+                    if (elements.size() == 0) {
+                        return true;
+                    }
+                    for (WebElement element : elements) {
+                        if (predicate.apply(element)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                @Override
+                public String toString() {
+                    return "any(" + predicate + ")";
+                }
+            };
+        }
+
+        private Predicate<List<WebElement>> checkAll(final Predicate<? super WebElement> predicate) {
+            return new Predicate<List<WebElement>>() {
+                @Override
+                public boolean apply(List<WebElement> elements) {
+                    for (WebElement element : elements) {
+                        if (!predicate.apply(element)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+                @Override
+                public String toString() {
+                    return "all(" + predicate + ")";
+                }
+            };
+        }
+
+        private Predicate<List<WebElement>> checkElemCount(final int expectedCount) {
+            return new Predicate<List<WebElement>>() {
+                @Override
+                public boolean apply(List<WebElement> elements) {
+                    return elements != null && elements.size() == expectedCount;
+                }
+
+                @Override
+                public String toString() {
+                    return "elemCount(" + expectedCount + ")";
+                }
+            };
         }
 
         /**
@@ -584,13 +673,13 @@ public final class Findr {
                         return null;
                     }
                     List<WebElement> filtered = filterElements(elements);
-                    if (waitCount != null && filtered.size() != waitCount) {
-                        logDebug("[Findr]  ! elemCount KO (expected " + waitCount + ", actual " + filtered.size() + ")");
+                    if (checkers != null && !checkers.apply(filtered)) {
+                        logDebug("[Findr]  ! checkList KO: " + checkers);
                         logDebug("[Findr]  => Chain STOPPED before callback");
                         return null;
                     } else {
-                        if (isDebugEnabled() && waitCount!=null) {
-                            logDebug("[Findr]  > elemCount OK (" + waitCount + ")");
+                        if (isDebugEnabled() && checkers!=null) {
+                            logDebug("[Findr]  > checkList OK: " + checkers);
                         }
                     }
                     T res = callback.apply(filtered);
@@ -649,7 +738,7 @@ public final class Findr {
             return "ListFindr{" +
                     "by=" + by +
                     ", filters=" + filters +
-                    ", waitCount=" + waitCount +
+                    ", checkers=" + checkers +
                     ", findr=" + Findr.this +
                     '}';
         }
