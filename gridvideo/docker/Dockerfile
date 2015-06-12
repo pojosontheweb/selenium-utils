@@ -27,4 +27,4 @@ RUN unzip /chromedriver_linux64.zip -d /grid
 RUN rm -f chromedriver_linux64.zip
 
 # video
-ADD /selenium-utils-gridvideo-1.4.1.jar /grid/selenium-utils-gridvideo-1.4.1.jar
+ADD /selenium-utils-gridvideo-1.4.2.jar /grid/selenium-utils-gridvideo-1.4.2.jar
