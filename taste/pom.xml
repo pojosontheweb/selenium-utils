@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.pojosontheweb</groupId>
         <artifactId>selenium-utils</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.2</version>
     </parent>
     <version>1.0-beta4</version>
     <artifactId>taste</artifactId>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.pojosontheweb</groupId>
             <artifactId>selenium-utils-groovy</artifactId>
-            <version>1.4.1</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
