@@ -72,8 +72,10 @@ public class LocaleTest {
 
             // assert btn text
             new Findr(driver)
-                    .elem(By.id("gbqfsa"))
-                    .where(Findrs.textEquals(expectedText))
+                    .elemList(By.tagName("input"))
+                    .where(Findrs.attrEquals("type", "submit"))
+                    .where(Findrs.attrEquals("value", expectedText))
+                    .whereElemCount(1)
                     .eval();
 
         } finally {

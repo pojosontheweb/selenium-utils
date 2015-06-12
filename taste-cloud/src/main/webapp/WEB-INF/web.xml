@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+    <description>My woko app</description>
+    <display-name>tastecloud</display-name>
+
+    <context-param>
+        <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+        <param-value>application</param-value>
+    </context-param>
+
+    <filter>
+        <description>
+            Provides essential configuration and request processing services
+            for the Stripes framework.
+        </description>
+        <display-name>Stripes Filter</display-name>
+        <filter-name>StripesFilter</filter-name>
+        <filter-class>net.sourceforge.stripes.controller.StripesFilter</filter-class>
+        <init-param>
+            <param-name>ActionResolver.Packages</param-name>
+            <param-value>
+                woko.actions
+                com.pojosontheweb.tastecloud.actions
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>Extension.Packages</param-name>
+            <param-value>
+                woko.actions
+                woko.hibernate
+                net.sourceforge.stripes.rpc
+                com.pojosontheweb.tastecloud.actions
+            </param-value>
+        </init-param>
+         <init-param>
+            <param-name>LocalePicker.Locales</param-name>
+            <param-value>en,fr</param-value>
+        </init-param>
+        <init-param>
+            <param-name>ExceptionHandler.Class</param-name>
+            <param-value>net.sourceforge.stripes.exception.DelegatingExceptionHandler</param-value>
+        </init-param>
+        <init-param>
+            <param-name>DelegatingExceptionHandler.Packages</param-name>
+            <param-value>woko.exceptions.handlers</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>StripesFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter>
+        <description>
+            Dynamic Mapping Filter for Stripes
+        </description>
+        <display-name>DynamicMappingFilter</display-name>
+        <filter-name>DynamicMappingFilter</filter-name>
+        <filter-class>net.sourceforge.stripes.controller.DynamicMappingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>DynamicMappingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>Set Character Encoding</filter-name>
+        <filter-class>woko.util.SetCharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>Set Character Encoding</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>HttpCacheFilter</filter-name>
+        <filter-class>woko.util.httpcaching.WokoHttpCacheFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HttpCacheFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- leaving this here for cleanup -->
+    <listener>
+        <display-name>WokoInitListener</display-name>
+        <listener-class>com.pojosontheweb.tastecloud.woko.TasteCloudInitListener</listener-class>
+    </listener>
+
+    <!-- leaving this here for Woko push -->
+    <context-param>
+        <param-name>Woko.Facet.Packages</param-name>
+        <param-value>
+            com.pojosontheweb.tastecloud.facets
+        </param-value>
+    </context-param>
+
+
+</web-app>
