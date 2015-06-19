@@ -41,6 +41,8 @@ public final class Findr {
      */
     private final int waitTimeout;
 
+    private final long sleepInMillis;
+
     public static boolean isDebugEnabled() {
         return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "false"));
     }
@@ -82,7 +84,7 @@ public final class Findr {
      * @param waitTimeout the wait timeout in seconds
      */
     public Findr(WebDriver driver, int waitTimeout) {
-        this(driver, waitTimeout, null, Collections.<String>emptyList());
+        this(driver, waitTimeout, WebDriverWait.DEFAULT_SLEEP_TIMEOUT, null, Collections.<String>emptyList());
     }
 
     /**
@@ -130,9 +132,14 @@ public final class Findr {
         }, "fromWebElement(" + webElement + ")");
     }
 
-    private Findr(WebDriver driver, int waitTimeout, Function<SearchContext, WebElement> f, List<String> path) {
+    private Findr(WebDriver driver,
+                  int waitTimeout,
+                  long sleepInMillis,
+                  Function<SearchContext, WebElement> f,
+                  List<String> path) {
         this.driver = driver;
         this.waitTimeout = waitTimeout;
+        this.sleepInMillis = sleepInMillis;
         this.f = f;
         this.path = path;
     }
@@ -191,7 +198,7 @@ public final class Findr {
                 }
             };
         }
-        return new Findr(driver, waitTimeout, composed, newPath);
+        return new Findr(driver, waitTimeout, sleepInMillis, composed, newPath);
 
     }
 
@@ -201,7 +208,16 @@ public final class Findr {
      * @return an updated Findr instance
      */
     public Findr setTimeout(int timeoutInSeconds) {
-        return new Findr(driver, timeoutInSeconds, f, path);
+        return new Findr(driver, timeoutInSeconds, sleepInMillis, f, path);
+    }
+
+    /**
+     * Set the WebDriverWait sleep interval (in ms). Use to control polling frequency.
+     * @param sleepInMillis the sleep interval in milliseconds
+     * @return an updated Findr instance
+     */
+    public Findr setSleepInMillis(long sleepInMillis) {
+        return new Findr(driver, waitTimeout, sleepInMillis, f, path);
     }
 
     /**
@@ -251,7 +267,7 @@ public final class Findr {
 
     private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
         try {
-            return new WebDriverWait(driver, waitTimeout).until(callback);
+            return new WebDriverWait(driver, waitTimeout, sleepInMillis).until(callback);
         } catch(TimeoutException e) {
             // failed to find element(s), build exception message
             // and re-throw exception
@@ -448,7 +464,7 @@ public final class Findr {
 
         private <T> T wrapWebDriverWaitList(final Function<WebDriver,T> callback) throws TimeoutException {
             try {
-                return new WebDriverWait(driver, waitTimeout).until(callback);
+                return new WebDriverWait(driver, waitTimeout, sleepInMillis).until(callback);
             } catch(TimeoutException e) {
                 // failed to find element(s), build exception message
                 // and re-throw exception
