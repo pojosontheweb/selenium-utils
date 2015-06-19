@@ -127,7 +127,7 @@ Here is a list of all supported System Properties :
 		<td>webtests.findr.sleep</td>
 		<td>Any (reasonable) positive long</td>
 		<td>500</td>
-		<td>The Findr sleep interval in milliseconds</td>
+		<td>The Findr sleep interval in milliseconds. Allows to control polling frequency.</td>
 	</tr>
 	<tr>
 		<td>webtests.findr.verbose</td>
