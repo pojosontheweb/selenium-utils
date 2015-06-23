@@ -6,7 +6,8 @@ package com.pojosontheweb.selenium;
 public enum Browsr {
 
     Chrome("chrome"),
-    Firefox("firefox");
+    Firefox("firefox"),
+    Safari("safari");
 
     /**
      * The value of the "webtests.browser" system property
