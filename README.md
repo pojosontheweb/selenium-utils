@@ -121,7 +121,13 @@ Here is a list of all supported System Properties :
 		<td>webtests.findr.timeout</td>
 		<td>Any (reasonable) positive integer</td>
 		<td>10</td>
-		<td>The default Findr timeout in seconds</td>
+		<td>The Findr timeout in seconds</td>
+	</tr>
+	<tr>
+		<td>webtests.findr.sleep</td>
+		<td>Any (reasonable) positive long</td>
+		<td>500</td>
+		<td>The Findr sleep interval in milliseconds. Allows to control polling frequency.</td>
 	</tr>
 	<tr>
 		<td>webtests.findr.verbose</td>

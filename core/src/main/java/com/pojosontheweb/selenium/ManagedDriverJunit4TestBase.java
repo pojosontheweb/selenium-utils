@@ -13,6 +13,7 @@ import org.openqa.selenium.WebDriver;
 public class ManagedDriverJunit4TestBase {
 
     public static final String PROP_WEBTESTS_FINDR_TIMEOUT = "webtests.findr.timeout";
+    public static final String PROP_WEBTESTS_FINDR_SLEEP = "webtests.findr.sleep";
 
     private final TestUtil testUtil = new TestUtil();
 
@@ -59,11 +60,22 @@ public class ManagedDriverJunit4TestBase {
     }
 
     protected Findr findr() {
+        Findr f = new Findr(getWebDriver());
         String timeoutStr = System.getProperty(PROP_WEBTESTS_FINDR_TIMEOUT);
-        int i = timeoutStr==null ? Findr.WAIT_TIMEOUT_SECONDS : Integer.parseInt(timeoutStr);
-        return new Findr(getWebDriver(), i);
+        if (timeoutStr!=null) {
+            f = f.setTimeout(Integer.parseInt(timeoutStr));
+        }
+        String sleepInMillisStr = System.getProperty(PROP_WEBTESTS_FINDR_SLEEP);
+        if (sleepInMillisStr!=null) {
+            f = f.setSleepInMillis(Long.parseLong(sleepInMillisStr));
+        }
+        return f;
     }
 
+    /**
+     * @deprecated use <code>findr().setTimeout(t)</code> instead.
+     */
+    @Deprecated
     protected Findr findr(int timeoutInSeconds) {
         return new Findr(getWebDriver(), timeoutInSeconds);
     }
