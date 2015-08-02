@@ -2,6 +2,7 @@
 
 ./start-hub.sh
 
+# arg 1 is the nb of nodes we want
 if [ -z "$1" ]
   then
   	NB_NODES=4
@@ -9,6 +10,8 @@ if [ -z "$1" ]
     NB_NODES=$1
 fi
 
+# arg 2 is the folder (on the host) where
+# videos are stored
 if [ -z "$2" ]
   then
     VIDEO_DIR="/tmp"
