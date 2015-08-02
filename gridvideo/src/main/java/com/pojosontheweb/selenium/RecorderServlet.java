@@ -20,44 +20,51 @@ public class RecorderServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        String vd = System.getProperty(SysProps.webtests.video.dir);
+        if (vd == null) {
+            throw new ServletException("Unable to initialize RecorderServlet : video dir must be passed via webtests.video.dir sys prop.");
+        }
+        destDir = new File(vd);
+        if (!destDir.exists()) {
+            throw new ServletException("Unable to initialize RecorderServlet : video dir doesn't exist " + vd);
+        }
         recordr = new ScreenRecordr();
-        destDir = new File(System.getProperty("java.io.tmpdir") +
-            File.separator + UUID.randomUUID().toString());
-        destDir.mkdirs();
     }
 
     private void start(HttpServletResponse resp) {
+        log.info("Starting Video Recording");
         recordr.start();
         resp.setStatus(HttpStatus.SC_OK);
     }
 
-    private void stop(HttpServletResponse resp) {
+    private void stop(HttpServletResponse resp, String sessionId) {
+        log.info("Stopping Video Recording");
         recordr.stop();
-        recordr.moveVideoFilesTo(destDir, "test");
+        log.info("Storing video files to " + destDir + " for session:" + sessionId);
+        recordr.moveVideoFilesTo(destDir, sessionId);
+        log.info("Video files moved for session:" + sessionId);
         resp.setStatus(HttpStatus.SC_OK);
-    }
-
-    private void download(HttpServletResponse resp) {
-        File vidFile = new File(destDir, "test-1.mov");
-
     }
 
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String command = req.getParameter("command");
-        if(command == null) {
+        if (command == null) {
             resp.setStatus(HttpStatus.SC_BAD_REQUEST);
             resp.getWriter().write("Missing parameter: 'command'");
             return;
         }
 
-        if(command.equalsIgnoreCase("start")) {
+        if (command.equalsIgnoreCase("start")) {
             start(resp);
-        } else if(command.equalsIgnoreCase("stop")) {
-            stop(resp);
-        } else if (command.equalsIgnoreCase("download")) {
-            download(resp);
-        }
-        else {
+        } else if (command.equalsIgnoreCase("stop")) {
+            String sessionId = req.getParameter("sessionId");
+            if (sessionId == null) {
+                resp.setStatus(HttpStatus.SC_BAD_REQUEST);
+                resp.getWriter().write("Missing parameter: 'sessionId'");
+            } else {
+                stop(resp, sessionId);
+            }
+        } else {
             resp.setStatus(HttpStatus.SC_BAD_REQUEST);
             resp.getWriter().write("Bad parameter: unsupported command : " + command);
         }

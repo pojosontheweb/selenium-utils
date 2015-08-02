@@ -15,7 +15,7 @@ RUN yum -y install xorg-x11-server-Xvfb libXtst xdpyinfo
 ENV DISPLAY :99
 ENV LD_LIBRARY_PATH /usr/lib64/
 
-RUN mkdir /grid
+RUN mkdir -p /grid/videos
 
 # selenium grid
 ADD http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar /grid/selenium-server-standalone-2.45.0.jar
@@ -27,4 +27,4 @@ RUN unzip /chromedriver_linux64.zip -d /grid
 RUN rm -f chromedriver_linux64.zip
 
 # video
-ADD /selenium-utils-gridvideo-1.4.1.jar /grid/selenium-utils-gridvideo-1.4.1.jar
+ADD /selenium-utils-gridvideo-1.4.1-jar-with-dependencies.jar /grid/selenium-utils-gridvideo-1.4.1-jar-with-dependencies.jar
