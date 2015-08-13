@@ -34,7 +34,7 @@ MAX=$[${PORT} + ${NB_NODES} - 1]
 
 for i in `seq ${PORT} ${MAX}`;
 do
-	./start-node.sh ${i} ${VIDEO_DIR} ${HOST_IP} ${HUB_URL}
+	./start-node.sh ${i} ${VIDEO_DIR} ${HOST_IP}
 done
 
-echo "Grid started with ${NB_NODES} nodes, video dir= ${VIDEO_DIR}"
+echo "Grid started with ${NB_NODES} nodes, video dir=${VIDEO_DIR}, hostIP=${HOST_IP}"
