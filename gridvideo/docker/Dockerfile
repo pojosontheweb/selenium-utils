@@ -21,6 +21,7 @@ RUN mkdir -p /grid/videos
 ADD http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar /grid/selenium-server-standalone-2.45.0.jar
 ADD /run-node.sh /grid/run-node.sh
 ADD /run-hub.sh /grid/run-hub.sh
+ADD /grid-logging.properties /grid/grid-logging.properties
 
 ADD http://chromedriver.storage.googleapis.com/2.15/chromedriver_linux64.zip /chromedriver_linux64.zip
 RUN unzip /chromedriver_linux64.zip -d /grid
