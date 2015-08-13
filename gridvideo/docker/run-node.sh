@@ -1,25 +1,12 @@
 #!/usr/bin/env bash
 
-if [ -z "$1" ]
-  then
-	NODE_PORT=5555
-  else
-	NODE_PORT=$1
-fi
+# args :
+# 1 : node port
+# 2 : host IP
 
-if [ -z "$2" ]
-  then
-    HOST_IP=`/sbin/ip route|awk '/default/ { print $3 }'`
-  else
-    HOST_IP=$2
-fi
-
-if [ -z "$3" ]
-  then
-    HUB_URL="http://${HOST_IP}:4444/grid/register"
-  else
-    HUB_URL=$3
-fi
+NODE_PORT=$1
+HOST_IP=$2
+HUB_URL="http://${HOST_IP}:4444/grid/register"
 
 echo "Starting XVFB"
 /usr/bin/Xvfb :99 -screen 0 1024x768x24 +extension RANDR &
