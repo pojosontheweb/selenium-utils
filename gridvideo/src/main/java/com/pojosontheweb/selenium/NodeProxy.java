@@ -12,10 +12,6 @@ import org.openqa.grid.internal.Registry;
 import org.openqa.grid.internal.TestSession;
 import org.openqa.selenium.remote.internal.HttpClientFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 public class NodeProxy extends org.openqa.grid.selenium.proxy.DefaultRemoteProxy {

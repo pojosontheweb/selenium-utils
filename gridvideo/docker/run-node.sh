@@ -21,5 +21,5 @@ export CHROME_DEVEL_SANDBOX=
 echo "XVFB started, starting node and registering to ${HUB_URL}"
 
 cd /grid
-java -Djava.security.egd=file:///dev/urandom -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -debug -host ${HOST_IP}
+java -Djava.security.egd=file:///dev/urandom -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -debug -host ${HOST_IP} -proxy com.pojosontheweb.selenium.NodeProxy -servlets com.pojosontheweb.selenium.RecorderServlet
 
