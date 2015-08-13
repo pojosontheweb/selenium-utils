@@ -7,7 +7,19 @@ if [ -z "$1" ]
 	NODE_PORT=$1
 fi
 
-HUB_URL="http://172.17.42.1:4444/grid/register"
+if [ -z "$2" ]
+  then
+    HOST_IP=`/sbin/ip route|awk '/default/ { print $3 }'`
+  else
+    HOST_IP=$2
+fi
+
+if [ -z "$3" ]
+  then
+    HUB_URL="http://${HOST_IP}:4444/grid/register"
+  else
+    HUB_URL=$3
+fi
 
 echo "Starting XVFB"
 /usr/bin/Xvfb :99 -screen 0 1024x768x24 +extension RANDR &
@@ -22,5 +34,5 @@ export CHROME_DEVEL_SANDBOX=
 echo "XVFB started, starting node and registering to ${HUB_URL}"
 
 cd /grid
-java -Djava.security.egd=file:///dev/urandom -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver -Dwebtests.video.dir=/grid/videos org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -host 172.17.42.1 -proxy com.pojosontheweb.selenium.NodeProxy -servlets com.pojosontheweb.selenium.RecorderServlet
+java -Djava.security.egd=file:///dev/urandom -cp *:. -Dwebdriver.chrome.driver=/grid/chromedriver org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -debug -host ${HOST_IP}
 
