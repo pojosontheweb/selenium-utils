@@ -26,7 +26,7 @@ public class RecorderServlet extends HttpServlet {
         }
         destDir = new File(vd);
         if (!destDir.exists()) {
-            throw new ServletException("Unable to initialize RecorderServlet : video dir doesn't exist " + vd);
+            destDir.mkdirs();
         }
         recordr = new ScreenRecordr();
     }
@@ -37,12 +37,12 @@ public class RecorderServlet extends HttpServlet {
         resp.setStatus(HttpStatus.SC_OK);
     }
 
-    private void stop(HttpServletResponse resp, String sessionId) {
+    private void stop(HttpServletResponse resp, String sessionId, String testName) {
         log.info("Stopping Video Recording");
         recordr.stop();
-        log.info("Storing video files to " + destDir + " for session:" + sessionId);
-        recordr.moveVideoFilesTo(destDir, sessionId);
-        log.info("Video files moved for session:" + sessionId);
+        log.info("Storing video files to " + destDir + " for session:" + sessionId + ", testName=" + testName);
+        recordr.moveVideoFilesTo(destDir, testName);
+        log.info("Video files moved for session:" + sessionId + ", testName=" + testName);
         resp.setStatus(HttpStatus.SC_OK);
     }
 
@@ -62,7 +62,11 @@ public class RecorderServlet extends HttpServlet {
                 resp.setStatus(HttpStatus.SC_BAD_REQUEST);
                 resp.getWriter().write("Missing parameter: 'sessionId'");
             } else {
-                stop(resp, sessionId);
+                String testName = req.getParameter(NodeProxy.REQUEST_PARAM_TEST_NAME);
+                if (testName == null) {
+                    testName = sessionId;
+                }
+                stop(resp, sessionId, testName);
             }
         } else {
             resp.setStatus(HttpStatus.SC_BAD_REQUEST);

@@ -12,6 +12,10 @@ import org.openqa.grid.internal.Registry;
 import org.openqa.grid.internal.TestSession;
 import org.openqa.selenium.remote.internal.HttpClientFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.logging.Logger;
 
 public class NodeProxy extends org.openqa.grid.selenium.proxy.DefaultRemoteProxy {
@@ -53,6 +57,8 @@ public class NodeProxy extends org.openqa.grid.selenium.proxy.DefaultRemoteProxy
         }
     }
 
+    public static final String REQUEST_PARAM_TEST_NAME = "webtests_test_name";
+
     @Override
     public void afterSession(TestSession session) {
         super.afterSession(session);
@@ -62,7 +68,14 @@ public class NodeProxy extends org.openqa.grid.selenium.proxy.DefaultRemoteProxy
             String sessionId = externalKey.getKey();
             log.info("Stopping Video Recording and tagging session " + sessionId);
 
-            HttpPost r = new HttpPost(serviceUrl + "?command=stop&sessionId=" + sessionId);
+            String testName = (String)session.getRequestedCapabilities().get(REQUEST_PARAM_TEST_NAME);
+            HttpPost r;
+            try {
+                r = new HttpPost(serviceUrl + "?command=stop&sessionId=" + sessionId +
+                                "&" + REQUEST_PARAM_TEST_NAME + "=" + URLEncoder.encode(testName, "utf-8"));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
             try {
                 HttpResponse response = client.execute(remoteHost, r);
                 if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
