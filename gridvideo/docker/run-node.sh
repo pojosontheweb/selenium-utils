@@ -9,14 +9,15 @@ HOST_IP=$2
 HUB_URL="http://${HOST_IP}:4444/grid/register"
 
 echo "Starting XVFB"
-/usr/bin/Xvfb :99 -screen 0 1024x768x24 +extension RANDR &
+/usr/bin/Xvfb :${NODE_PORT} -screen 0 1280x1024x24 +extension RANDR &
 ACTIVE=9999
 while [ $ACTIVE -ne 0 ] ; do
-        xdpyinfo -display :99 &> /dev/null
+        xdpyinfo -display :${NODE_PORT} &> /dev/null
         ACTIVE=$?
 done
 dbus-uuidgen > /var/lib/dbus/machine-id
 export CHROME_DEVEL_SANDBOX=
+export DISPLAY=:${NODE_PORT}
 
 echo "XVFB started, starting node and registering to ${HUB_URL}"
 

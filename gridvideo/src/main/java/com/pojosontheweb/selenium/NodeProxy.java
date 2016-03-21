@@ -69,6 +69,9 @@ public class NodeProxy extends org.openqa.grid.selenium.proxy.DefaultRemoteProxy
             log.info("Stopping Video Recording and tagging session " + sessionId);
 
             String testName = (String)session.getRequestedCapabilities().get(REQUEST_PARAM_TEST_NAME);
+            if (testName == null) {
+                testName = sessionId;
+            }
             HttpPost r;
             try {
                 r = new HttpPost(serviceUrl + "?command=stop&sessionId=" + sessionId +
@@ -92,6 +95,7 @@ public class NodeProxy extends org.openqa.grid.selenium.proxy.DefaultRemoteProxy
                 r.releaseConnection();
             }
 
+            FrontEndServlet.SESSIONS_AND_URLS.put(sessionId, serviceUrl);
         }
 
     }

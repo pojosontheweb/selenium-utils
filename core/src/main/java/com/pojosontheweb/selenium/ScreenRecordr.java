@@ -63,7 +63,7 @@ public class ScreenRecordr {
                                 EncodingKey,
                                 "black",
                                 FrameRateKey,
-                                Rational.valueOf(30)),
+                                Rational.valueOf(15)),
                         null);
             }
 
