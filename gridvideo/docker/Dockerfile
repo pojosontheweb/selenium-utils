@@ -12,7 +12,6 @@ RUN yum -y install unzip
 
 # xvfb
 RUN yum -y install xorg-x11-server-Xvfb libXtst xdpyinfo
-ENV DISPLAY :99
 ENV LD_LIBRARY_PATH /usr/lib64/
 
 RUN mkdir -p /grid/videos
