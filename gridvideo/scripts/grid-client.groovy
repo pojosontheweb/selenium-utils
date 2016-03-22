@@ -7,7 +7,7 @@ import groovyx.net.http.*
 def cli = new CliBuilder(usage: 'grid-client.groovy [options]')
 cli.with {
 	h longOpt: 'help', 'Show usage information'
-	hh longOpt: 'hub-host', args:1, argName: 'hostname/IP', 'Hub host'
+	hh longOpt: 'hub-host', args:1, argName: 'hostname/IP', 'Hub hostname'
 	l longOpt: 'list-videos', 'List recorded videos'
 	d longOpt: 'download-video', args:1, argName: 'sessionId', 'Download recorded test session'
 	u longOpt: 'video-url', args:1, argName: 'sessionId', 'Return the dl url of a video'
