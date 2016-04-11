@@ -6,6 +6,7 @@ cli.with {
 	hh 	longOpt: 'host-ip', args:1, argName:'host', 'Hostname/IP'
 	vd 	longOpt: 'video-dir', args:1, argName: 'video-dir', 'Path to store videos to (must exist)'
 	n 	longOpt: 'nb-nodes', args:1, argName: 'nb-nodes', 'Number of nodes to start'
+	hu	longOpt: 'hub-url', args:1, argName: 'hub-url', 'Do not start the hub, use provided URL instead'
 }
 
 def options = cli.parse(args)
@@ -39,6 +40,12 @@ def exec = { String... commandArgs ->
 	return p.text
 }
 
+if (options.hu) {
+	// no-hub, start nodes only
+	println "TODO"
+	return
+}
+
 // start the hub
 String[] startHubCommand = ["docker", "run", "--net=host", "-tid", "-p", "4444:4444", "pojosontheweb/selgrid", "/grid/run-hub.sh"]
 String hubId = exec(startHubCommand)
@@ -50,7 +57,7 @@ if (hubId) {
 	String videoDir = options.vd ?: '/tmp'
 	String host = options.hh
 	(start..(start + nbNodes - 1)).each { int port ->
-		String[] nodeCommand = ["docker", "run", "--net=host", "-tid", "-p", "$port:$port", "-v", "$videoDir:/grid/videos", "pojosontheweb/selgrid", "/grid/run-node.sh", "$port", "$host"]
+		String[] nodeCommand = ["docker", "run", "--net=host", "-tid", "-p", "$port:$port", "-v", "$videoDir:/grid/videos", "pojosontheweb/selgrid", "/grid/run-node.sh", "$port", "$host", "http://$host:4444/grid/register"]
 		String nodeId = exec(nodeCommand)
 		print "[Node] ${options.hh}:$port $nodeId"
 		started++

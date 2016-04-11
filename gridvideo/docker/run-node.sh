@@ -3,10 +3,11 @@
 # args :
 # 1 : node port
 # 2 : host IP
+# 3 : hub url
 
 NODE_PORT=$1
 HOST_IP=$2
-HUB_URL="http://${HOST_IP}:4444/grid/register"
+HUB_URL=$3
 
 echo "Starting XVFB"
 /usr/bin/Xvfb :${NODE_PORT} -screen 0 1280x1024x24 +extension RANDR &

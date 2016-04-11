@@ -3,6 +3,11 @@
 @Grab(group='org.codehaus.groovy.modules.http-builder', module='http-builder', version='0.7')
 
 import groovyx.net.http.*
+import org.apache.http.*
+import org.apache.http.client.*
+import org.apache.http.impl.client.*
+import org.apache.http.client.methods.*
+
 
 def cli = new CliBuilder(usage: 'grid-client.groovy [options]')
 cli.with {
@@ -35,11 +40,9 @@ if (!options.hh) {
 	debug("Using hub at ${options.hh}")
 }
 
-def http = new HTTPBuilder("http://${options.hh}:4444/")
-
 if (options.l) {
 	// list files...
-	http.get(
+	new HTTPBuilder("http://${options.hh}:4444/").get(
 		path:'/grid/admin/FrontEndServlet',
 		query: [command:'list']
 	) { resp, json ->
@@ -47,20 +50,18 @@ if (options.l) {
 	}
 } else if (options.d) {
 	// download video
-	http.get(
-		path:'/grid/admin/FrontEndServlet',
-		query: [
-			command:'download',
-			sessionId: options.d
-		]
-	) { resp, inputStream ->
-		byte[] buffer = new byte[1024];
-		int len = inputStream.read(buffer);
-		while (len != -1) {
-			out.write(buffer, 0, len);
-			len = inputStream.read(buffer);
-		}
+	HttpGet req = new HttpGet("http://${options.hh}:4444/grid/admin/FrontEndServlet?command=download&sessionId=${options.d}");
+	HttpClient client = new DefaultHttpClient();
+	HttpResponse response = client.execute(req);
+// validate response code, etc.
+	InputStream inputStream = response.getEntity().getContent();
+	byte[] buffer = new byte[1024];
+	int len = inputStream.read(buffer);
+	while (len != -1) {
+		System.out.write(buffer, 0, len);
+		len = inputStream.read(buffer);
 	}
+	inputStream.close()
 } else if (options.u) {
 	println "http://${options.hh}:4444/grid/admin/FrontEndServlet?command=download&sessionId=${options.u}"
 }
