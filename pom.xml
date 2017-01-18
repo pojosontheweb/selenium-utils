@@ -9,7 +9,7 @@
         <version>6</version>
     </parent>
     <groupId>com.pojosontheweb</groupId>
-    <version>1.4.4</version>
+    <version>1.4.5</version>
     <artifactId>selenium-utils</artifactId>
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
@@ -46,7 +46,7 @@
         <gmavenVersion>1.5</gmavenVersion>
         <gmavenProviderSelection>2.0</gmavenProviderSelection>
         <groovyVersion>2.3.9</groovyVersion>
-        <seleniumVersion>2.45.0</seleniumVersion>
+        <seleniumVersion>2.53.1</seleniumVersion>
     </properties>
     <build>
         <pluginManagement>

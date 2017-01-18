@@ -12,9 +12,15 @@ public class FirefoxBuildr {
     private File path;
     private FirefoxProfile profile;
     private String locales;
+    private FirefoxBinary binary;
 
     public FirefoxBuildr setFirefoxPath(File path) {
         this.path = path;
+        return this;
+    }
+
+    public FirefoxBuildr setFirefoxBinary(FirefoxBinary binary) {
+        this.binary = binary;
         return this;
     }
 
@@ -32,10 +38,12 @@ public class FirefoxBuildr {
         if (profile==null) {
             profile = createFirefoxProfile(locales);
         }
-        if (path!=null) {
-            return new FirefoxDriver(new FirefoxBinary(path), profile);
+        if (binary == null) {
+            return path == null
+                    ? new FirefoxDriver(profile)
+                    : new FirefoxDriver(new FirefoxBinary(path), profile);
         } else {
-            return new FirefoxDriver(profile);
+            return new FirefoxDriver(binary, profile);
         }
     }
 
