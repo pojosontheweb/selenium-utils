@@ -15,7 +15,12 @@ public class ManagedDriverJunit4TestBase {
     public static final String PROP_WEBTESTS_FINDR_TIMEOUT = "webtests.findr.timeout";
     public static final String PROP_WEBTESTS_FINDR_SLEEP = "webtests.findr.sleep";
 
-    private final TestUtil testUtil = new TestUtil();
+    private final TestUtil testUtil = new TestUtil() {
+        @Override
+        protected WebDriver createWebDriver() {
+            return ManagedDriverJunit4TestBase.this.createWebDriver();
+        }
+    };
 
     private static String toTestName(Description d) {
         return d.getClassName() + "." + d.getMethodName();
@@ -54,6 +59,18 @@ public class ManagedDriverJunit4TestBase {
             testUtil.tearDown();
         }
     };
+
+    /**
+     * Called by the test watcher on setup, you should not
+     * call this method directly. Instead, it can be overriden
+     * in your test(s) in order to get control over the
+     * WebDriver creation.
+     * This one creates the web driver from sys props.
+     * @return a new WebDriver instance to be used for the test
+     */
+    protected WebDriver createWebDriver() {
+        return DriverBuildr.fromSysProps().build();
+    }
 
     protected final WebDriver getWebDriver() {
         return testUtil.getWebDriver();
