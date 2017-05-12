@@ -307,10 +307,10 @@ public class Findrs {
         };
     }
 
-    public static Function<WebElement, ?> click() {
-        return new Function<WebElement, Object>() {
+    public static Function<WebElement, Boolean> click() {
+        return new Function<WebElement, Boolean>() {
             @Override
-            public Object apply(WebElement webElement) {
+            public Boolean apply(WebElement webElement) {
                 try {
                     webElement.click();
                 } catch (Exception e) {
@@ -327,10 +327,10 @@ public class Findrs {
         };
     }
 
-    public static Function<WebElement, ?> clear() {
-        return new Function<WebElement, Object>() {
+    public static Function<WebElement, Boolean> clear() {
+        return new Function<WebElement, Boolean>() {
             @Override
-            public Object apply(WebElement webElement) {
+            public Boolean apply(WebElement webElement) {
                 try {
                     webElement.clear();
                 } catch (Exception e) {
@@ -346,10 +346,10 @@ public class Findrs {
         };
     }
 
-    public static Function<WebElement, ?> sendKeys(final CharSequence... keys) {
-        return new Function<WebElement, Object>() {
+    public static Function<WebElement, Boolean> sendKeys(final CharSequence... keys) {
+        return new Function<WebElement, Boolean>() {
             @Override
-            public Object apply(WebElement webElement) {
+            public Boolean apply(WebElement webElement) {
                 try {
                     webElement.sendKeys(keys);
                 } catch (Exception e) {

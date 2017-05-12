@@ -24,6 +24,8 @@ public final class Findr {
     /** the sys prop name for enabling logs in findr eval(s) */
     public static final String SYSPROP_VERBOSE = "webtests.findr.verbose";
 
+    private static final FindrActions DEFAULT_ACTIONS = new FindrActions();
+
     /** ref to the driver */
     private final WebDriver driver;
 
@@ -42,6 +44,8 @@ public final class Findr {
     private final int waitTimeout;
 
     private final long sleepInMillis;
+
+    private final FindrActions findrActions;
 
     public static boolean isDebugEnabled() {
         return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "false"));
@@ -84,7 +88,14 @@ public final class Findr {
      * @param waitTimeout the wait timeout in seconds
      */
     public Findr(WebDriver driver, int waitTimeout) {
-        this(driver, waitTimeout, WebDriverWait.DEFAULT_SLEEP_TIMEOUT, null, Collections.<String>emptyList());
+        this(
+                driver,
+                waitTimeout,
+                WebDriverWait.DEFAULT_SLEEP_TIMEOUT,
+                null,
+                Collections.<String>emptyList(),
+                DEFAULT_ACTIONS
+        );
     }
 
     /**
@@ -136,12 +147,14 @@ public final class Findr {
                   int waitTimeout,
                   long sleepInMillis,
                   Function<SearchContext, WebElement> f,
-                  List<String> path) {
+                  List<String> path,
+                  FindrActions actions) {
         this.driver = driver;
         this.waitTimeout = waitTimeout;
         this.sleepInMillis = sleepInMillis;
         this.f = f;
         this.path = path;
+        this.findrActions = actions;
     }
 
     private <F,T> Function<F,T> withoutWebDriverException(final Function<F, T> function) {
@@ -198,7 +211,7 @@ public final class Findr {
                 }
             };
         }
-        return new Findr(driver, waitTimeout, sleepInMillis, composed, newPath);
+        return new Findr(driver, waitTimeout, sleepInMillis, composed, newPath, findrActions);
 
     }
 
@@ -208,7 +221,7 @@ public final class Findr {
      * @return an updated Findr instance
      */
     public Findr setTimeout(int timeoutInSeconds) {
-        return new Findr(driver, timeoutInSeconds, sleepInMillis, f, path);
+        return new Findr(driver, timeoutInSeconds, sleepInMillis, f, path, findrActions);
     }
 
     /**
@@ -217,7 +230,11 @@ public final class Findr {
      * @return an updated Findr instance
      */
     public Findr setSleepInMillis(long sleepInMillis) {
-        return new Findr(driver, waitTimeout, sleepInMillis, f, path);
+        return new Findr(driver, waitTimeout, sleepInMillis, f, path, findrActions);
+    }
+
+    public Findr setActions(FindrActions actions) {
+        return new Findr(driver, waitTimeout, sleepInMillis, f, path, actions);
     }
 
     /**
@@ -416,8 +433,8 @@ public final class Findr {
      * @param keys the text to send
      * @throws TimeoutException if at least one condition in the chain failed
      */
-    public void sendKeys(final CharSequence... keys) throws TimeoutException {
-        eval(Findrs.sendKeys(keys));
+    public void sendKeys(CharSequence... keys) throws TimeoutException {
+        eval(findrActions.sendKeys(keys));
     }
 
     /**
@@ -427,7 +444,7 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void click() {
-        eval(Findrs.click());
+        eval(findrActions.click());
     }
 
     /**
@@ -437,7 +454,7 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public void clear() {
-        eval(Findrs.clear());
+        eval(findrActions.clear());
     }
 
     private static final Function<List<WebElement>,Object> IDENTITY_LIST = new Function<List<WebElement>, Object>() {
@@ -608,11 +625,18 @@ public final class Findr {
         }
 
         /**
+         * Alias for <code>count</code>
+         */
+        public ListFindr whereElemCount(int elemCount) {
+            return count(elemCount);
+        }
+
+        /**
          * Wait for the list findr to mach passed count
          * @param elemCount the expected count
          * @return a new ListFindr with updated chain
          */
-        public ListFindr whereElemCount(int elemCount) {
+        public ListFindr count(int elemCount) {
             return new ListFindr(by, filters, composeCheckers(checkElemCount(elemCount)));
         }
 
