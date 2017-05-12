@@ -41,6 +41,9 @@ public final class Findr {
      */
     private final int waitTimeout;
 
+    /**
+     * The sleep interval (between polls)
+     */
     private final long sleepInMillis;
 
     public static boolean isDebugEnabled() {
