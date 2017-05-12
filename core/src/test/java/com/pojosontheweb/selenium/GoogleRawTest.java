@@ -33,11 +33,25 @@ public class GoogleRawTest {
         }
     }
 
+    // just for the demo
+    private static class MyActions extends FindrActions {
+
+        int clickCount = 0;
+
+        @Override
+        public Function<WebElement, Boolean> click() {
+            clickCount++;
+            return super.click();
+        }
+
+    }
+
+
     // very simple page object, just for the example...
     private static class GooglePage extends AbstractPageObject {
 
-        GooglePage(WebDriver driver) {
-            super(new Findr(driver));
+        GooglePage(Findr f) {
+            super(f);
         }
 
         // example of factoring out Findrs, can be
@@ -54,8 +68,9 @@ public class GoogleRawTest {
         // public pageobject api
 
         GooglePage typeQuery(String query) {
-            $("#lst-ib")
-                    .sendKeys(query, Keys.ENTER);
+            Findr input = $("#lst-ib");
+            input.click();
+            input.sendKeys(query, Keys.ENTER);
             return this;
         }
 
@@ -136,7 +151,9 @@ public class GoogleRawTest {
         }
         assertTrue(fail);
 
-        final GooglePage google = new GooglePage(driver);
+        final MyActions myActions = new MyActions();
+        final Findr findr = new Findr(driver).setActions(myActions);
+        final GooglePage google = new GooglePage(findr);
 
         // query, assert result...
         google
@@ -150,6 +167,9 @@ public class GoogleRawTest {
                 .assertAnyWokoAndAllHaveClass()
                 .assertAllResultsAreNotWoko()
                 .assertNoStrangeResults();
+
+        // assert we have clicked
+        assertTrue("no clicks ???", myActions.clickCount > 0);
     }
 
 
