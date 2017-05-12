@@ -48,9 +48,9 @@ Those can be used directly in your findrs :
 
 ```
 new Findr(driver)
-	.elem(By.cssSelector("div.my-class"))
-	.where(Findrs.attrEquals("my-attr", "my-value"))
-	.where(Findrs.textEquals("This is some content"))
+	.$("div.my-class"))
+	.where(attrEquals("my-attr", "my-value"))
+	.where(textEquals("This is some content"))
 	.eval();
 ``` 
 
@@ -63,13 +63,13 @@ There are also variants to `eval()` that accept a `failureMessage` argument.
 
 ### Understanding failures
 
-`Findr` executes the various functions you compose as a "back box", and it's sometimes hard to understand where 
-it went wrong in the conditions chain. In order to get insights about what's going on, you can 
-set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when asserting the condition chain. 
+`Findr` executes the various functions you compose as a "back box", and it's sometimes 
+hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when 
+asserting the condition chain. 
 
 ## WebDriver init
 
-Use `DrivrBuilder` in order to create instances of `WebDriver`. The API can be used statically :
+Use `DriverBuilder` in order to create instances of `WebDriver`. The API can be used statically :
 
 ```
 // create a simple Chrome Driver
@@ -82,7 +82,7 @@ WebDriver driver = DriverBuildr
 Or by defining system properties :
 
 ```
-WebDriver = DriverBuildr.fromSysProps().build();
+WebDriver = DriverBuilder.fromSysProps().build();
 ```
 
 The latter approach allows for more flexible builds. 
@@ -203,7 +203,7 @@ Add the dependency to your pom :
 
 ```
 <dependency>
-	<groupId>com.pojosontheweb</groupId>
+    <groupId>com.pojosontheweb</groupId>
     <artifactId>selenium-utils-core</artifactId>
     <version>LATEST-SNAPSHOT</version>
     <scope>test</scope>
@@ -214,11 +214,11 @@ Configure surefire :
 
 ```
 <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
+    <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
     <configuration>
     	<systemPropertyVariables>
-        	<webtests.browser>${webtests.browser}</webtests.browser>
+            <webtests.browser>${webtests.browser}</webtests.browser>
             <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
             <webtests.video.dir>${project.build.directory}/webtests-videos</webtests.video.dir>
             <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
@@ -239,11 +239,9 @@ With sys props :
 $> mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedriver -Dwebtests.video.enabled=true
 ```
 
-## API Docs
+## Page Objects
 
-The JavaDocs can be found here :
-
-http://jdp.rvkb.com/api/selenium-utils-core/index.html
+Included is a simple yet useful `AbstractPageObject` class that you can use to create your own page helper libraries.
 
 ## Groovy
 
