@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.pojosontheweb</groupId>
         <artifactId>selenium-utils</artifactId>
-        <version>LATEST-SNAPSHOT</version>
+        <version>1.4.6</version>
     </parent>
     <artifactId>monte-repack</artifactId>
     <packaging>jar</packaging>
