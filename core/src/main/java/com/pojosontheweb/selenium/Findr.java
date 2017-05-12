@@ -144,7 +144,7 @@ public final class Findr {
         this.path = path;
     }
 
-    private <F,T> Function<F,T> wrapAndTrapCatchSeleniumException(final Function<F, T> function) {
+    private <F,T> Function<F,T> withoutWebDriverException(final Function<F, T> function) {
         return new Function<F,T>() {
             @Override
             public T apply(F input) {
@@ -159,7 +159,7 @@ public final class Findr {
     }
 
     private Findr compose(final Function<SearchContext,WebElement> function, final String pathElem) {
-        final Function<SearchContext,WebElement> newFunction = wrapAndTrapCatchSeleniumException(function);
+        final Function<SearchContext,WebElement> newFunction = withoutWebDriverException(function);
         ArrayList<String> newPath = new ArrayList<String>(path);
         if (pathElem!=null) {
             newPath.add(pathElem);
@@ -245,6 +245,15 @@ public final class Findr {
     }
 
     /**
+     * Shortcut for <code>elem(By.cssSelector(...))</code>.
+     * @param selector the css selector
+     * @return a new Findr with updated chain
+     */
+    public Findr $(String selector) {
+        return elem(By.cssSelector(selector));
+    }
+
+    /**
      * Adds specified multiple element selector to the chain, and return a new ListFindr.
      * @param by the selector
      * @return a new ListFindr with updated condition chain
@@ -253,16 +262,29 @@ public final class Findr {
         return new ListFindr(by);
     }
 
+    /**
+     * Shortcut for <code>elemList(By.cssSelector(selector))</code>
+     * @param selector the css selector
+     * @return a new ListFindr with updated condition chain
+     */
+    public ListFindr $$(String selector) {
+        return elemList(By.cssSelector(selector));
+    }
+
     public ListFindr append(ListFindr lf) {
         return new ListFindr(lf.by, lf.filters, lf.checkers);
     }
 
     public Findr append(Findr f) {
         List<String> newPath = new ArrayList<String>(path!=null?path:new ArrayList<String>());
+        String sp;
         if (f.path!=null) {
             newPath.addAll(f.path);
+            sp = Joiner.on(", ").join(f.path);
+        } else {
+            sp = "";
         }
-        return compose(f.f, "append[" + Joiner.on(", ").join(f.path) + "]");
+        return compose(f.f, "append[" + sp + "]");
     }
 
     private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
@@ -291,7 +313,7 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public <T> T eval(final Function<WebElement,T> callback) throws TimeoutException {
-        return wrapWebDriverWait(wrapAndTrapCatchSeleniumException(new Function<WebDriver, T>() {
+        return wrapWebDriverWait(withoutWebDriverException(new Function<WebDriver, T>() {
             @Override
             public T apply(WebDriver input) {
                 if (f==null) {
@@ -677,7 +699,7 @@ public final class Findr {
          */
         public <T> T eval(final Function<List<WebElement>, T> callback) throws TimeoutException {
             logDebug("[Findr] ListFindr eval");
-            return wrapWebDriverWaitList(wrapAndTrapCatchSeleniumException(new Function<WebDriver, T>() {
+            return wrapWebDriverWaitList(withoutWebDriverException(new Function<WebDriver, T>() {
                 @Override
                 public T apply(WebDriver input) {
                     SearchContext c = f == null ? input : f.apply(input);

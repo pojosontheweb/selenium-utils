@@ -58,10 +58,10 @@ public class GoogleRawTest {
 
             // check the results
             new Findr(driver)
-                    .elem(By.id("search"))
-                    .elemList(By.cssSelector("h3.r"))
+                    .$("#search")
+                    .$$("h3.r")
                     .at(0)
-                    .elem(By.tagName("a"))
+                    .$("a")
                     .where(Findrs.textContains("POJOs on the Web"))
                     .eval();
 
@@ -104,10 +104,10 @@ public class GoogleRawTest {
 
             // regexp matching
             new Findr(driver)
-                    .elem(By.id("search"))
-                    .elemList(By.cssSelector("h3.r"))
+                    .$("#search")
+                    .$$("h3.r")
                     .at(0)
-                    .elem(By.tagName("a"))
+                    .$("a")
                     .where(Findrs.textMatches(".*(POJOs).*"))
                     .eval();
 
