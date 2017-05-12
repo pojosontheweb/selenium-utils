@@ -2,6 +2,8 @@
 
 Takes the misery out of selenium !
 
+[![Build Status](https://travis-ci.org/pojosontheweb/selenium-utils.svg?branch=master)](https://travis-ci.org/pojosontheweb/selenium-utils)
+
 ## Findr
 
 `Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
@@ -18,18 +20,21 @@ driver.get("http://www.google.com");
 
 // perform the search
 new Findr(driver)			// create a Findr
-	.elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
+    .elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
     .sendKeys("pojos on the web", Keys.ENTER);  // type the query
 
 // check the results
 new Findr(driver)			// create Findr
-	.elem(By.id("ires"))	// wait for elem by id
+    .elem(By.id("ires"))	// wait for elem by id
     .elemList(By.cssSelector("h3.r")) // wait for a list of elements
     .at(0)					// wait for 1st in the list
     .elem(By.tagName("a"))	// wait for some <a> tag under the first list elem
     .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
     .eval();	// evaluate the whole stuff ! will block until success, or timeout
 ```
+
+> as of v1.5, You can also use the `$` and `$$` functions, which are shorthands to `elem` and `elemList`.
+
 
 ### Built-in predicates
 
