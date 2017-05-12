@@ -238,6 +238,15 @@ public final class Findr {
     }
 
     /**
+     * Empty the condition chain. Use to create new Findrs with same settings but
+     * a different condition chain.
+     * @return a new empty Findr with other props untouched
+     */
+    public Findr empty() {
+        return new Findr(driver, waitTimeout, sleepInMillis, null, path, findrActions);
+    }
+
+    /**
      * Adds specified single-element selector to the chain, and return a new Findr.
      * @param by the selector
      * @return a new Findr with updated condition chain
