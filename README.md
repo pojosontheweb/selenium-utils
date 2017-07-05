@@ -18,23 +18,22 @@ Simple example over Google search :
 // get google
 driver.get("http://www.google.com");
 
+final Findr findr = new Findr(driver);
+
 // perform the search
-new Findr(driver)			// create a Findr
-    .elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
-    .sendKeys("pojos on the web", Keys.ENTER);  // type the query
+findr			
+    .$("#gbqfq")            
+    .sendKeys("pojos on the web", Keys.ENTER); 
 
 // check the results
-new Findr(driver)			// create Findr
-    .elem(By.id("ires"))	// wait for elem by id
-    .elemList(By.cssSelector("h3.r")) // wait for a list of elements
-    .at(0)					// wait for 1st in the list
-    .elem(By.tagName("a"))	// wait for some <a> tag under the first list elem
-    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
-    .eval();	// evaluate the whole stuff ! will block until success, or timeout
+findr			
+    .$("#ires")
+    .$$("h3.r")
+    .at(0)		
+    .$("a")
+    .where(textEquals("POJOs on the Web!: Woko"))
+    .eval();	
 ```
-
-> as of v1.5, You can also use the `$` and `$$` functions, which are shorthands to `elem` and `elemList`.
-
 
 ### Built-in predicates
 
