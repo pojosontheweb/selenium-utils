@@ -2,6 +2,8 @@
 
 Takes the misery out of selenium !
 
+[![Build Status](https://travis-ci.org/pojosontheweb/selenium-utils.svg?branch=master)](https://travis-ci.org/pojosontheweb/selenium-utils)
+
 ## Findr
 
 `Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
@@ -16,19 +18,21 @@ Simple example over Google search :
 // get google
 driver.get("http://www.google.com");
 
+final Findr findr = new Findr(driver);
+
 // perform the search
-new Findr(driver)			// create a Findr
-	.elem(By.id("gbqfq"))  // wait for the elem located by id "gbqfq"
-    .sendKeys("pojos on the web", Keys.ENTER);  // type the query
+findr			
+    .$("#gbqfq")            
+    .sendKeys("pojos on the web", Keys.ENTER); 
 
 // check the results
-new Findr(driver)			// create Findr
-	.elem(By.id("ires"))	// wait for elem by id
-    .elemList(By.cssSelector("h3.r")) // wait for a list of elements
-    .at(0)					// wait for 1st in the list
-    .elem(By.tagName("a"))	// wait for some <a> tag under the first list elem
-    .where(Findrs.textEquals("POJOs on the Web!: Woko")) // wait for the text in the link
-    .eval();	// evaluate the whole stuff ! will block until success, or timeout
+findr			
+    .$("#ires")
+    .$$("h3.r")
+    .at(0)		
+    .$("a")
+    .where(textEquals("POJOs on the Web!: Woko"))
+    .eval();	
 ```
 
 ### Built-in predicates
@@ -43,9 +47,9 @@ Those can be used directly in your findrs :
 
 ```
 new Findr(driver)
-	.elem(By.cssSelector("div.my-class"))
-	.where(Findrs.attrEquals("my-attr", "my-value"))
-	.where(Findrs.textEquals("This is some content"))
+	.$("div.my-class"))
+	.where(attrEquals("my-attr", "my-value"))
+	.where(textEquals("This is some content"))
 	.eval();
 ``` 
 
@@ -58,13 +62,13 @@ There are also variants to `eval()` that accept a `failureMessage` argument.
 
 ### Understanding failures
 
-`Findr` executes the various functions you compose as a "back box", and it's sometimes hard to understand where 
-it went wrong in the conditions chain. In order to get insights about what's going on, you can 
-set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when asserting the condition chain. 
+`Findr` executes the various functions you compose as a "back box", and it's sometimes 
+hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when 
+asserting the condition chain. 
 
 ## WebDriver init
 
-Use `DrivrBuilder` in order to create instances of `WebDriver`. The API can be used statically :
+Use `DriverBuilder` in order to create instances of `WebDriver`. The API can be used statically :
 
 ```
 // create a simple Chrome Driver
@@ -77,7 +81,7 @@ WebDriver driver = DriverBuildr
 Or by defining system properties :
 
 ```
-WebDriver = DriverBuildr.fromSysProps().build();
+WebDriver = DriverBuilder.fromSysProps().build();
 ```
 
 The latter approach allows for more flexible builds. 
@@ -121,7 +125,13 @@ Here is a list of all supported System Properties :
 		<td>webtests.findr.timeout</td>
 		<td>Any (reasonable) positive integer</td>
 		<td>10</td>
-		<td>The default Findr timeout in seconds</td>
+		<td>The Findr timeout in seconds</td>
+	</tr>
+	<tr>
+		<td>webtests.findr.sleep</td>
+		<td>Any (reasonable) positive long</td>
+		<td>500</td>
+		<td>The Findr sleep interval in milliseconds. Allows to control polling frequency.</td>
 	</tr>
 	<tr>
 		<td>webtests.findr.verbose</td>
@@ -192,7 +202,7 @@ Add the dependency to your pom :
 
 ```
 <dependency>
-	<groupId>com.pojosontheweb</groupId>
+    <groupId>com.pojosontheweb</groupId>
     <artifactId>selenium-utils-core</artifactId>
     <version>LATEST-SNAPSHOT</version>
     <scope>test</scope>
@@ -203,11 +213,11 @@ Configure surefire :
 
 ```
 <plugin>
-	<groupId>org.apache.maven.plugins</groupId>
+    <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
     <configuration>
     	<systemPropertyVariables>
-        	<webtests.browser>${webtests.browser}</webtests.browser>
+            <webtests.browser>${webtests.browser}</webtests.browser>
             <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
             <webtests.video.dir>${project.build.directory}/webtests-videos</webtests.video.dir>
             <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
@@ -228,11 +238,9 @@ With sys props :
 $> mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedriver -Dwebtests.video.enabled=true
 ```
 
-## API Docs
+## Page Objects
 
-The JavaDocs can be found here :
-
-http://jdp.rvkb.com/api/selenium-utils-core/index.html
+Included is a simple yet useful `AbstractPageObject` class that you can use to create your own page helper libraries.
 
 ## Groovy
 

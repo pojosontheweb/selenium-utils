@@ -55,6 +55,9 @@ public class DriverBuildr {
                         b.setLocales(locale);
                     }
                     return b.build();
+                } else if (browsr.equals(Browsr.Safari)) {
+                    SafariBuildr b = safari();
+                    return b.build();
                 } else {
                     FirefoxBuildr b = firefox();
                     if (locale != null) {
@@ -79,6 +82,13 @@ public class DriverBuildr {
      */
     public static FirefoxBuildr firefox() {
         return new FirefoxBuildr();
+    }
+
+    /**
+     * Create and return a SafariBuildr instance.
+     */
+    public static SafariBuildr safari() {
+        return new SafariBuildr();
     }
 
     /**

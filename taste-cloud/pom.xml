@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.pojosontheweb</groupId>
         <artifactId>selenium-utils</artifactId>
-        <version>1.4.1</version>
+        <version>LATEST-SNAPSHOT</version>
     </parent>
     <artifactId>taste-cloud</artifactId>
     <name>selenium-utils/taste-cloud</name>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>com.pojosontheweb</groupId>
             <artifactId>selenium-utils-core</artifactId>
-            <version>1.4.1</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.seleniumhq.selenium</groupId>

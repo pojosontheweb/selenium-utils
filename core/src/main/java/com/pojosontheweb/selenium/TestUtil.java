@@ -92,7 +92,7 @@ public class TestUtil {
     public void setUp() {
 
         // init web driver before each test
-        webDriver = DriverBuildr.fromSysProps().build();
+        webDriver = createWebDriver();
 
         // init recorder if needed
         recordr = videoEnabled ? new ScreenRecordr() : null;
@@ -102,6 +102,10 @@ public class TestUtil {
             log("video is enabled, starting recorder");
             recordr.start();
         }
+    }
+
+    protected WebDriver createWebDriver() {
+        return DriverBuildr.fromSysProps().build();
     }
 
     public void tearDown() {
