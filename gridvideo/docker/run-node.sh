@@ -10,15 +10,15 @@ HOST_IP=$2
 HUB_URL=$3
 
 echo "Starting XVFB"
-/usr/bin/Xvfb :${NODE_PORT} -screen 0 1280x1024x24 +extension RANDR &
+/usr/bin/Xvfb :99 -screen 0 1280x1024x24 +extension RANDR &
 ACTIVE=9999
 while [ $ACTIVE -ne 0 ] ; do
-        xdpyinfo -display :${NODE_PORT} &> /dev/null
+        xdpyinfo -display :99 &> /dev/null
         ACTIVE=$?
 done
 dbus-uuidgen > /var/lib/dbus/machine-id
 export CHROME_DEVEL_SANDBOX=
-export DISPLAY=:${NODE_PORT}
+export DISPLAY=:99
 
 echo "XVFB started, starting node and registering to ${HUB_URL}"
 
