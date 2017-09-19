@@ -22,7 +22,7 @@ ADD /run-node.sh /grid/run-node.sh
 ADD /run-hub.sh /grid/run-hub.sh
 ADD /grid-logging.properties /grid/grid-logging.properties
 
-ADD http://chromedriver.storage.googleapis.com/2.15/chromedriver_linux64.zip /chromedriver_linux64.zip
+ADD https://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip /chromedriver_linux64.zip
 RUN unzip /chromedriver_linux64.zip -d /grid
 RUN rm -f chromedriver_linux64.zip
 
