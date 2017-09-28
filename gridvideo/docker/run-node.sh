@@ -23,5 +23,5 @@ export DISPLAY=:99
 echo "XVFB started, starting node and registering to ${HUB_URL}"
 
 cd /grid
-java -Xmx1024m -Djava.util.logging.config.file=/grid/grid-logging.properties -Dwebtests.video.dir=/grid/videos -Djava.security.egd=file:///dev/urandom -Dwebdriver.chrome.driver=/grid/chromedriver -cp *:. org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -host ${HOST_IP} -proxy com.pojosontheweb.selenium.NodeProxy -servlets com.pojosontheweb.selenium.RecorderServlet
+java -Xmx1024m -Djava.util.logging.config.file=/grid/grid-logging.properties -Dwebtests.video.dir=/grid/videos -Djava.security.egd=file:///dev/urandom -cp *:. org.openqa.grid.selenium.GridLauncher -role node -hub ${HUB_URL} -maxSession 1 -port ${NODE_PORT} -host ${HOST_IP} -proxy com.pojosontheweb.selenium.NodeProxy -servlets com.pojosontheweb.selenium.RecorderServlet
 

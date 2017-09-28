@@ -57,7 +57,7 @@ if (hubId) {
 	String videoDir = options.vd ?: '/tmp'
 	String host = options.hh
 	(start..(start + nbNodes - 1)).each { int port ->
-		String[] nodeCommand = ["docker", "run", "--net=host", "-tid", "-p", "$port:$port", "-v", "$videoDir:/grid/videos", "pojosontheweb/selgrid", "/grid/run-node.sh", "$port", "$host", "http://$host:4444/grid/register"]
+		String[] nodeCommand = ["docker", "run", "--security-opt", "seccomp=unconfined", "-v", "/dev/shm:/dev/shm", "--net=host", "-tid", "-p", "$port:$port", "-v", "$videoDir:/grid/videos", "pojosontheweb/selgrid", "/grid/run-node.sh", "$port", "$host", "http://$host:4444/grid/register"]
 		String nodeId = exec(nodeCommand)
 		print "[Node] ${options.hh}:$port $nodeId"
 		started++
