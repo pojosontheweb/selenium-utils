@@ -14,3 +14,8 @@ ADD /run-hub.sh /grid/run-hub.sh
 ADD /grid-logging.properties /grid/grid-logging.properties
 
 ADD /selenium-utils-gridvideo-LATEST-SNAPSHOT-jar-with-dependencies.jar /grid/selenium-utils-gridvideo-LATEST-SNAPSHOT-jar-with-dependencies.jar
+
+RUN sudo chown seluser:seluser /grid
+
+
+
