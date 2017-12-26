@@ -3,6 +3,7 @@ package com.pojosontheweb.selenium;
 import com.google.common.base.Function;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.openqa.selenium.*;
 
 import static com.pojosontheweb.selenium.Findrs.textContains;
@@ -23,6 +24,7 @@ public class GoogleRawTest {
     }
 
     @Test
+    @Ignore
     public void testFirefox() {
         System.out.println("Testing with Firefox");
         WebDriver d = DriverBuildr.firefox().build();

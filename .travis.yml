@@ -8,7 +8,7 @@ before_script:
   - sudo apt-get install -y libappindicator1 fonts-liberation lftp
   - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/chrome.deb
   - sudo dpkg -i /tmp/chrome.deb
-  - wget https://chromedriver.storage.googleapis.com/2.29/chromedriver_linux64.zip -O /tmp/chromedriver.zip
+  - wget https://chromedriver.storage.googleapis.com/2.9/chromedriver_linux64.zip -O /tmp/chromedriver.zip
   - unzip /tmp/chromedriver.zip -d /tmp/
   - sudo mv /tmp/chromedriver /usr/bin/chromedriver
   - export CHROMEDRIVER=/usr/bin/chromedriver
