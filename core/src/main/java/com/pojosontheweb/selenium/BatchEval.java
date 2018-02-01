@@ -2,6 +2,7 @@ package com.pojosontheweb.selenium;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Supplier;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
@@ -50,6 +51,15 @@ public class BatchEval<R> {
     }
 
 
+    public static BatchEval<Boolean> batch(Findr findr) {
+        return batch(findr, new Function<WebElement, Boolean>() {
+            @Override
+            public Boolean apply(WebElement webElement) {
+                return true;
+            }
+        });
+    }
+
     /**
      * Evaluates everything with the default retry count
      */
@@ -68,7 +78,7 @@ public class BatchEval<R> {
             logDebug("<< Batch eval OK");
             return res;
         } catch (TimeoutException e) {
-            if (retries > 0) {
+            if (retries > 1) {
                 // try again
                 logDebug("Batch eval caught timeout exception, retries = " + retries + ", retrying");
                 return eval(retries - 1);
@@ -115,6 +125,16 @@ public class BatchEval<R> {
                 count + 1
         );
     }
+
+    public BatchEval<Void> add(final Findr f) {
+        return add(f, new BatchEvalCallback<R, Void>() {
+            @Override
+            public Void apply(WebElement e, R t) {
+                return null;
+            }
+        });
+    }
+
 
 
 }

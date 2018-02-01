@@ -5,8 +5,11 @@ import org.junit.Test;
 import org.junit.Ignore;
 import org.openqa.selenium.*;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static com.pojosontheweb.selenium.Findrs.textContains;
 import static com.pojosontheweb.selenium.Findrs.textMatches;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static com.pojosontheweb.selenium.BatchEval.batch;
 
@@ -182,17 +185,22 @@ public class GoogleRawTest {
         assertTrue(fail);
 
         // failing batch eval
+        Findr f = new Findr(driver, 2);
+        Findr fOk = f.$("#viewport");
+        Findr fKo = f.$("#hey-hooooo");
         boolean batchEvalFailed = false;
+        final AtomicInteger i = new AtomicInteger(0);
+        final AtomicInteger i2 = new AtomicInteger(0);
         try {
-            Findr f = new Findr(driver, 2);
-            Findr fOk = f.$("#viewport");
-            Findr fKo = f.$("#hey-hooooo");
-            batch(
+            String yalla = batch(
+                    fOk
+            ).add(
                     fOk,
-                    new Function<WebElement, Boolean>() {
+                    new BatchEval.BatchEvalCallback<Boolean, Boolean>() {
                         @Override
-                        public Boolean apply(WebElement webElement) {
-                            return true;
+                        public Boolean apply(WebElement e, Boolean t) {
+                            i.incrementAndGet();
+                            return t;
                         }
                     }
             ).add(
@@ -200,15 +208,21 @@ public class GoogleRawTest {
                     new BatchEval.BatchEvalCallback<Boolean, String>() {
                         @Override
                         public String apply(WebElement e, Boolean t) {
+                            // should not be called (findr is KO)
+                            i2.incrementAndGet();
                             e.click();
                             return "really ???";
                         }
                     }
             ).eval(3);
+            System.out.println(yalla); // never reached, just to test BatchEval
         } catch (TimeoutException e) {
             batchEvalFailed = true;
         }
         assertTrue(batchEvalFailed);
+        assertEquals(3, i.get()); // 3 retries expected
+        assertEquals(0, i2.get());
+
 
         final MyActions myActions = new MyActions();
         final Findr findr = new Findr(driver).setActions(myActions);
