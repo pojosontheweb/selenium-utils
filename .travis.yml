@@ -14,14 +14,12 @@ script:
   - whereis google-chrome-stable
   - google-chrome-stable --version
   - whereis chromedriver
-  - mvn clean install -Dgoogle.chrome=/usr/bin/google-chrome-stable -Pitcases jacoco:report coveralls:report
+  - mvn clean install -Dwebtests.browser=chrome -Dwebtests.verbose=true -Dwebdriver.chrome.driver=/usr/local/share/chromedriver
 
 #before_script:
 #  - export DISPLAY=:99.0
 #  - sh -e /etc/init.d/xvfb start
 #  - sleep 3
-script:
-  - mvn clean install -Dwebtests.browser=chrome -Dwebtests.verbose=true -Dwebdriver.chrome.driver=/usr/local/share/chromedriver
 
 # Skip install step which is not needed with maven
 install: true
