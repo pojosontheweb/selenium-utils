@@ -1,3 +1,5 @@
+jdk:
+  - oraclejdk8
 sudo: required
 dist: trusty
 addons:
@@ -14,7 +16,7 @@ script:
   - whereis google-chrome-stable
   - google-chrome-stable --version
   - whereis chromedriver
-  - mvn clean install -Dwebtests.browser=chrome -Dwebtests.verbose=true -Dwebdriver.chrome.driver=/usr/local/share/chromedriver
+  - mvn clean install -Dgoogle.chrome=/usr/bin/google-chrome-stable -Dwebtests.browser=chrome -Dwebtests.verbose=true
 
 #before_script:
 #  - export DISPLAY=:99.0
@@ -28,5 +30,3 @@ cache:
  directories:
  - $HOME/.m2
 
-jdk:
-  - oraclejdk8

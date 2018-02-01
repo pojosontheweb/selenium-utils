@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <name>selenium-utils/core</name>
     <properties>
-        <webtests.browser>firefox</webtests.browser>
+        <webtests.browser>chrome</webtests.browser>
         <webtests.findr.verbose>true</webtests.findr.verbose>
     </properties>
     <dependencies>
