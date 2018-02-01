@@ -60,6 +60,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.16</version>
+			<configuration>
+				<systemPropertyVariables>
+				    <webtests.verbose>${webtests.verbose}</webtests.verbose>
+				    <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
+				    <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
+				    <webtests.video.dir>${webtests.video.dir}</webtests.video.dir>
+				</systemPropertyVariables>
+			</configuration>
                 </plugin>
                 <plugin>
                     <groupId>com.spotify</groupId>
