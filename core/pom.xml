@@ -6,13 +6,13 @@
     <parent>
         <groupId>com.pojosontheweb</groupId>
         <artifactId>selenium-utils</artifactId>
-        <version>1.4.7</version>
+        <version>1.4.8</version>
     </parent>
     <artifactId>selenium-utils-core</artifactId>
     <packaging>jar</packaging>
     <name>selenium-utils/core</name>
     <properties>
-        <webtests.browser>firefox</webtests.browser>
+        <webtests.browser>chrome</webtests.browser>
         <webtests.findr.verbose>true</webtests.findr.verbose>
     </properties>
     <dependencies>

@@ -1,1 +1,2 @@
-mvn clean install -Dwebdriver.chrome.driver=/Users/vankeisb/bin/chromedriver -Dwebtests.browser=chrome
+#!/usr/bin/env bash
+mvn clean install -Dwebdriver.chrome.driver=$CHROMEDRIVER -Dwebtests.browser=chrome

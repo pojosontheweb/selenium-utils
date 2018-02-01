@@ -35,6 +35,15 @@ findr
     .eval();	
 ```
 
+`Findr` instances are immutable and can be safely shared and reused :
+
+```
+Findr container = new Findr(driver).$("#container");
+container.$("#username").sendKeys("john.doe");
+container.$("#the-button").click();
+```
+
+
 ### Built-in predicates
 
 The `Findrs` class exposes a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
@@ -53,6 +62,12 @@ new Findr(driver)
 	.eval();
 ``` 
 
+### Batch evaluation
+
+The library also provides support for composing several Findr evaluations into
+a single, retry-all operation. This allows to group a set of interactions
+and make sure that all of them are actually performed.
+See `com.pojosontheweb.selenium.BatchEval`.
 
 ### Error reporting
 
@@ -65,6 +80,7 @@ There are also variants to `eval()` that accept a `failureMessage` argument.
 `Findr` executes the various functions you compose as a "back box", and it's sometimes 
 hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when 
 asserting the condition chain. 
+
 
 ## WebDriver init
 
