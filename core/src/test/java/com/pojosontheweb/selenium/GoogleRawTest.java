@@ -1,17 +1,14 @@
 package com.pojosontheweb.selenium;
 
 import com.google.common.base.Function;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.openqa.selenium.*;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static com.pojosontheweb.selenium.Findrs.textContains;
 import static com.pojosontheweb.selenium.Findrs.textMatches;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static com.pojosontheweb.selenium.BatchEval.batch;
 
 public class GoogleRawTest {
 
@@ -72,38 +69,11 @@ public class GoogleRawTest {
 
         // public pageobject api
 
-        GooglePage typeQuery(final String query) {
-            // sample batch eval
-            final Findr input = $("#lst-ib");
-            return
-                batch(
-                    input,
-                    new Function<WebElement, Boolean>() {
-                        @Override
-                        public Boolean apply(WebElement inputElem) {
-                            // use f.click so that our actions are used
-                            input.click();
-                            return true;
-                        }
-                    }
-                ).add(
-                    input,
-                    new BatchEval.BatchEvalCallback<Boolean, String>() {
-                        @Override
-                        public String apply(WebElement inputElem, Boolean prevResult) {
-                            inputElem.sendKeys(query, Keys.ENTER);
-                            return "yeah";
-                        }
-                    }
-                ).add(
-                    input,
-                    new BatchEval.BatchEvalCallback<String, GooglePage>() {
-                        @Override
-                        public GooglePage apply(WebElement e, String s) {
-                            return GooglePage.this;
-                        }
-                    }
-                ).eval();
+        GooglePage typeQuery(String query) {
+            Findr input = $("#lst-ib");
+            input.click();
+            input.sendKeys(query, Keys.ENTER);
+            return this;
         }
 
         GooglePage assertResultAtContains(int index, String expectedText) {
@@ -159,7 +129,6 @@ public class GoogleRawTest {
                     .eval();
             return this;
         }
-
     }
 
     static void performTest(final WebDriver driver) {
@@ -184,46 +153,6 @@ public class GoogleRawTest {
         }
         assertTrue(fail);
 
-        // failing batch eval
-        Findr f = new Findr(driver, 2);
-        Findr fOk = f.$("#viewport");
-        Findr fKo = f.$("#hey-hooooo");
-        boolean batchEvalFailed = false;
-        final AtomicInteger i = new AtomicInteger(0);
-        final AtomicInteger i2 = new AtomicInteger(0);
-        try {
-            String yalla = batch(
-                    fOk
-            ).add(
-                    fOk,
-                    new BatchEval.BatchEvalCallback<Boolean, Boolean>() {
-                        @Override
-                        public Boolean apply(WebElement e, Boolean t) {
-                            i.incrementAndGet();
-                            return t;
-                        }
-                    }
-            ).add(
-                    fKo,
-                    new BatchEval.BatchEvalCallback<Boolean, String>() {
-                        @Override
-                        public String apply(WebElement e, Boolean t) {
-                            // should not be called (findr is KO)
-                            i2.incrementAndGet();
-                            e.click();
-                            return "really ???";
-                        }
-                    }
-            ).eval(3);
-            System.out.println(yalla); // never reached, just to test BatchEval
-        } catch (TimeoutException e) {
-            batchEvalFailed = true;
-        }
-        assertTrue(batchEvalFailed);
-        assertEquals(3, i.get()); // 3 retries expected
-        assertEquals(0, i2.get());
-
-
         final MyActions myActions = new MyActions();
         final Findr findr = new Findr(driver).setActions(myActions);
         final GooglePage google = new GooglePage(findr);
@@ -233,7 +162,8 @@ public class GoogleRawTest {
                 .typeQuery("pojos on the web")
                 .assertResultAtContains(0, "POJOs on the Web")
                 .assertResultRegexp(0, ".*(POJOs).*");
-        
+
+
         // any() and all()
         google
                 .assertAnyWokoAndAllHaveClass()
