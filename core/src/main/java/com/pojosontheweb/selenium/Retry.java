@@ -1,69 +1,145 @@
 package com.pojosontheweb.selenium;
 
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Supplier;
 import org.openqa.selenium.TimeoutException;
+
 import static com.pojosontheweb.selenium.Findr.logDebug;
 
 public class Retry {
 
-    private final Runnable runnable;
-    private final int count;
+    private static abstract class AbstractRetry {
+        final int count;
+        final int retries;
 
-    private Retry(int count, Runnable runnable) {
-        this.count = count;
-        this.runnable = runnable;
-    }
-
-    public static Retry retry() {
-        return new Retry(0, new Runnable() {
-            @Override
-            public void run() {
-                // no-op !
-            }
-        });
-    }
-
-    public Retry add(final Runnable other) {
-        return new Retry(count + 1, new Runnable() {
-            @Override
-            public void run() {
-                runnable.run();
-                logDebug("[Retry] step #" + count);
-                other.run();
-            }
-        });
-    }
-
-    public Retry add(final Findr f) {
-        return add(new Runnable() {
-            @Override
-            public void run() {
-                f.eval();
-            }
-        });
-    }
-
-    public Retry add(final Findr.ListFindr f) {
-        return add(new Runnable() {
-            @Override
-            public void run() {
-                f.eval();
-            }
-        });
-    }
-
-    public void eval(int retries) {
-        logDebug("[Retry] >> eval retries = " + retries);
-        try {
-            this.runnable.run();
-            logDebug("[Retry] << Ok");
-        } catch (TimeoutException e) {
-            if (retries > 1)  {
-                eval(retries - 1);
-            } else {
-                throw new TimeoutException("Exhausted retries", e);
-            }
+        AbstractRetry(int count, int retries) {
+            this.count = count;
+            this.retries = retries;
         }
     }
+
+    public static class RetryWithResult<T> extends AbstractRetry {
+
+        private final Supplier<T> func;
+
+        private RetryWithResult(int count, int retries, Supplier<T> func) {
+            super(count, retries);
+            this.func = func;
+        }
+
+        public T eval() {
+            return doEval(retries);
+        }
+
+        private T doEval(int retries) {
+            try {
+                return func.get();
+            } catch (TimeoutException e) {
+                if (retries > 1) {
+                    return doEval(retries - 1);
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        public <O> RetryWithResult<O> add(final Function<T,O> mapper) {
+            return new RetryWithResult<O>(count + 1, retries, new Supplier<O>() {
+                @Override
+                public O get() {
+                    return mapper.apply(func.get());
+                }
+            });
+        }
+
+        public <O> RetryWithResult<O> add(final Findr other, final Function<T,O> mapper) {
+            return add(new Function<T, O>() {
+                @Override
+                public O apply(T t) {
+                    other.eval();
+                    return mapper.apply(t);
+                }
+            });
+        }
+
+        public RetryWithResult<T> add(final Findr other) {
+            return add(other, Functions.<T>identity());
+        }
+    }
+
+    public static class RetryNoResult extends AbstractRetry {
+
+        private final Runnable runnable;
+
+        private RetryNoResult(int count, int retries, Runnable runnable) {
+            super(count, retries);
+            this.runnable = runnable;
+        }
+
+        public void eval() {
+            doEval(retries);
+        }
+
+        private void doEval(int retries) {
+            try {
+                runnable.run();
+            } catch (TimeoutException e) {
+                if (retries > 1) {
+                    doEval(retries - 1);
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        public RetryNoResult add(final Runnable other) {
+            return new RetryNoResult(count + 1, retries, new Runnable() {
+                @Override
+                public void run() {
+                    runnable.run();
+                    logDebug("[Retry] step #" + count);
+                    other.run();
+                }
+            });
+        }
+
+        public RetryNoResult add(final Findr f) {
+            return add(new Runnable() {
+                @Override
+                public void run() {
+                    f.eval();
+                }
+            });
+        }
+
+        public RetryNoResult add(final Findr.ListFindr f) {
+            return add(new Runnable() {
+                @Override
+                public void run() {
+                    f.eval();
+                }
+            });
+        }
+
+    }
+
+
+    public static RetryNoResult retry(int retries) {
+        return new RetryNoResult(0, retries, new Runnable() {
+            @Override
+            public void run() {
+                // it's a noop
+            }
+        });
+    }
+
+
+    public static <T> RetryWithResult<T> retry(int retries, Supplier<T> supplier) {
+        return new RetryWithResult<T>(0, retries, supplier);
+    }
+
+
 
 }

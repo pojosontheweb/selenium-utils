@@ -1,5 +1,8 @@
 package com.pojosontheweb.selenium;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Supplier;
 import com.sun.jna.platform.unix.X11;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
@@ -19,7 +22,7 @@ public class Issue23RetryTest {
         final AtomicInteger i1 = new AtomicInteger(0);
         final AtomicInteger i2 = new AtomicInteger(0);
         final List<String> l = new ArrayList<String>();
-        Retry.retry()
+        Retry.retry(5)
                 .add(new Runnable() {
                     @Override
                     public void run() {
@@ -34,8 +37,7 @@ public class Issue23RetryTest {
                         l.add("B");
                     }
                 })
-                .eval(5);
-
+                .eval();
         assertEquals(1, i1.get());
         assertEquals(1, i2.get());
         assertEquals(Arrays.asList("A", "B"), l);
@@ -43,39 +45,31 @@ public class Issue23RetryTest {
     }
 
     @Test
-    public void testRetriesFailure() {
+    public void testRetriesResultOk() {
         final AtomicInteger i1 = new AtomicInteger(0);
         final AtomicInteger i2 = new AtomicInteger(0);
-        final List<String> l = new ArrayList<String>();
-        boolean failed = false;
-        try {
-            Retry.retry()
-                    .add(new Runnable() {
+        String s = Retry.retry(5,
+                    new Supplier<String>() {
                         @Override
-                        public void run() {
+                        public String get() {
                             i1.incrementAndGet();
-                            l.add("A");
-                            throw new TimeoutException("too bad");
+                            return "A";
                         }
-                    })
-                    .add(new Runnable() {
-                        @Override
-                        public void run() {
-                            l.add("B");
-                            i2.incrementAndGet();
-                        }
-                    })
-                    .eval(5);
-        } catch (TimeoutException e) {
-            failed = true;
-        }
-
-        assertTrue(failed);
-        assertEquals(5, i1.get());
-        assertEquals(0, i2.get());
-        assertEquals(Arrays.asList("A", "A", "A", "A", "A"), l);
-
+                    }
+                )
+                .add(new Function<String, String>() {
+                    @Override
+                    public String apply(String s) {
+                        i2.incrementAndGet();
+                        return s+"B";
+                    }
+                })
+                .eval();
+        assertEquals(1, i1.get());
+        assertEquals(1, i2.get());
+        assertEquals("AB", s);
     }
+
 
     @Test
     public void testRetriesFindrs() {
@@ -86,7 +80,7 @@ public class Issue23RetryTest {
         try {
             final Findr f = new Findr(d);
             d.get("http://www.google.com");
-            Retry.retry()
+            Retry.retry(5)
                     .add(f.$("#viewport"))
                     .add(new Runnable() {
                         @Override
@@ -106,7 +100,7 @@ public class Issue23RetryTest {
                         }
                     })
                     .add(f.setTimeout(2).$("#i-dont-exist")) // just to make it fail
-                    .eval(5);
+                    .eval();
         } catch (TimeoutException e) {
             failed = true;
         } finally {
@@ -115,7 +109,52 @@ public class Issue23RetryTest {
         assertTrue(failed);
         assertEquals(5, i.get());
         assertEquals(Arrays.asList("A", "B", "A", "B", "A", "B", "A", "B", "A", "B"), l);
+    }
 
+
+    @Test
+    public void testRetriesResultFindrs() {
+        final WebDriver d = DriverBuildr.fromSysProps().build();
+        final List<String> l = new ArrayList<String>();
+        final AtomicInteger i = new AtomicInteger(0);
+        boolean failed = false;
+        try {
+            final Findr f = new Findr(d);
+            d.get("http://www.google.com");
+            String s = Retry.retry(
+                            5,
+                            new Supplier<String>() {
+                                @Override
+                                public String get() {
+                                    return "A";
+                                }
+                            }
+                    )
+                    .add(f.$("#viewport"))
+                    .add(
+                            f.$("#viewport"),
+                            new Function<String, String>() {
+                                @Override
+                                public String apply(String s) {
+                                    return s + "B";
+                                }
+                            }
+                    )
+                    .add(
+                            new Function<String, String>() {
+                                @Override
+                                public String apply(String s) {
+                                    i.incrementAndGet();
+                                    return s + "C";
+                                }
+                            }
+                    )
+                    .eval();
+            assertEquals("ABC", s);
+        } finally {
+            d.quit();
+        }
+        assertEquals(1, i.get());
     }
 
 }
