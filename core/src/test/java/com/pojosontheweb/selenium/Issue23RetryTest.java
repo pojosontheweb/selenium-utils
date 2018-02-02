@@ -111,13 +111,65 @@ public class Issue23RetryTest {
         assertEquals(Arrays.asList("A", "B", "A", "B", "A", "B", "A", "B", "A", "B"), l);
     }
 
+    @Test
+    public void testRetriesNoResultToResult() {
+        final AtomicInteger i = new AtomicInteger(0);
+        String s = Retry.retry(5)
+                .add(new Runnable() {
+                    @Override
+                    public void run() {
+                        i.incrementAndGet();
+                    }
+                })
+                .add(new Supplier<String>() {
+                    @Override
+                    public String get() {
+                        return "ABC";
+                    }
+                })
+                .eval();
+        assertEquals(1, i.get());
+        assertEquals("ABC", s);
+    }
+
+    @Test
+    public void testRetriesResultToNoResult() {
+        final AtomicInteger i1 = new AtomicInteger(0);
+        final AtomicInteger i2 = new AtomicInteger(0);
+        final AtomicInteger i3 = new AtomicInteger(0);
+        Retry.retry(5,
+                new Supplier<String>() {
+                    @Override
+                    public String get() {
+                        i1.incrementAndGet();
+                        return "ABC";
+                    }
+                })
+                .add(new Function<String, String>() {
+                    @Override
+                    public String apply(String s) {
+                        i2.incrementAndGet();
+                        return "DEF";
+                    }
+                })
+                .add(new Retry.RetryConsumer<String>() {
+                    @Override
+                    public void accept(String s) {
+                        i3.incrementAndGet();
+                    }
+                })
+                .eval();
+        assertEquals(1, i1.get());
+        assertEquals(1, i2.get());
+        assertEquals(1, i3.get());
+    }
+
 
     @Test
     public void testRetriesResultFindrs() {
         final WebDriver d = DriverBuildr.fromSysProps().build();
         final List<String> l = new ArrayList<String>();
         final AtomicInteger i = new AtomicInteger(0);
-        boolean failed = false;
         try {
             final Findr f = new Findr(d);
             d.get("http://www.google.com");

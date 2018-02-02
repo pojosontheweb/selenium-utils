@@ -67,6 +67,19 @@ public class Retry {
         public RetryWithResult<T> add(final Findr other) {
             return add(other, Functions.<T>identity());
         }
+
+        public RetryNoResult add(final RetryConsumer<T> consumer) {
+            return new RetryNoResult(
+                    count,
+                    retries,
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            consumer.accept(func.get());
+                        }
+                    }
+            );
+        }
     }
 
     public static class RetryNoResult extends AbstractRetry {
@@ -123,6 +136,24 @@ public class Retry {
             });
         }
 
+        public <O> RetryWithResult<O> add(final Supplier<O> supplier) {
+            return new RetryWithResult<O>(
+                    count,
+                    retries,
+                    new Supplier<O>() {
+                        @Override
+                        public O get() {
+                            runnable.run();
+                            return supplier.get();
+                        }
+                    }
+            );
+        }
+
+    }
+
+    public interface RetryConsumer<T> {
+        void accept(T t);
     }
 
 
