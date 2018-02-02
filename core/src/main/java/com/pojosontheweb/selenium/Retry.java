@@ -34,6 +34,7 @@ public class Retry {
         }
 
         private T doEval(int retries) {
+            logDebug("[Retry] eval, retries = " + retries);
             try {
                 return func.get();
             } catch (TimeoutException e) {
@@ -49,7 +50,9 @@ public class Retry {
             return new RetryWithResult<O>(count + 1, retries, new Supplier<O>() {
                 @Override
                 public O get() {
-                    return mapper.apply(func.get());
+                    O res = mapper.apply(func.get());
+                    logDebug("[Retry] step #" + count);
+                    return res;
                 }
             });
         }
@@ -76,6 +79,7 @@ public class Retry {
                         @Override
                         public void run() {
                             consumer.accept(func.get());
+                            logDebug("[Retry] step #" + count);
                         }
                     }
             );
@@ -96,6 +100,7 @@ public class Retry {
         }
 
         private void doEval(int retries) {
+            logDebug("[Retry] eval, retries = " + retries);
             try {
                 runnable.run();
             } catch (TimeoutException e) {
@@ -144,7 +149,9 @@ public class Retry {
                         @Override
                         public O get() {
                             runnable.run();
-                            return supplier.get();
+                            O res = supplier.get();
+                            logDebug("[Retry] step #" + count);
+                            return res;
                         }
                     }
             );

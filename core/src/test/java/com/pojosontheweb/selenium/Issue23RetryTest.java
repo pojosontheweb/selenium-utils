@@ -21,6 +21,7 @@ public class Issue23RetryTest {
     public void testRetriesOk() {
         final AtomicInteger i1 = new AtomicInteger(0);
         final AtomicInteger i2 = new AtomicInteger(0);
+        final AtomicInteger i3 = new AtomicInteger(0);
         final List<String> l = new ArrayList<String>();
         Retry.retry(5)
                 .add(new Runnable() {
@@ -37,10 +38,18 @@ public class Issue23RetryTest {
                         l.add("B");
                     }
                 })
+                .add(new Runnable() {
+                    @Override
+                    public void run() {
+                        i3.incrementAndGet();
+                        l.add("C");
+                    }
+                })
                 .eval();
         assertEquals(1, i1.get());
         assertEquals(1, i2.get());
-        assertEquals(Arrays.asList("A", "B"), l);
+        assertEquals(1, i3.get());
+        assertEquals(Arrays.asList("A", "B", "C"), l);
 
     }
 
@@ -48,6 +57,7 @@ public class Issue23RetryTest {
     public void testRetriesResultOk() {
         final AtomicInteger i1 = new AtomicInteger(0);
         final AtomicInteger i2 = new AtomicInteger(0);
+        final AtomicInteger i3 = new AtomicInteger(0);
         String s = Retry.retry(5,
                     new Supplier<String>() {
                         @Override
@@ -64,10 +74,18 @@ public class Issue23RetryTest {
                         return s+"B";
                     }
                 })
+                .add(new Function<String, String>() {
+                    @Override
+                    public String apply(String s) {
+                        i3.incrementAndGet();
+                        return s+"C";
+                    }
+                })
                 .eval();
         assertEquals(1, i1.get());
         assertEquals(1, i2.get());
-        assertEquals("AB", s);
+        assertEquals(1, i3.get());
+        assertEquals("ABC", s);
     }
 
 
