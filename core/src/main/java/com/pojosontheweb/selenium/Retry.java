@@ -8,6 +8,16 @@ import org.openqa.selenium.TimeoutException;
 
 import static com.pojosontheweb.selenium.Findr.logDebug;
 
+/**
+ * Utility class for batching several "steps" (e.g. Findr evaluations
+ * or clicks) into a unique, retry-all operation.
+ * This can be handy to replace "nested" findrs.
+ * Retry evaluates all the steps added with <code>add()</code>,
+ * and catches <code>TimeoutException</code>s along the way.
+ * It retries everything from the beginning if there's a failure,
+ * and finally rethrows the last exception if any, when all retries
+ * have failed.
+ */
 public class Retry {
 
     private static abstract class AbstractRetry {
@@ -29,6 +39,10 @@ public class Retry {
             this.func = func;
         }
 
+        /**
+         * Evaluate everything for the requested retry count
+         * @return the result of the last step if everything went ok
+         */
         public T eval() {
             return doEval(retries);
         }
