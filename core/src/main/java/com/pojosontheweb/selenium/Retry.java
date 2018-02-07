@@ -20,6 +20,8 @@ import static com.pojosontheweb.selenium.Findr.logDebug;
  */
 public class Retry {
 
+    public static final int DEFAULT_RETRY_COUNT = 5;
+
     private static abstract class AbstractRetry {
         final int count;
         final int retries;
@@ -178,6 +180,10 @@ public class Retry {
     }
 
 
+    public static RetryNoResult retry() {
+        return retry(DEFAULT_RETRY_COUNT);
+    }
+
     public static RetryNoResult retry(int retries) {
         return new RetryNoResult(0, retries, new Runnable() {
             @Override
@@ -185,11 +191,6 @@ public class Retry {
                 // it's a noop
             }
         });
-    }
-
-
-    public static <T> RetryWithResult<T> retry(int retries, Supplier<T> supplier) {
-        return new RetryWithResult<T>(0, retries, supplier);
     }
 
 

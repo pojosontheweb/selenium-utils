@@ -58,15 +58,14 @@ public class Issue23RetryTest {
         final AtomicInteger i1 = new AtomicInteger(0);
         final AtomicInteger i2 = new AtomicInteger(0);
         final AtomicInteger i3 = new AtomicInteger(0);
-        String s = Retry.retry(5,
-                    new Supplier<String>() {
+        String s = Retry.retry()
+                .add(new Supplier<String>() {
                         @Override
                         public String get() {
-                            i1.incrementAndGet();
-                            return "A";
-                        }
+                        i1.incrementAndGet();
+                        return "A";
                     }
-                )
+                })
                 .add(new Function<String, String>() {
                     @Override
                     public String apply(String s) {
@@ -155,8 +154,8 @@ public class Issue23RetryTest {
         final AtomicInteger i1 = new AtomicInteger(0);
         final AtomicInteger i2 = new AtomicInteger(0);
         final AtomicInteger i3 = new AtomicInteger(0);
-        Retry.retry(5,
-                new Supplier<String>() {
+        Retry.retry()
+                .add(new Supplier<String>() {
                     @Override
                     public String get() {
                         i1.incrementAndGet();
@@ -191,15 +190,13 @@ public class Issue23RetryTest {
         try {
             final Findr f = new Findr(d);
             d.get("http://www.google.com");
-            String s = Retry.retry(
-                            5,
-                            new Supplier<String>() {
+            String s = Retry.retry()
+                    .add(new Supplier<String>() {
                                 @Override
                                 public String get() {
                                     return "A";
                                 }
-                            }
-                    )
+                            })
                     .add(f.$("#viewport"))
                     .add(
                             f.$("#viewport"),
