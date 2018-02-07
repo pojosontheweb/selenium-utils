@@ -62,12 +62,46 @@ new Findr(driver)
 	.eval();
 ``` 
 
-### Batch evaluation
+### Batch / Retry
 
-The library also provides support for composing several Findr evaluations into
+The library also provides support for composing several "steps" into
 a single, retry-all operation. This allows to group a set of interactions
-and make sure that all of them are actually performed.
-See `com.pojosontheweb.selenium.BatchEval`.
+and make sure that all of them are actually performed. 
+
+This can be used as a relacement for "nested" findrs, which are not easy to 
+manage :
+
+    // a "nested" findr version that clicks/asserts 
+    // as an atomic op
+    void openDropDown() {
+        f.$("#my-button").eval( e -> {
+            e.click();
+            // make sure that dropdown is shown
+            // if not then the top-level eval()
+            // will be called again
+            // we use a "nested" Findr
+            f.$("#my-dropdown")                
+                .where(isDisplayed())
+                .setTimeout(5) // must be < to the parent's timeout...
+                .eval();
+        });
+    }
+    
+Can be replaced with `Retry` :
+
+    import static com.pojosontheweb.selenium.Retry.retry;
+
+    void openDropDown() {
+        retry()
+            .add(() -> f.$("#my-button").click())
+            .add(f.$("#my-dropdown").where(isDisplayed())
+            .eval();
+    }
+    
+The `add()` method accepts several types of arguments (Findr, Runnable, mapping functions etc.), 
+allowing to create a chain of steps. This chain is then evaluated calling
+the `eval()` method on it. 
+
 
 ### Error reporting
 
@@ -75,7 +109,7 @@ See `com.pojosontheweb.selenium.BatchEval`.
 
 There are also variants to `eval()` that accept a `failureMessage` argument.
 
-### Understanding failures
+#### Verbose logging
 
 `Findr` executes the various functions you compose as a "back box", and it's sometimes 
 hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when 
