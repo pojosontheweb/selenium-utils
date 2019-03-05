@@ -1,10 +1,10 @@
 package com.pojosontheweb.selenium;
 
-import com.google.common.base.Function;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Ignore;
 import org.openqa.selenium.*;
+
+import java.util.function.Function;
 
 import static com.pojosontheweb.selenium.Findrs.textContains;
 import static com.pojosontheweb.selenium.Findrs.textMatches;

@@ -1,11 +1,12 @@
 package org.pojosontheweb.selenium.groovy
 
-import com.google.common.base.Function
-import com.google.common.base.Predicate
 import com.pojosontheweb.selenium.Findr
 import com.pojosontheweb.selenium.Findr.ListFindr
 import com.pojosontheweb.selenium.formz.Select
 import org.openqa.selenium.By
+
+import java.util.function.Function
+import java.util.function.Predicate
 
 @Category(Findr)
 class FindrCategory {
