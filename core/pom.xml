@@ -31,16 +31,15 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
-            <optional>true</optional>
         </dependency>
 
         <!-- video -->
         <dependency>
             <groupId>com.pojosontheweb</groupId>
             <artifactId>monte-repack</artifactId>
+            <optional>true</optional>
             <version>1.0</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>
