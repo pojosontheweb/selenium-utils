@@ -3,6 +3,7 @@ package com.pojosontheweb.selenium;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 
 import java.io.File;
@@ -35,16 +36,15 @@ public class FirefoxBuildr {
     }
 
     public WebDriver build() {
+        FirefoxOptions opts = new FirefoxOptions();
         if (profile==null) {
             profile = createFirefoxProfile(locales);
         }
-        if (binary == null) {
-            return path == null
-                    ? new FirefoxDriver(profile)
-                    : new FirefoxDriver(new FirefoxBinary(path), profile);
-        } else {
-            return new FirefoxDriver(binary, profile);
+        opts.setProfile(profile);
+        if (binary != null) {
+            opts.setBinary(binary);
         }
+        return new FirefoxDriver(opts);
     }
 
     public static FirefoxProfile createFirefoxProfile(String locales) {
