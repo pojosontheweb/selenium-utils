@@ -1,16 +1,38 @@
-package com.pojosontheweb.selenium;
+package com.findr.tests;
 
+import com.pojosontheweb.selenium.AbstractPageObject;
+import com.pojosontheweb.selenium.Findr;
+import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase;
+import com.pojosontheweb.selenium.Retry;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
 
 import static com.pojosontheweb.selenium.Findrs.*;
 
 public class FindrTest extends ManagedDriverJunit4TestBase {
 
+    private final Server server = new Server(8080);
+
 
     @Before
-    public void openPage() {
+    public void openPage() throws Exception {
+        WebAppContext webapp = new WebAppContext();
+        webapp.setContextPath("/");
+        File warFile = new File("./src/main/webapp");
+        webapp.setWar(warFile.getAbsolutePath());
+        server.setHandler(webapp);
+        server.start();
         getWebDriver().get("http://localhost:8080");
+    }
+
+    @After
+    public void stopServer() throws Exception {
+        server.stop();
     }
 
 
