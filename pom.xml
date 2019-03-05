@@ -15,6 +15,7 @@
     <name>Selenium Utils</name>
     <modules>
         <!--module>monte</module-->
+        <module>test-app</module>
         <module>core</module>
         <module>groovy</module>
         <!--<module>gridvideo</module>-->
@@ -81,8 +82,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
         </plugins>

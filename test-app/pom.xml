@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.pojosontheweb</groupId>
+        <artifactId>selenium-utils</artifactId>
+        <version>LATEST-SNAPSHOT</version>
+    </parent>
+    <artifactId>selenium-utils-test-app</artifactId>
+    <packaging>war</packaging>
+    <name>selenium-utils/test-app</name>
+    <dependencies>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.4.15.v20190215</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

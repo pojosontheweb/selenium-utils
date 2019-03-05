@@ -1,6 +1,7 @@
 package com.pojosontheweb.selenium;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.openqa.selenium.By.cssSelector;
@@ -9,6 +10,7 @@ import static org.openqa.selenium.By.id;
 public class Issue10Test extends ManagedDriverJunit4TestBase {
 
     @Test
+    @Ignore
     public void testElemListWhereElemCount() {
         getWebDriver().get("http://woko.pojosontheweb.com");
 
