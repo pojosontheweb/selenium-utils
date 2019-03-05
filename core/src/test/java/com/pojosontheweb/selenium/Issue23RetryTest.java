@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Supplier;
 import com.sun.jna.platform.unix.X11;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -89,6 +90,7 @@ public class Issue23RetryTest {
 
 
     @Test
+    @Ignore
     public void testRetriesFindrs() {
         final WebDriver d = DriverBuildr.fromSysProps().build();
         final List<String> l = new ArrayList<String>();
@@ -183,6 +185,7 @@ public class Issue23RetryTest {
 
 
     @Test
+    @Ignore
     public void testRetriesResultFindrs() {
         final WebDriver d = DriverBuildr.fromSysProps().build();
         final List<String> l = new ArrayList<String>();

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>selenium-utils test app</title>
+    <script src="jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<h1>Welcome to the test app !</h1>
+<p>
+    This app allows to test the <code>selenium-utils</code> lib without
+    depending on an external (and maybe changing) website.
+</p>
+
+<h2>Simple buttons</h2>
+<div id="simple-button">
+    <button id="simple-sync">Simple sync</button>
+    <button id="simple-timeout">Simple timeout</button>
+    <div
+            class="simple-result yalla"
+            my-attr="foo">
+        not yet clicked
+    </div>
+</div>
+<script>
+
+    $(document).ready(() => {
+        $("#simple-sync").click(_ => {
+            $(".simple-result").text("sync clicked");
+        });
+
+        $("#simple-timeout").click(_ => {
+            setTimeout(() => {
+                $(".simple-result").text("timeout clicked");
+            }, 1000);
+        });
+
+
+        $("#change-list").click(() => {
+            setTimeout(() => {
+                $("li.foo").each((index, elem) => {
+                    $(elem).text("value " + ((index + 1) * 10))
+                })
+            }, 500)
+        })
+
+    });
+
+</script>
+
+
+<h2>List of things</h2>
+<div id="list-of-things">
+    <ul class="shoo be doo wah">
+        <li class="foo">value 1</li>
+        <li class="foo">value 2</li>
+        <li class="foo">value 3</li>
+        <li class="foo">value 4</li>
+        <li class="foo bar">value 5</li>
+    </ul>
+    <button id="change-list">Change list contents</button>
+</div>
+
+
+</body>
+</html>

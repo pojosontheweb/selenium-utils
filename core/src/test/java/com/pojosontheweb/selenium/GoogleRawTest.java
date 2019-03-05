@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 public class GoogleRawTest {
 
     @Test
+    @Ignore
     public void testChrome() {
         System.out.println("Testing with Chrome");
         WebDriver d = DriverBuildr.chrome().build();
