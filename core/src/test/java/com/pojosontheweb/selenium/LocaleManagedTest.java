@@ -1,6 +1,7 @@
 package com.pojosontheweb.selenium;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class LocaleManagedTest extends ManagedDriverJunit4TestBase {

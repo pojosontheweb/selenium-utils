@@ -1,10 +1,10 @@
 package com.pojosontheweb.selenium;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -94,9 +94,9 @@ public final class Findr {
         this(
                 driver,
                 waitTimeout,
-                WebDriverWait.DEFAULT_SLEEP_TIMEOUT,
+                500,
                 null,
-                Collections.<String>emptyList(),
+                Collections.emptyList(),
                 DEFAULT_ACTIONS
         );
     }
@@ -309,7 +309,7 @@ public final class Findr {
         String sp;
         if (f.path!=null) {
             newPath.addAll(f.path);
-            sp = Joiner.on(", ").join(f.path);
+            sp = f.path.stream().collect(Collectors.joining(", "));
         } else {
             sp = "";
         }
@@ -425,7 +425,7 @@ public final class Findr {
                 }
                 if (input instanceof WebElement) {
                     WebElement webElement = (WebElement)input;
-                    if (predicate.apply(webElement)) {
+                    if (predicate.test(webElement)) {
                         return webElement;
                     }
                     return null;
@@ -497,18 +497,14 @@ public final class Findr {
         }
 
         private <T> Predicate<T> wrapAndTrap(final Predicate<T> predicate) {
-            return new Predicate<T>() {
-                @Override
-                public boolean apply(T input) {
-                    if (input==null) {
-                        return false;
-                    }
-                    try {
-                        return predicate.apply(input);
-                    } catch(WebDriverException e) {
-                        return false;
-                    }
-
+            return (T input) -> {
+                if (input==null) {
+                    return false;
+                }
+                try {
+                    return predicate.test(input);
+                } catch(WebDriverException e) {
+                    return false;
                 }
             };
         }
@@ -548,8 +544,8 @@ public final class Findr {
         private Predicate<WebElement> composeFilters(final Predicate<? super WebElement> predicate) {
             return new Predicate<WebElement>() {
                 @Override
-                public boolean apply(WebElement input) {
-                    return (filters == null || filters.apply(input)) && wrapAndTrap(predicate).apply(input);
+                public boolean test(WebElement input) {
+                    return (filters == null || filters.test(input)) && wrapAndTrap(predicate).test(input);
                 }
 
                 @Override
@@ -566,8 +562,8 @@ public final class Findr {
         private Predicate<List<WebElement>> composeCheckers(final Predicate<List<WebElement>> predicate) {
             return new Predicate<List<WebElement>>() {
                 @Override
-                public boolean apply(List<WebElement> input) {
-                    return (checkers == null || checkers.apply(input)) && wrapAndTrap(predicate).apply(input);
+                public boolean test(List<WebElement> input) {
+                    return (checkers == null || checkers.test(input)) && wrapAndTrap(predicate).test(input);
                 }
 
                 @Override
@@ -602,7 +598,7 @@ public final class Findr {
                     if (elements==null) {
                         return null;
                     }
-                    if (checkers != null && !checkers.apply(filtered)) {
+                    if (checkers != null && !checkers.test(filtered)) {
                         logDebug("[Findr]  ! checkList KO: " + checkers);
                         logDebug("[Findr]  => Chain STOPPED before callback");
                         return null;
@@ -624,7 +620,7 @@ public final class Findr {
         private List<WebElement> filterElements(List<WebElement> source) {
             List<WebElement> filtered = new ArrayList<WebElement>();
             for (WebElement element : source) {
-                if (filters==null || filters.apply(element)) {
+                if (filters==null || filters.test(element)) {
                     filtered.add(element);
                 }
             }
@@ -673,12 +669,12 @@ public final class Findr {
         private Predicate<List<WebElement>> checkAny(final Predicate<? super WebElement> predicate) {
             return new Predicate<List<WebElement>>() {
                 @Override
-                public boolean apply(List<WebElement> elements) {
+                public boolean test(List<WebElement> elements) {
                     if (elements.size() == 0) {
                         return true;
                     }
                     for (WebElement element : elements) {
-                        if (predicate.apply(element)) {
+                        if (predicate.test(element)) {
                             return true;
                         }
                     }
@@ -695,9 +691,9 @@ public final class Findr {
         private Predicate<List<WebElement>> checkAll(final Predicate<? super WebElement> predicate) {
             return new Predicate<List<WebElement>>() {
                 @Override
-                public boolean apply(List<WebElement> elements) {
+                public boolean test(List<WebElement> elements) {
                     for (WebElement element : elements) {
-                        if (!predicate.apply(element)) {
+                        if (!predicate.test(element)) {
                             return false;
                         }
                     }
@@ -714,7 +710,7 @@ public final class Findr {
         private Predicate<List<WebElement>> checkElemCount(final int expectedCount) {
             return new Predicate<List<WebElement>>() {
                 @Override
-                public boolean apply(List<WebElement> elements) {
+                public boolean test(List<WebElement> elements) {
                     return elements != null && elements.size() == expectedCount;
                 }
 
@@ -747,7 +743,7 @@ public final class Findr {
                         return null;
                     }
                     List<WebElement> filtered = filterElements(elements);
-                    if (checkers != null && !checkers.apply(filtered)) {
+                    if (checkers != null && !checkers.test(filtered)) {
                         logDebug("[Findr]  ! checkList KO: " + checkers);
                         logDebug("[Findr]  => Chain STOPPED before callback");
                         return null;

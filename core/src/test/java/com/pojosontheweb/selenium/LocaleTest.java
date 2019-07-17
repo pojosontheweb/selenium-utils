@@ -27,8 +27,8 @@ public class LocaleTest {
         );
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void testFirefox() {
         performTest(
                 DriverBuildr
@@ -48,8 +48,8 @@ public class LocaleTest {
         );
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void testSysPropsFirefox() {
         System.setProperty("webtests.browser", "firefox");
         System.setProperty("webtests.locales", "de");
@@ -57,6 +57,7 @@ public class LocaleTest {
     }
 
     @Test
+    @Ignore
     public void testSysPropsChrome() {
         System.setProperty("webtests.browser", "chrome");
         System.setProperty("webtests.locales", "sl");
@@ -73,9 +74,10 @@ public class LocaleTest {
             // assert btn text
             new Findr(driver)
                     .elemList(By.tagName("input"))
+                    .where(Findrs.attrEquals("name", "btnK"))
                     .where(Findrs.attrEquals("type", "submit"))
                     .where(Findrs.attrEquals("value", expectedText))
-                    .whereElemCount(1)
+                    .at(0)
                     .eval();
 
         } finally {

@@ -1,10 +1,11 @@
 package com.pojosontheweb.selenium;
 
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Supplier;
 import org.openqa.selenium.TimeoutException;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static com.pojosontheweb.selenium.Findr.logDebug;
 
@@ -84,10 +85,10 @@ public class Retry {
         }
 
         public RetryWithResult<T> add(final Findr other) {
-            return add(other, Functions.<T>identity());
+            return add(other, Function.identity());
         }
 
-        public RetryNoResult add(final RetryConsumer<T> consumer) {
+        public RetryNoResult add(final Consumer<T> consumer) {
             return new RetryNoResult(
                     count,
                     retries,
@@ -173,10 +174,6 @@ public class Retry {
             );
         }
 
-    }
-
-    public interface RetryConsumer<T> {
-        void accept(T t);
     }
 
 

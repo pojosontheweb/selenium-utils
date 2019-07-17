@@ -1,10 +1,11 @@
 package org.pojosontheweb.selenium.groovy
 
-import com.google.common.base.Function
-import com.google.common.base.Predicate
 import com.pojosontheweb.selenium.Findr
 import org.openqa.selenium.TimeoutException
 import org.openqa.selenium.WebElement
+
+import java.util.function.Function
+import java.util.function.Predicate
 
 @Category(Findr.ListFindr)
 class ListFindrCategory {

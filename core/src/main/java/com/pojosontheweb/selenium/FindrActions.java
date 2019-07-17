@@ -1,7 +1,8 @@
 package com.pojosontheweb.selenium;
 
-import com.google.common.base.Function;
 import org.openqa.selenium.WebElement;
+
+import java.util.function.Function;
 
 /**
  * Central place for click/clear/sendKeys behavior. Can be extended/overriden

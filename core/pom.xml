@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.pojosontheweb</groupId>
         <artifactId>selenium-utils</artifactId>
-        <version>1.4.10</version>
+        <version>2.0.0</version>
     </parent>
     <artifactId>selenium-utils-core</artifactId>
     <packaging>jar</packaging>
@@ -31,16 +31,15 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
-            <optional>true</optional>
         </dependency>
 
         <!-- video -->
         <dependency>
             <groupId>com.pojosontheweb</groupId>
             <artifactId>monte-repack</artifactId>
+            <optional>true</optional>
             <version>1.0</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>

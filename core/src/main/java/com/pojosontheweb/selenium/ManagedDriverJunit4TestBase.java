@@ -97,4 +97,13 @@ public class ManagedDriverJunit4TestBase {
         return new Findr(getWebDriver(), timeoutInSeconds);
     }
 
+    public Findr $(String selector) {
+        return findr().$(selector);
+    }
+
+    public Findr.ListFindr $$(String selector) {
+        return findr().$$(selector);
+    }
+
+
 }
