@@ -9,7 +9,7 @@
         <version>6</version>
     </parent>
     <groupId>com.pojosontheweb</groupId>
-    <version>2.0-rc1</version>
+    <version>LATEST-SNAPSHOT</version>
     <artifactId>selenium-utils</artifactId>
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
