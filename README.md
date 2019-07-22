@@ -1,20 +1,21 @@
-# Selenium Utils
-
 Takes the misery out of selenium !
 
 [![Build Status](https://travis-ci.org/pojosontheweb/selenium-utils.svg?branch=master)](https://travis-ci.org/pojosontheweb/selenium-utils)
 
-## Findr
+# Findr !
 
 `Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
 
-The API is slick, easy to use and helps to be DRY and concise. It's based on chained methods in order to expose a clear API, and uses function composition in order to create chains of conditions. This chain is then evaluated atomically inside a WebDriverWait, under the hood.
+The API is slick, easy to use and helps to be DRY and concise. 
+It's based on chained methods and function composition, in order to let you create chains of selectors/assertions. 
+Those chains are then evaluated atomically inside a WebDriverWait, under the hood.
 
-Evaluation fails if the chain doesn't completely completes within a given timeout, and an exception is thrown.
+Evaluation succeeds if the whole chain passes. 
+Otherwise, if one element in the chain fails, then the whole chain fails and is retried from the top, until timeout.
 
 Simple example over Google search :
 
-```
+```java
 // get google
 driver.get("http://www.google.com");
 
@@ -35,32 +36,26 @@ findr
     .eval();	
 ```
 
-`Findr` instances are immutable and can be safely shared and reused :
+## Retrying all
 
+`Findr` will retry all elements in the chain, until the whole chain passes, or timeouts.
+
+Let's have a look at this simple click :
+
+```java
+new Findr(webDriver).$(".foo").$(".bar").click();
 ```
-Findr container = new Findr(driver).$("#container");
-container.$("#username").sendKeys("john.doe");
-container.$("#the-button").click();
-```
 
+In practice, this will create an atomic chain with those steps :
 
-### Built-in predicates
+1. find a `WebElement` with class `foo`
+2. find a `WebElement` with class `bar`, under the one found in 1.
+3. call `click()` on the `WebElement` found in 2.
 
-The `Findrs` class exposes a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
+Again, the chain will be evaluated atomically, so 1, 2 and 3 _must_ pass for the whole expression (the click) to pass.
+If any step in the chain fails, then it's retried from step 1, until exhaustion.
 
-* attrEquals(String attrName, String expectedValue)
-* hasClass(String className)
-* textEquals(final String expected)
- 
-Those can be used directly in your findrs :
-
-```
-new Findr(driver)
-	.$("div.my-class"))
-	.where(attrEquals("my-attr", "my-value"))
-	.where(textEquals("This is some content"))
-	.eval();
-``` 
+This is really the heart of the system, what makes tests robust and stable.
 
 ### Batch / Retry
 
@@ -71,56 +66,92 @@ and make sure that all of them are actually performed.
 This can be used as a relacement for "nested" findrs, which are not easy to 
 manage :
 
-    // a "nested" findr version that clicks/asserts 
-    // as an atomic op
-    void openDropDown() {
-        f.$("#my-button").eval( e -> {
-            e.click();
-            // make sure that dropdown is shown
-            // if not then the top-level eval()
-            // will be called again
-            // we use a "nested" Findr
-            f.$("#my-dropdown")                
-                .where(isDisplayed())
-                .setTimeout(5) // must be < to the parent's timeout...
-                .eval();
-        });
-    }
+```java
+// a "nested" findr version that clicks/asserts 
+// as an atomic op
+void openDropDown() {
+    f.$("#my-button").eval( e -> {
+        e.click();
+        // make sure that dropdown is shown
+        // if not then the top-level eval()
+        // will be called again
+        // we use a "nested" Findr
+        f.$("#my-dropdown")                
+            .where(isDisplayed())
+            .setTimeout(5) // must be < to the parent's timeout...
+            .eval();
+    });
+}
+```
     
 Can be replaced with `Retry` :
 
-    import static com.pojosontheweb.selenium.Retry.retry;
+```java
+import static com.pojosontheweb.selenium.Retry.retry;
 
-    void openDropDown() {
-        retry()
-            .add(() -> f.$("#my-button").click())
-            .add(f.$("#my-dropdown").where(isDisplayed())
-            .eval();
-    }
+void openDropDown() {
+    retry()
+        .add(() -> f.$("#my-button").click())
+        .add(f.$("#my-dropdown").where(isDisplayed())
+        .eval();
+}
+```
     
 The `add()` method accepts several types of arguments (Findr, Runnable, mapping functions etc.), 
 allowing to create a chain of steps. This chain is then evaluated calling
 the `eval()` method on it. 
 
 
-### Error reporting
+## Composition
+
+`Findr` instances are immutable and can be safely shared and reused :
+
+```java
+Findr container = new Findr(driver).$("#container");
+container.$("#username").sendKeys("john.doe");
+container.$("#the-button").click();
+```
+
+This makes it very easy (and safe) to create helper functions or page objects that reuse Findrs.
+Again, composed Findrs are evaluated as a single, atomic chain.
+
+## Built-in predicates
+
+The `Findrs` class exposes a set of static factory methods that create `Predicate<WebElement>`s for the recurrent stuff, for example :
+
+* attrEquals(String attrName, String expectedValue)
+* hasClass(String className)
+* textEquals(final String expected)
+ 
+Those can be used directly in your findrs :
+
+```java
+new Findr(driver)
+	.$("div.my-class"))
+	.where(attrEquals("my-attr", "my-value"))
+	.where(textEquals("This is some content"))
+	.eval();
+``` 
+
+## Error reporting
 
 `Findr` tries to report failures in condition chains by including a String-ified version of the path. Of course, the stack trace of the Timeout exception will tell where the evaluation failed.
 
 There are also variants to `eval()` that accept a `failureMessage` argument.
 
-#### Verbose logging
+### Verbose logging
 
 `Findr` executes the various functions you compose as a "back box", and it's sometimes 
 hard to understand where it went wrong in the conditions chain. In order to get insights about what's going on, you can set the sys prop `webtests.findr.verbose`, so that it outputs the logs (to stdout) when 
 asserting the condition chain. 
 
 
+
 ## WebDriver init
 
 Use `DriverBuilder` in order to create instances of `WebDriver`. The API can be used statically :
 
-```
+```java
 // create a simple Chrome Driver
 WebDriver driver = DriverBuildr
 	.chrome()
@@ -130,7 +161,7 @@ WebDriver driver = DriverBuildr
 
 Or by defining system properties :
 
-```
+```java
 WebDriver = DriverBuilder.fromSysProps().build();
 ```
 
@@ -223,7 +254,7 @@ Here is a list of all supported System Properties :
 
 Base classes are included that manage the driver init/close and video stuff. If you use JUnit for example, you simply have to extend a base class :
 
-```
+```java
 public class MyTest extends ManagedDriverJunit4TestBase {
 
     @Test
@@ -250,7 +281,7 @@ It's built on [Monte Media Library](http://www.randelshofer.ch/monte/), and is p
 
 Add the dependency to your pom :
 
-```
+```xml
 <dependency>
     <groupId>com.pojosontheweb</groupId>
     <artifactId>selenium-utils-core</artifactId>
@@ -261,7 +292,7 @@ Add the dependency to your pom :
 
 Configure surefire :
 
-```
+```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
@@ -278,14 +309,14 @@ Configure surefire :
 
 Invoke maven :
 
-```
-$> mvn test
+```bash
+mvn test
 ```
 
 With sys props :
 
-```
-$> mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedriver -Dwebtests.video.enabled=true
+```bash
+mvn test -Dwebtests.browser=chrome -Dwebdriver.chrome.driver=/opt/chromedriver -Dwebtests.video.enabled=true
 ```
 
 ## Page Objects
