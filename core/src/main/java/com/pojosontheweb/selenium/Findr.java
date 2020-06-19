@@ -722,6 +722,15 @@ public final class Findr {
         }
 
         /**
+         * Counts that there's 1 element matching the list findr, and return it.
+         * Shorthand for <code>count(1).at(0)</code>.
+         * @return
+         */
+        public Findr expectOne() {
+            return count(1).at(0);
+        }
+
+        /**
          * Evaluates this ListFindr and invokes passed callback if the whole chain suceeded. Throws
          * a TimeoutException if the condition chain didn't match.
          * @param callback the callback to call if the chain succeeds
