@@ -14,9 +14,9 @@
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
-<!--        <module>monte</module>-->
-        <module>core</module>
-        <module>groovy</module>
+        <module>monte</module>
+<!--        <module>core</module>-->
+<!--        <module>groovy</module>-->
         <!--<module>gridvideo</module>-->
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
