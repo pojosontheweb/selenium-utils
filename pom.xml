@@ -46,7 +46,7 @@
         <gmavenVersion>1.5</gmavenVersion>
         <gmavenProviderSelection>2.0</gmavenProviderSelection>
         <groovyVersion>2.3.9</groovyVersion>
-        <seleniumVersion>3.141.59</seleniumVersion>
+        <seleniumVersion>4.1.2</seleniumVersion>
     </properties>
     <build>
         <pluginManagement>
