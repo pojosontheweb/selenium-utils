@@ -7,7 +7,6 @@ import org.junit.Test;
 public class Issue1Test extends ManagedDriverJunit4TestBase {
 
     @Test
-    @Ignore
     public void testWithInjectedWebDriver() throws Exception {
         boolean thrown = false;
         try {

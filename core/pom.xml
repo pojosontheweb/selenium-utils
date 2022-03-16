@@ -13,6 +13,7 @@
     <name>selenium-utils/core</name>
     <properties>
         <webtests.browser>chrome</webtests.browser>
+        <webtests.locales>en</webtests.locales>
         <webtests.findr.verbose>true</webtests.findr.verbose>
     </properties>
     <dependencies>
