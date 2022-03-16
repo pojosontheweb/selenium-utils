@@ -16,7 +16,7 @@ public class SelectTest extends ManagedDriverJunit4TestBase {
         findr().elem(By.id("accept-choices")).click();
 
         getWebDriver().switchTo().frame("iframeResult");
-        
+
         // select helper test
         Findr fSelect = findr().elem(By.id("cars"));
         Select select = new Select(fSelect);
