@@ -13,7 +13,7 @@ public class SelectTest extends ManagedDriverJunit4TestBase {
         getWebDriver().get("http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select");
 
         // dismiss cookies
-        findr().elem(By.id("accept-choices")).click();
+//        findr().elem(By.id("accept-choices")).click();
 
         getWebDriver().switchTo().frame("iframeResult");
 
