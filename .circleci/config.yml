@@ -7,7 +7,7 @@ defaults: &defaults
   working_directory: ~/repo
 
 jobs:
-  webtests:
+  build:
     working_directory: ~/repo
     docker:
       - image: circleci/openjdk:8-jdk-browsers
