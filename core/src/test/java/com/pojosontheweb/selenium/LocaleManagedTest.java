@@ -14,7 +14,7 @@ public class LocaleManagedTest extends ManagedDriverJunit4TestBase {
 
     @Test
     public void testWithInjectedWebDriver() throws Exception {
-        LocaleTest.performTest(getWebDriver(), "Iskanje Google", false);
+        LocaleTest.performTest(getWebDriver(), "sl", LocaleTest.BTN_TEXT_SL, false);
     }
 
 }

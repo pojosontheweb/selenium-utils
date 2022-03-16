@@ -26,9 +26,9 @@ public class ChromeBuildr {
         if (propPath==null) {
             if (driverPath != null) {
                 System.setProperty(CHROMEDRIVER_PATH_SYSPROP_NAME, driverPath.getAbsolutePath());
-            } else {
-                throw new RuntimeException("Path to ChromeDriver not specified ! Please set the path either " +
-                        "by calling the builder or by setting the " + CHROMEDRIVER_PATH_SYSPROP_NAME + " System Property");
+//            } else {
+//                throw new RuntimeException("Path to ChromeDriver not specified ! Please set the path either " +
+//                        "by calling the builder or by setting the " + CHROMEDRIVER_PATH_SYSPROP_NAME + " System Property");
             }
         }
 

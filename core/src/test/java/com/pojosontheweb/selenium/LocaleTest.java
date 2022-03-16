@@ -4,8 +4,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxBinary;
+
+import java.io.File;
+
+import static com.pojosontheweb.selenium.Findrs.*;
 
 public class LocaleTest {
+
+    public static final String BTN_TEXT_SL = "Iskanje Google";
+    public static final String BTN_TEXT_DE = "Google Suche";
 
     @Test
     public void testChrome() {
@@ -14,7 +22,8 @@ public class LocaleTest {
                         .chrome()
                         .setLocales("sl,fr")
                         .build(),
-                "Iskanje Google",
+                "sl",
+                BTN_TEXT_SL,
                 true
         );
         performTest(
@@ -22,20 +31,21 @@ public class LocaleTest {
                         .chrome()
                         .setLocales("de,en")
                         .build(),
-                "Google-Suche",
+                "de",
+                BTN_TEXT_DE,
                 true
         );
     }
 
     @Test
-    @Ignore
     public void testFirefox() {
         performTest(
                 DriverBuildr
                         .firefox()
                         .setLocales("sl")
                         .build(),
-                "Iskanje Google",
+                "sl",
+                BTN_TEXT_SL,
                 true
         );
         performTest(
@@ -43,7 +53,8 @@ public class LocaleTest {
                         .firefox()
                         .setLocales("de")
                         .build(),
-                "Google-Suche",
+                "de",
+                BTN_TEXT_DE,
                 true
         );
     }
@@ -53,7 +64,7 @@ public class LocaleTest {
     public void testSysPropsFirefox() {
         System.setProperty("webtests.browser", "firefox");
         System.setProperty("webtests.locales", "de");
-        performTest(DriverBuildr.fromSysProps().build(), "Google-Suche", true);
+        performTest(DriverBuildr.fromSysProps().build(), "de", BTN_TEXT_DE, true);
     }
 
     @Test
@@ -61,22 +72,28 @@ public class LocaleTest {
     public void testSysPropsChrome() {
         System.setProperty("webtests.browser", "chrome");
         System.setProperty("webtests.locales", "sl");
-        performTest(DriverBuildr.fromSysProps().build(), "Iskanje Google", true);
+        performTest(DriverBuildr.fromSysProps().build(), "sl", BTN_TEXT_SL, true);
     }
 
-    public static void performTest(final WebDriver driver, String expectedText, boolean quit) {
+    public static void performTest(final WebDriver driver, String locale, String expectedText, boolean quit) {
 
         try {
+
+            // create "root" findr
+            Findr f = new Findr(driver);
 
             // get google
             driver.get("http://www.google.com");
 
+            Google g = new Google(f, locale);
+            g.dismissCookies();
+
             // assert btn text
-            new Findr(driver)
-                    .elemList(By.tagName("input"))
-                    .where(Findrs.attrEquals("name", "btnK"))
-                    .where(Findrs.attrEquals("type", "submit"))
-                    .where(Findrs.attrEquals("value", expectedText))
+            f
+                    .$$("input")
+                    .where(attrEquals("name", "btnK"))
+                    .where(attrEquals("type", "submit"))
+                    .where(attrEquals("value", expectedText))
                     .at(0)
                     .eval();
 
