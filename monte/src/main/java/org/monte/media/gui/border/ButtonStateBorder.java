@@ -1,35 +1,11 @@
-/*
-* @(#)ButtonStateBorder.java  1.2  2009-11-20
- *
- * Copyright (c) 2006-2009 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 
 package org.monte.media.gui.border;
 
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
-/**
- * ButtonStateBorder.
- *
- * @author  Werner Randelshofer
- * @version 1.2 2009-11-20 Added more constructors.
- * <br>1.1 2005-11-30 Method getBorderInsets() returns border insets from
- * variable borderInsets, if it is not null. This allows to defer image loading
- * until the border needs to be painted.
- * <br>1.0.4 2005-10-03 Draw default state only, if button is not pressed.
- * <br>1.0.3 2005-09-30 Draw pressed state only, if button state "isPressed"
- * _and_ "isArmed" are true.
- * <br>1.0.2 2005-06-25 Return a new instance of insets in method getBorderInsets.
- * <br>1.0.1 2005-04-17 Blinking default button needs to be drawn on
- * all window types, and not just on JDialog's.
- * <br>1.0  18 March 2005  Created.
- */
+
 public class ButtonStateBorder implements Border {
     public final static int E = 0;
     public final static int EP = 1;
@@ -42,37 +18,24 @@ public class ButtonStateBorder implements Border {
     public final static int DI = 8;
     public final static int DIS = 9;
     public final static int DEFAULT = 10;
-    /**
-     * Borders
-     */
+    
     private Border[] borders;
 
-    /** Holds the icon pictures in a single image. This variable is used only
-     *until we create the icons array. Then it is set to null.
-     */
+    
     private Image tiledImage;
-    /**
-     * The number of icons in the tiledImage.
-     */
+    
     private int tileCount;
-    /**
-     * Whether the tiledImage needs to be tiled horizontally or vertically
-     * to get the icons out of it.
-     */
+    
     private boolean isTiledHorizontaly;
 
     private Insets borderInsets;
-    /** Only used for tiled image. */
+    
     private boolean fill;
-    /** Only used for tiled image. */
+    
     private Insets imageInsets;
 
 
-    /**
-     * Creates a new instance.
-     * All borders must have the same insets.
-     * If a border is null, nothing is drawn for this state.
-     */
+    
     public ButtonStateBorder(Border e, Border es) {
         borders = new Border[DEFAULT+1];
         borders[E] = e;
@@ -86,11 +49,7 @@ public class ButtonStateBorder implements Border {
         borders[DI] = es;
         borders[DIS] = es;
     }
-    /**
-     * Creates a new instance.
-     * All borders must have the same insets.
-     * If a border is null, nothing is drawn for this state.
-     */
+    
     public ButtonStateBorder(Border e, Border ep, Border es, Border eps,
     Border d, Border ds, Border i, Border is, Border di, Border dis) {
         borders = new Border[DEFAULT+1];
@@ -105,19 +64,13 @@ public class ButtonStateBorder implements Border {
         borders[DI] = dis;
         borders[DIS] = dis;
     }
-    /**
-     * Creates a new instance.
-     * All borders must have the same insets.
-     */
+    
     public ButtonStateBorder(Border[] borders) {
         this.borders = new Border[DEFAULT+1];
         System.arraycopy(borders, 0, this.borders, 0, Math.min(borders.length, this.borders.length));
     }
 
-    /**
-     * Creates a new instance.
-     * All borders must have the same dimensions.
-     */
+    
     public ButtonStateBorder(Image tiledImage, int tileCount, boolean isTiledHorizontaly,
     Insets imageInsets, Insets borderInsets, boolean fill) {
         this.tiledImage = tiledImage;
@@ -154,7 +107,7 @@ public class ButtonStateBorder implements Border {
 
     protected Border getBorder(Component c) {
         Border border;
-        boolean isActive = true; //QuaquaUtilities.isOnActiveWindow(c);
+        boolean isActive = true;
 
         if (c instanceof AbstractButton) {
             ButtonModel model = ((AbstractButton) c).getModel();

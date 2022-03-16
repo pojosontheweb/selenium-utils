@@ -1,13 +1,4 @@
-/*
- * @(#)TSCCCodec.java 
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.jmf.codec.video;
 
 import org.monte.media.avi.TechSmithCodecCore;
@@ -23,20 +14,10 @@ import javax.media.format.IndexedColorFormat;
 import javax.media.format.RGBFormat;
 import javax.media.format.VideoFormat;
 
-/**
- * JMF Codec for the TechSmith Screen-Capture format.
- * <p>
- * This codec can decode24 and encode the format to/from a JMF {@code RGBFormat}
- * or a {@code IndexedColorFormat}.
- * <p>
- * See {@link org.monte.media.avi.TechSmithCodecCore} for a description of the format.
- *
- * @author Werner Randelshofer
- * @version $Id: TSCCCodec.java 304 2013-01-03 07:45:40Z werner $
- */
+
 public class TSCCCodec extends AbstractVideoDecoder {
 
-    /** RGB bit masks */
+
     protected static final int bMask = 0x000000ff;
     protected static final int gMask = 0x0000ff00;
     protected static final int rMask = 0x00ff0000;
@@ -49,54 +30,54 @@ public class TSCCCodec extends AbstractVideoDecoder {
     public TSCCCodec() {
         supportedInputFormats = new VideoFormat[]{
             new VideoFormat("tscc"),
-            //
+
             new RGBFormat(
-            null, // dimension
-            Format.NOT_SPECIFIED, // max data length 
-            Format.intArray, // data type
-            Format.NOT_SPECIFIED, // frame rate
-            32, // bits per pixel
-            rMask, gMask, bMask, // red, green, blue mask
-            Format.NOT_SPECIFIED, // pixel stride
-            Format.NOT_SPECIFIED,// line stride
-            Format.FALSE, // flipped
-            Format.NOT_SPECIFIED // endian
+            null,
+            Format.NOT_SPECIFIED,
+            Format.intArray,
+            Format.NOT_SPECIFIED,
+            32,
+            rMask, gMask, bMask,
+            Format.NOT_SPECIFIED,
+            Format.NOT_SPECIFIED,
+            Format.FALSE,
+            Format.NOT_SPECIFIED
             ),
-            //
+
             new IndexedColorFormat(
-            null, // dimension
-            Format.NOT_SPECIFIED,// max data length
-            Format.byteArray,// data type
-            Format.NOT_SPECIFIED,// frame rate
-            Format.NOT_SPECIFIED, // line stride
-            256,// map size
-            null, null, null// r,g,b map
+            null,
+            Format.NOT_SPECIFIED,
+            Format.byteArray,
+            Format.NOT_SPECIFIED,
+            Format.NOT_SPECIFIED,
+            256,
+            null, null, null
             )
         };
         defaultOutputFormats = new VideoFormat[]{
             new VideoFormat("tscc"),
-            //
+
             new RGBFormat(
-            null, // dimension
-            Format.NOT_SPECIFIED, // max data length 
-            Format.intArray, // data type
-            Format.NOT_SPECIFIED, // frame rate
-            32, // bits per pixel
-            rMask, gMask, bMask, // red, green, blue mask
-            Format.NOT_SPECIFIED, // pixel stride
-            Format.NOT_SPECIFIED,// line stride
-            Format.FALSE, // flipped
-            Format.NOT_SPECIFIED // endian
+            null,
+            Format.NOT_SPECIFIED,
+            Format.intArray,
+            Format.NOT_SPECIFIED,
+            32,
+            rMask, gMask, bMask,
+            Format.NOT_SPECIFIED,
+            Format.NOT_SPECIFIED,
+            Format.FALSE,
+            Format.NOT_SPECIFIED
             ),
-            //
+
             new IndexedColorFormat(
-            null, // dimension
-            Format.NOT_SPECIFIED,// max data length
-            Format.byteArray,// data type
-            Format.NOT_SPECIFIED,// frame rate
-            Format.NOT_SPECIFIED, // line stride
-            256,// map size
-            null, null, null// r,g,b map
+            null,
+            Format.NOT_SPECIFIED,
+            Format.byteArray,
+            Format.NOT_SPECIFIED,
+            Format.NOT_SPECIFIED,
+            256,
+            null, null, null
             )
         };
         pluginName = "TechSmith Screen-Capture Codec";
@@ -119,12 +100,12 @@ public class TSCCCodec extends AbstractVideoDecoder {
             VideoFormat outf = new VideoFormat("tscc", s, Format.NOT_SPECIFIED, Format.byteArray,
                     inf.getFrameRate());
             formats = new Format[]{outf};
-        } else if (new IndexedColorFormat(null, // dimension
-                Format.NOT_SPECIFIED,// max data length
-                Format.byteArray,// data type
-                Format.NOT_SPECIFIED,// frame rate
-                Format.NOT_SPECIFIED, // line stride
-                256,// map size
+        } else if (new IndexedColorFormat(null,
+                Format.NOT_SPECIFIED,
+                Format.byteArray,
+                Format.NOT_SPECIFIED,
+                Format.NOT_SPECIFIED,
+                256,
                 null, null, null).matches(input)) {
             VideoFormat inf = (VideoFormat) input;
             Dimension s = inf.getSize();
@@ -159,13 +140,13 @@ public class TSCCCodec extends AbstractVideoDecoder {
         }
     }
 
-    /** Copies all meta-data field from in to out. */
+
     protected void copyMetaTo(Buffer in, Buffer out) {
-        //out.setData(in.getData());
-        //out.setHeader(in.getHeader());
-        //out.setFormat(in.getFormat());
-        //out.setLength(in.getLength());
-        ///out.setOffset(in.getOffset());
+
+
+
+
+
         out.setTimeStamp(in.getTimeStamp());
         out.setDuration(in.getDuration());
         out.setSequenceNumber(in.getSequenceNumber());
@@ -220,7 +201,7 @@ public class TSCCCodec extends AbstractVideoDecoder {
             state.setPalette(inicvf.getRedValues(), inicvf.getGreenValues(), inicvf.getBlueValues());
         }
 
-        // FIXME - Implement pixelStride <> 1
+
         if (pixelStride != 1) {
             return BUFFER_PROCESSED_FAILED;
         }
@@ -315,7 +296,7 @@ public class TSCCCodec extends AbstractVideoDecoder {
         out.setDiscard(false);
         out.setFormat(outputFormat);
 
-        // The following could be done in the open() method
+
         VideoFormat invf = (VideoFormat) inputFormat;
         boolean isKeyframe;
         VideoFormat ooutvf = (VideoFormat) outputFormat;
@@ -355,7 +336,7 @@ public class TSCCCodec extends AbstractVideoDecoder {
         }
 
 
-        // Handle header
+
         int header;
         if (in.getHeader() instanceof Integer) {
             header = (Integer) in.getHeader();
@@ -363,7 +344,7 @@ public class TSCCCodec extends AbstractVideoDecoder {
             header = 0;
         }
 
-        if (0x100 == (header & 0x100)) { // palette change
+        if (0x100 == (header & 0x100)) {
             try {
                 state.decodePalette((byte[]) in.getData(), in.getOffset(), in.getLength());
                 out.setFlags(Buffer.FLAG_DISCARD);
@@ -396,7 +377,7 @@ public class TSCCCodec extends AbstractVideoDecoder {
         out.setLength(width * height);
 
         byte[] inDat = (byte[]) in.getData();
-        // Detect if frames were skipped
+
         long sequenceNumber = in.getSequenceNumber();
         boolean framesWereSkipped = (sequenceNumber != previousSequenceNumber + 1);
         try {
@@ -443,13 +424,6 @@ public class TSCCCodec extends AbstractVideoDecoder {
     @Override
     public void open() throws ResourceUnavailableException {
         state = new TechSmithCodecCore();
-        /*
-        if (((VideoFormat) outputFormat).getDataType() == int[].class) {
-        pixels = new int[outputFormat.getSize().width * outputFormat.getSize().height];
-        previousPixels = new int[outputFormat.getSize().width * outputFormat.getSize().height];
-        } else {
-        previousPixels = new byte[outputFormat.getSize().width * outputFormat.getSize().height];
-        pixels = new byte[outputFormat.getSize().width * outputFormat.getSize().height];
-        }*/
+
     }
 }

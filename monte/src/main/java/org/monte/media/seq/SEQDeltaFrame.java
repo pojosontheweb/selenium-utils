@@ -1,44 +1,26 @@
-/*
- * @(#)SEQDeltaFrame.java  1.0  2010-12-25
- *
- * Copyright (c) 2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.seq;
 
 import org.monte.media.image.BitmapImage;
 import java.util.Arrays;
 
-/**
- * Represents a delta frame in a movie track.
- * <p>
- * References:<br>
- * <a href="http://www.fileformat.info/format/atari/egff.htm">http://www.fileformat.info/format/atari/egff.htm</a><br>
- * <a href="http://www.atari-forum.com/wiki/index.php/ST_Picture_Formats">http://www.atari-forum.com/wiki/index.php/ST_Picture_Formats</a>
- *
- * @author  Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version 1.0  2010-12-25 Created.
- */
+
 public class SEQDeltaFrame
         extends SEQFrame {
 
     private int leftBound, topBound, rightBound, bottomBound;
-    public final static int //
+    public final static int
             OP_Copy = 0,
             OP_XOR = 1;
-    public final static int //
+    public final static int
             SM_UNCOMPRESSED = 0,
             SM_COMPRESSED = 1;
-    private final static int //
+    private final static int
             ENCODING_COPY_UNCOMPRESSED = (OP_Copy << 1) | SM_UNCOMPRESSED,
             ENCODING_COPY_COMPRESSED = (OP_Copy << 1) | SM_COMPRESSED,
             ENCODING_XOR_UNCOMPRESSED = (OP_XOR << 1) | SM_UNCOMPRESSED,
             ENCODING_XOR_COMPRESSED = (OP_XOR << 1) | SM_COMPRESSED;
-    /** Wether we already printed a warning about a broken encoding. */
+    
     private boolean isWarningPrinted = false;
 
     public SEQDeltaFrame() {
@@ -71,33 +53,26 @@ public class SEQDeltaFrame
     private void decodeCopyUncompressed(BitmapImage bitmap, SEQMovieTrack track) {
     }
 
-    /**
-     * Compressed data contains a sequence of control WORDs (16-bit signed WORDs)
-     * and data. A control WORD with a value between 1 and 32,767 indicates that
-     * the next WORD is to be repeated a number of times equal to the control
-     * WORD value. A control WORD with a negative value indicates that a run
-     * of bytes equal to the absolute value of the control WORD value is to be
-     * read from the compressed data.
-     */
+    
     private void decodeCopyCompressed(BitmapImage bitmap, SEQMovieTrack track) {
-        int di = 0; // data index
+        int di = 0;
         byte[] screen = bitmap.getBitmap();
         Arrays.fill(screen, (byte) 0);
 
         int bStride = bitmap.getBitplaneStride();
         int sStride = bitmap.getScanlineStride();
-        int x = leftBound; // screen x
-        int y = topBound; // screen y
+        int x = leftBound;
+        int y = topBound;
         int shift = x & 0x7;
-        int b = 0; // screen bitplane
-        int si = y * sStride + x / 8; // screen index
+        int b = 0;
+        int si = y * sStride + x / 8;
         int width = bitmap.getWidth();
 
         if (shift == 0) {
             while (di < data.length) {
-                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff))); // opcode
+                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff)));
                 if ((op & 0x8000) == 0) {
-                    // => Repeat the next data word op-times
+
                     byte d1 = data[di++];
                     byte d2 = data[di++];
                     for (int i = 0; i < op; i++) {
@@ -119,7 +94,7 @@ public class SEQDeltaFrame
                         }
                     }
                 } else {
-                    // => Copy the next abs(op) words
+
                     op = op ^ 0x8000;
                     for (int i = 0; i < op; i++) {
                         byte d1 = data[di++];
@@ -149,9 +124,9 @@ public class SEQDeltaFrame
             int invMask = (0xff << invShift) & 0xff;
             int xorInvMask = 0xff >>> shift;
             while (di < data.length) {
-                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff))); // opcode
+                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff)));
                 if ((op & 0x8000) == 0) {
-                    // => Repeat the next data word op-times
+
                     byte d1 = data[di++];
                     byte d2 = data[di++];
                     byte d3 = (byte) (d2 << invShift);
@@ -165,7 +140,7 @@ public class SEQDeltaFrame
                                 screen[si + 2] = (byte) ((screen[si + 2] & xorInvMask) | d3);
                             }
                         }
-                        //screen[si + 2] = (byte) (d3);
+
                         y++;
                         si += sStride;
                         if (y >= bottomBound) {
@@ -180,7 +155,7 @@ public class SEQDeltaFrame
                         }
                     }
                 } else {
-                    // => Copy the next abs(op) words
+
                     op = op ^ 0x8000;
                     for (int i = 0; i < op; i++) {
                         byte d1 = data[di++];
@@ -217,22 +192,22 @@ public class SEQDeltaFrame
     }
 
     private void decodeXORCompressed(BitmapImage bitmap, SEQMovieTrack track) {
-        int di = 0; // data index
+        int di = 0;
         byte[] screen = bitmap.getBitmap();
         int bStride = bitmap.getBitplaneStride();
         int sStride = bitmap.getScanlineStride();
-        int x = leftBound; // screen x
-        int y = topBound; // screen y
+        int x = leftBound;
+        int y = topBound;
         int shift = x & 0x7;
-        int b = 0; // screen bitplane
-        int si = y * sStride + x / 8; // screen index
+        int b = 0;
+        int si = y * sStride + x / 8;
         int width = bitmap.getWidth();
 
         if (shift == 0) {
             while (di < data.length) {
-                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff))); // opcode
+                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff)));
                 if ((op & 0x8000) == 0) {
-                    // => Repeat the next data word op-times
+
                     byte d1 = data[di++];
                     byte d2 = data[di++];
                     for (int i = 0; i < op; i++) {
@@ -254,7 +229,7 @@ public class SEQDeltaFrame
                         }
                     }
                 } else {
-                    // => Copy the next abs(op) words
+
                     op = op ^ 0x8000;
                     for (int i = 0; i < op; i++) {
                         byte d1 = data[di++];
@@ -285,9 +260,9 @@ public class SEQDeltaFrame
             int invMask = (0xff << invShift) & 0xff;
             int xorInvMask = 0xff >>> shift;
             while (di < data.length) {
-                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff))); // opcode
+                int op = (((data[di++] & 0xff) << 8) | ((data[di++] & 0xff)));
                 if ((op & 0x8000) == 0) {
-                    // => Repeat the next data word op-times
+
                     byte d1 = data[di++];
                     byte d2 = data[di++];
                     byte d3 = (byte) (d2 << invShift);
@@ -315,7 +290,7 @@ public class SEQDeltaFrame
                         }
                     }
                 } else {
-                    // => Copy the next abs(op) words
+
                     op = op ^ 0x8000;
                     for (int i = 0; i < op; i++) {
                         byte d1 = data[di++];
@@ -323,7 +298,7 @@ public class SEQDeltaFrame
                         byte d3 = (byte) (d2 << invShift);
                         d2 = (byte) (((d1 << invShift) & invMask) | ((d2 & 0xff) >>> shift));
                         d1 = (byte) ((d1 & 0xff) >>> shift);
-                        //screen[si] = (byte) ((screen[si] & mask) | ((screen[si]&xorMask)^d1));
+
                         screen[si] = (byte) ((screen[si] & invMask) | ((screen[si] & xorInvMask) ^ d1));
                         if (x < width - 8) {
                             screen[si + 1] ^= d2;
@@ -376,13 +351,7 @@ public class SEQDeltaFrame
         return rightBound;
     }
 
-    /** Returns true if the frame can be decoded over both the previous frame
-     * or the subsequent frame. Bidirectional frames can be used efficiently
-     * for forward and backward playing a movie.
-     * <p>
-     * All key frames are bidirectional. Delta frames which use an XOR OP-mode
-     * are bidirectional as well.
-     */
+    
     @Override
     public boolean isBidirectional() {
         return getOperation() == OP_XOR;

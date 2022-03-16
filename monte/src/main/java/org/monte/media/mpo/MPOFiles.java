@@ -1,13 +1,4 @@
-/*
- * @(#)MPOFiles.java  1.0  2011-02-27
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 
 package org.monte.media.mpo;
 
@@ -17,25 +8,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Utility methods for {@code MPOFiles}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-02-27 Created.
- */
+
 public class MPOFiles {
 
     private MPOFiles() {
     }
-    /** Splits a MPO file into two JPEG files.
-     * <p>
-     * A MPO file consists of two or more concatenated JPEG files with
-     * multi-picture file meta-data in APP2 segments which start with the
-     * character sequence "MPF\0".
-     * <p>
-     * This method writes each JPEG file into a separate file and strips
-     * the multi-picture meta-data.
-     */
+    
     public static ArrayList<File> splitMPOFile(File f) throws IOException {
         int imgCount = 0;
         ArrayList<File> splittedFiles=new ArrayList<File>();
@@ -68,9 +46,9 @@ public class MPOFiles {
                 out.pushSegment(seg.marker);
                 out.popSegment();
             } else if (out != null) {
-                // Skip APP2 segments which start with the string "MPF\0".
+
                 if (seg.marker == JFIFInputStream.APP2_MARKER) {
-                    // read fully up to 4 bytes
+
                     int len = 4, off = 0, n = 0;
                     while (n < len) {
                         int count = in.read(buf, off + n, len - n);

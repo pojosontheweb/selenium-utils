@@ -1,13 +1,4 @@
-/*
- * @(#)PGMImageReader.java  1.1  2010-06-24
- * 
- * Copyright (c) 2009-2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.pgm;
 
 import java.awt.Point;
@@ -32,26 +23,18 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
-/**
- * Reads an image in the Netpbm grayscale image format (PGM).
- * <p>
- * See: <a href="http://netpbm.sourceforge.net/doc/pgm.html">PGM Format Specification</a>.
- *
- * @author Werner Randelshofer
- * @version 1.1 2010-06-24 Skip comments in header.
- * <br>1.0 2009-12-14 Created.
- */
+
 public class PGMImageReader extends ImageReader {
 
-    /** All images have the same width.*/
+
     private int width = -1;
-    /** All images have the same height.*/
+
     private int height = -1;
-    /** All images have the same depth. Must be in the range [1,65535].*/
+
     private int maxGray = -1;
-    /** Number of images. */
+
     private int numImages = -1;
-    /** Start of image data. */
+
     private long dataOffset = -1;
 
     public PGMImageReader(PGMImageReaderSpi originatingProvider) {
@@ -90,10 +73,10 @@ public class PGMImageReader extends ImageReader {
     public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException {
         readHeader();
         LinkedList<ImageTypeSpecifier> l = new LinkedList<ImageTypeSpecifier>();
-        ComponentColorModel ccm = new ComponentColorModel(//
+        ComponentColorModel ccm = new ComponentColorModel(
                 new ICC_ColorSpace(ICC_Profile.getInstance(ColorSpace.CS_GRAY)),
-                new int[]{maxGray > 255 ? 16 : 8},//
-                false, false, Transparency.OPAQUE,//
+                new int[]{maxGray > 255 ? 16 : 8},
+                false, false, Transparency.OPAQUE,
                 (maxGray > 255) ? DataBuffer.TYPE_SHORT : DataBuffer.TYPE_BYTE);
         l.add(new ImageTypeSpecifier(ccm, ccm.createCompatibleSampleModel(width, height)));
         return l.iterator();
@@ -121,10 +104,10 @@ public class PGMImageReader extends ImageReader {
         ImageInputStream in = (ImageInputStream) getInput();
         in.seek(dataOffset + imageIndex * width * height * (maxGray > 255 ? 2 : 1));
 
-        ComponentColorModel ccm = new ComponentColorModel(//
+        ComponentColorModel ccm = new ComponentColorModel(
                 new ICC_ColorSpace(ICC_Profile.getInstance(ColorSpace.CS_GRAY)),
-                new int[]{maxGray > 255 ? 16 : 8},//
-                false, false, Transparency.OPAQUE,//
+                new int[]{maxGray > 255 ? 16 : 8},
+                false, false, Transparency.OPAQUE,
                 (maxGray > 255) ? DataBuffer.TYPE_SHORT : DataBuffer.TYPE_BYTE);
         SampleModel sm = ccm.createCompatibleSampleModel(width, height);
 
@@ -142,26 +125,24 @@ public class PGMImageReader extends ImageReader {
         return img;
     }
 
-    /** Reads the PGM header.
-     * Does nothing if the header has already been loaded.
-     */
+
     private void readHeader() throws IOException {
         if (dataOffset == -1) {
 
             ImageInputStream in = (ImageInputStream) getInput();
             in.seek(0);
 
-            // Check if file starts with "P5"
+
             if (in.readShort() != 0x5035) {
                 in.reset();
                 throw new IOException("Illegal magic number");
             }
-            // Skip whitespace (blank, TAB, CR or LF)
+
             int b = in.readUnsignedByte();
             if (b != 0x20 && b != 0x09 && b != 0x0d && b != 0x0a) {
                 throw new IOException("Whitespace missing after magic number");
             }
-            // Read width
+
             width = readHeaderValue(in, "image width");
             if (width < 1) {
                 throw new IOException("Illegal image width " + width);
@@ -179,19 +160,19 @@ public class PGMImageReader extends ImageReader {
     }
 
     private int readHeaderValue(ImageInputStream in, String name) throws IOException {
-        // Skip whitespace (blank, TAB, CR or LF) and comments
+
         int b;
         do {
             b = in.readUnsignedByte();
 
-            if (b == '#') { // comments
+            if (b == '#') {
                 do {
                     b = in.readUnsignedByte();
                 } while (b != 0x0d && b != 0x0a);
             }
         } while (b == 0x20 || b == 0x09 || b == 0x0d || b == 0x0a);
 
-        // read value
+
         if (b < 0x30 || b > 0x39) {
             throw new IOException(name + " missing");
         }

@@ -1,13 +1,4 @@
-/*
- * @(#)AbstractCodec.java  1.0  2011-04-05
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.jmf.codec;
 
 import javax.media.Buffer;
@@ -16,12 +7,7 @@ import javax.media.Control;
 import javax.media.Format;
 import javax.media.ResourceUnavailableException;
 
-/**
- * {@code AbstractCodec}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-04-05 Created.
- */
+
 public abstract class AbstractCodec implements Codec {
 
     protected String pluginName;
@@ -60,6 +46,6 @@ public abstract class AbstractCodec implements Codec {
     }
     protected static boolean isSet(Buffer buf, int flag) {
         return (buf.getFlags()&flag)==flag;
-        
+
     }
 }

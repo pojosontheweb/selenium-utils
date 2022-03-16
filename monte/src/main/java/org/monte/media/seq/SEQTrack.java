@@ -1,13 +1,4 @@
-/*
- * @(#)SEQTrack.java  1.0  2011-02-20
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance onlyWith the
- * license agreement you entered into onlyWith Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 
 package org.monte.media.seq;
 
@@ -20,12 +11,7 @@ import java.io.IOException;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * {@code SEQTrack}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-02-20 Created.
- */
+
 public class SEQTrack implements Track {
     private SEQDemultiplexer demux;
     private long position;

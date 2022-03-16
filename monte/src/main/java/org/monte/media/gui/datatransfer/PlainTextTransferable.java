@@ -1,28 +1,10 @@
-/*
- * @(#)PlainTextTransferable.java  1.1  2009-09-01
- *
- * Copyright (c) 2007-2009 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 
 package org.monte.media.gui.datatransfer;
 
 import java.awt.datatransfer.*;
 import java.io.*;
-/**
- * PlainTextTransferable.
- * <p>
- * Note: This transferable should (almost) always be used in conjunction with
- * PlainTextTransferable.
- *
- * @author Werner Randelshofer
- * @version 1.1 2009-09-01 Replaced use of deprecated class StringBufferInputStream.
- * <br>1.0 22. August 2007 Created.
- */
+
 public class PlainTextTransferable extends AbstractTransferable {
     private String plainText;
 
@@ -49,8 +31,8 @@ public class PlainTextTransferable extends AbstractTransferable {
         } else if (InputStream.class.equals(flavor.getRepresentationClass())) {
             String charsetName = flavor.getParameter("charset");
             return new ByteArrayInputStream(plainText.getBytes(charsetName==null?"UTF-8":charsetName));
-            //return new StringBufferInputStream(plainText);
-        } // fall through to unsupported
+
+        }
 
 	throw new UnsupportedFlavorException(flavor);
     }

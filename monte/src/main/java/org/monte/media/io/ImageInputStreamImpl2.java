@@ -1,39 +1,15 @@
-/*
- * @(#)ImageInputStreamImpl2.java 
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.io;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
 import javax.imageio.stream.ImageInputStreamImpl;
 
-/**
- * {@code ImageInputStreamImpl2} fixes bugs in ImageInputStreamImpl.
- * <p>
- * ImageInputStreamImpl uses read(byte[]) instead of readFully(byte[]) inside of
- * readShort. This results in corrupt data input if the underlying stream can
- * not fulfill the read operation in a single step.
- *
- * @author Werner Randelshofer
- * @version $Id: ImageInputStreamImpl2.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public abstract class ImageInputStreamImpl2 extends ImageInputStreamImpl {
-    // Length of the buffer used for readFully(type[], int, int)
+
     private static final int BYTE_BUF_LENGTH = 8192;
-    /**
-     * Byte buffer used for readFully(type[], int, int).  Note that this
-     * array is also used for bulk reads in readShort(), readInt(), etc, so
-     * it should be large enough to hold a primitive value (i.e. >= 8 bytes).
-     * Also note that this array is package protected, so that it can be
-     * used by ImageOutputStreamImpl in a similar manner.
-     */
+    
     byte[] byteBuf = new byte[BYTE_BUF_LENGTH];
 
     @Override

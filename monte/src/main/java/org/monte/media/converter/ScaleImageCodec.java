@@ -1,13 +1,4 @@
-/*
- * @(#)ScaleImageCodec.java  1.0  2012-04-24
- * 
- * Copyright (c) 2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.converter;
 
 import java.awt.Graphics2D;
@@ -20,23 +11,18 @@ import org.monte.media.Format;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * Scales a buffered image.
- *
- * @author Werner Randelshofer
- * @version 1.0 2012-04-24 Created.
- */
+
 public class ScaleImageCodec extends AbstractVideoCodec {
 
     public ScaleImageCodec() {
         super(new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
                 },
                 new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
-                }//
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
+                }
                 );
         name = "Scale Image";
     }
@@ -68,7 +54,7 @@ public class ScaleImageCodec extends AbstractVideoCodec {
         if (out.data instanceof BufferedImage) {
             imgOut = (BufferedImage) out.data;
             if (imgOut.getWidth() != outputFormat.get(WidthKey)
-                    || imgOut.getHeight() != outputFormat.get(HeightKey)//
+                    || imgOut.getHeight() != outputFormat.get(HeightKey)
                     || imgOut.getType() != imgIn.getType()) {
                 imgOut = null;
             }

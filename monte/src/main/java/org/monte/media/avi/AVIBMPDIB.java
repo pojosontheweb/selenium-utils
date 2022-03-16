@@ -1,13 +1,4 @@
-/*
- * @(#)AVIBMPDIB.java  1.0  2009-12-30
- * 
- * Copyright (c) 2009 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.avi;
 
 import org.monte.media.io.ImageInputStreamAdapter;
@@ -19,24 +10,12 @@ import java.util.*;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
-/**
- * This class defines the JPEG Huffman table, which is omitted in AVI MJPEG
- * files.
- * <p>
- * Source:
- * Microsoft Windows Bitmap Format.
- * Multimedia Technical Note: JPEG DIB Format.
- * (c) 1993 Microsoft Corporation. All rights reserved.
- * <a href="http://www.fileformat.info/format/bmp/spec/b7c72ebab8064da48ae5ed0c053c67a4/BMPDIB.TXT">BMPDIB.txt</a>
- *
- * @author Werner Randelshofer
- * @version 1.0 2009-12-30 Created.
- */
+
  public class AVIBMPDIB {
 
-    /** MJPG DHT Segment */
+
     private static byte[] MJPGDHTSeg = {
-        /* JPEG DHT Segment for YCrCb omitted from MJPG data */
+
         (byte) 0xFF, (byte) 0xC4, (byte) 0x01, (byte) 0xA2,
         (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x05, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x01, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
         (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01, (byte) 0x02, (byte) 0x03, (byte) 0x04, (byte) 0x05, (byte) 0x06, (byte) 0x07, (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B, (byte) 0x01,
@@ -67,7 +46,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
         (byte) 0xD3, (byte) 0xD4, (byte) 0xD5, (byte) 0xD6, (byte) 0xD7, (byte) 0xD8, (byte) 0xD9, (byte) 0xDA, (byte) 0xE2, (byte) 0xE3, (byte) 0xE4, (byte) 0xE5, (byte) 0xE6, (byte) 0xE7, (byte) 0xE8,
         (byte) 0xE9, (byte) 0xEA, (byte) 0xF2, (byte) 0xF3, (byte) 0xF4, (byte) 0xF5, (byte) 0xF6, (byte) 0xF7, (byte) 0xF8, (byte) 0xF9, (byte) 0xFA
     };
-    /** JFIF Start of Image (SOI) segment. */
+
     private static byte[] JFIFSOISeg = {
         (byte) 0xff,
         (byte) 0xd8
@@ -78,7 +57,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
     }
     public static InputStream prependDHTSeg(byte[] jpgWithoutDHT, int offset, int length) {
 
-        // FIXME - Only add DHT Segment if none is present
+
 
         Vector<InputStream> v = new Vector<InputStream>();
         v.add(new ByteArrayInputStream(JFIFSOISeg));
@@ -91,7 +70,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
         Vector<InputStream> v = new Vector<InputStream>();
         v.add(new ByteArrayInputStream(JFIFSOISeg));
         v.add(new ByteArrayInputStream(MJPGDHTSeg));
-        iisWithoutDHT.seek(2);// skip JFIF SOI 
+        iisWithoutDHT.seek(2);
         v.add(new ImageInputStreamAdapter(iisWithoutDHT));
         return new MemoryCacheImageInputStream(new SequenceInputStream(v.elements()));
     }
@@ -99,7 +78,7 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
         Vector<InputStream> v = new Vector<InputStream>();
         v.add(new ByteArrayInputStream(JFIFSOISeg));
         v.add(new ByteArrayInputStream(MJPGDHTSeg));
-        inWithoutDHT.skip(2);// skip JFIF SOI
+        inWithoutDHT.skip(2);
         v.add(inWithoutDHT);
         return new MemoryCacheImageInputStream(new SequenceInputStream(v.elements()));
     }

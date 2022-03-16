@@ -1,13 +1,4 @@
-/*
- * @(#)AbstractSplineInterpolator.java  1.0  2012-01-25
- * 
- * Copyright (c) 2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media;
 
 import java.awt.geom.Point2D.Float;
@@ -17,15 +8,10 @@ import java.awt.geom.Point2D;
 import java.util.Arrays;
 import static java.lang.Math.*;
 
-/**
- * {@code AbstractSplineInterpolator}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2012-01-25 Created.
- */
+
 public abstract class AbstractSplineInterpolator extends Interpolator {
 
-    /** Note: (x0,y0) and (x1,y1) are implicitly (0, 0) and (1,1) respectively. */
+    
     private LengthItem[] fractions;
 
     private static class LengthItem {
@@ -69,49 +55,24 @@ public abstract class AbstractSplineInterpolator extends Interpolator {
  public AbstractSplineInterpolator() {
         this(0f, 1f);
     }
-    /**
-     * Creates a new interpolator which interpolates from 0 to 1 within the
-     * specified timespan.
-     */
+    
     public AbstractSplineInterpolator(long timespan) {
         this(0f, 1f, timespan);
     }
-    /**
-     * Creates a new interpolator which interpolates into the specified
-     * direction within one second.
-     *
-     * @param reverse Set this to true, if you want to interpolate from 1 to 0
-     * instead of from 0 to 1. 
-     */
+    
     public AbstractSplineInterpolator(boolean reverse) {
         this((reverse) ? 1f : 0f, (reverse) ? 0f : 1f);
     }
-    /**
-     * Creates a new interpolator which interpolates from the specified
-     * start value to the specified end value within one second.
-     *
-     * @param startValue A value between 0 and 1. 
-     * @param endValue A value between 0 and 1. 
-     */
+    
     public AbstractSplineInterpolator(float startValue, float endValue) {
         this(startValue, endValue, 1000);
     }
-    /**
-     * Creates a new interpolator which interpolates from the specified
-     * start value to the specified end value within the specified timespan.
-     *
-     * @param startValue A value between 0 and 1. 
-     * @param endValue A value between 0 and 1. 
-     * @param timespan A timespan in milliseconds.
-     */
+    
     public AbstractSplineInterpolator(float startValue, float endValue, long timespan) {
         super(startValue,endValue,timespan);
     }    
 
-    /** This method must be called by the subclass in the constructor.
-     * 
-     * @param N 
-     */
+    
     protected void updateFractions(int N) {
         fractions = new LengthItem[N];
         Float p = new Float();
@@ -121,20 +82,17 @@ public abstract class AbstractSplineInterpolator extends Interpolator {
         }
     }
 
-    /**
-     * Evaluates the spline function at time t, and clamps the result value between 0
-     * and 1.
-     */
+    
     @Override
     public final float getFraction(float t) {
         LengthItem p1 = new LengthItem(t, 0f, t);
         LengthItem p2 = new LengthItem(t, 0f, t);
         int index = Arrays.binarySearch(fractions, p1, fractionComparator);
-        if (index >= 0) {// we have found the exact value
+        if (index >= 0) {
             return fractions[index].y;
         }
 
-        // we found the next bigger value
+
         index = -1 - index;
         if (index == fractions.length) {
             return fractions[fractions.length - 1].y;
@@ -150,18 +108,13 @@ public abstract class AbstractSplineInterpolator extends Interpolator {
         return getY(s);
     }
 
-    /**
-     * Evaluates the spline function at curve parameter time t.
-     */
+    
     protected abstract Float getXY(float t, Float p);
 
-    /**
-     * Evaluates the spline function at curve parameter time t.
-     */
+    
     protected abstract float getY(float t);
 
-    /** This method is empty. 
-     * Subclasses don't have to call super.update(fraction). */
+    
     @Override
     protected void update(float fraction) {
     }

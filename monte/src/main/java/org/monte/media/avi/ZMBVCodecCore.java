@@ -1,16 +1,7 @@
-/*
- * @(#)ZMBVCodecCore.java  1.0  2011-08-29
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.avi;
 
-//import com.jcraft.jzlib.InflaterInputStream;
+
 import java.util.zip.InflaterInputStream;
 import java.io.IOException;
 import org.monte.media.io.AppendableByteArrayInputStream;
@@ -20,109 +11,6 @@ import java.nio.ByteOrder;
 import javax.imageio.stream.ImageInputStream;
 import static java.lang.Math.*;
 
-/**
- * Implements the DosBox Capture Codec {@code "ZMBV"}.
- * 
- * <p>This is a codec added to the DosBox project to capture screen data 
- * (like Vmware VMNC).</p>
- * 
- * <p>This codec employs ZLIB compression and has intraframes and delta frames.
- * Delta frames seem to have blocks either copied from the previous frame or 
- * XOR'ed with some block from the previous frame.
- * <p>
- * The FourCC for this codec is ZMBV which ostensibly stands for Zip Motion 
- * Blocks Video. The data is most commonly stored in AVI files.
- * </p>
- * <p><b>Data Format</b></p>
- * <p>Byte 0 of a ZMBV data chunk contains the following flags:</p>
- * <pre>
- * bits 7-2  undefined
- * bit 1     palette change
- * bit 0     1 = intraframe, 0 = interframe
- * </pre>
- * 
- * <p>If the frame is an intra frame as indicated by bit 0 of byte 0, the next
- * 6 bytes in the data chunk are formatted as follows:</p>
- * <pre>
- * byte 1    major version
- * byte 2    minor version
- * byte 3    compression type (0 = uncompressed, 1 = zlib-compressed)
- * byte 4    video format
- * byte 5    block width
- * byte 6    block height
- * </pre>
- * <p>Presently, the only valid major/minor version pair is 0/1. A block width or
- * height of 0 is invalid. These are the video modes presently defined:</p>
- * <pre>
- * 0  none
- * 1  1 bit/pixel, palettized
- * 2  2 bits/pixel, palettized
- * 3  4 bits/pixel, palettized
- * 4  8 bits/pixel, palettized
- * 5  15 bits/pixel
- * 6  16 bits/pixel
- * 7  24 bits/pixel
- * 8  32 bits/pixel
- * </pre>
- * 
- * <p>Presently, only modes 4 (8 bpp), 5 (15 bpp), 6 (16 bpp) and 8 (32 bpp) are
- * supported.</p>
- * 
- * <p>If the compression type is 1, the remainder of the data chunk is compressed
- * using the standard zlib package. Decompress the data before proceeding with 
- * the next step. Otherwise, proceed to the next step. Also note that you must 
- * reset zlib for intraframes.</p>
- * 
- * <p>If bit 1 of the frame header (palette change) is set then the first 768 
- * bytes of the uncompressed data represent 256 red-green-blue palette triplets.
- * Each component is one byte and ranges from 0..255.</p>
- * 
- * <p>An intraframe consists of 768 bytes of palette data (for palettized modes)
- * and raw frame data.</p>
- * 
- * </p>An interframe is comprised of up to three parts:</p>
- * <ol>
- * <li>if palette change flag was set then first 768 bytes represent XOR'ed 
- * palette difference</li>
- * <li>block info (2 bytes per block, padded to 4 bytes length)</li>
- * <li>block differences</li>
- * </ol>
- * <p>Block info is composed from a motion vector and a flag: first byte is 
- * (dx &lt;&lt; 1) | flag, second byte is (dy &lt;&lt; 1). Motion vectors can go
- * out of bounds and in that case you need to zero the out-of-bounds part. 
- * Also note that currently motion vectors are limited to a range of (-16..16).
- * Flag tells whether the codec simply copies the block from the decoded offset
- * or copies it and XOR's it with data from block differences. All XORing for
- * 15/16 bpp and 32 bpp modes is done with little-endian integers.</p>
- * 
- * <p>Interframe decoding can be done this way:</p>
- * <pre>
- * for each block {
- *   a = block_info[current_block][0];
- *   b = block_info[current_block][1];
- *   dx = a &gt;&gt; 1;
- *   dy = b &gt;&gt; 1;
- *   flag = a & 1;
- *   copy block from offset (dx, dy) from previous frame.
- *   if (flag) {
- *     XOR block with data read from stream.
- *   }
- * }
- * </pre>
- * 
- * <p>References<br>
- * <a href="http://wiki.multimedia.cx/index.php?title=ZMBV"
- * >http://wiki.multimedia.cx/index.php?title=ZMBV</a>
- * </p>
- * 
- * <p>Note: We use the JZLib library for decoding compressed input streams,
- * because the {@code javax.zip.InflaterInputStream} sometimes fails to decode
- * the data.</p>
- * 
- * *
- * @author Werner Randelshofer
- * @version 1.0 2011-08-29 Created.
- */
 public class ZMBVCodecCore {
 
     public final static int VIDEOMODE_NONE = 0;
@@ -136,19 +24,6 @@ public class ZMBVCodecCore {
     public final static int VIDEOMODE_32_BIT_BGR = 8;
     public final static int COMPRESSION_NONE = 0;
     public final static int COMPRESSION_ZLIB = 1;
-    /**
-     * 
-     * @param inDat Input data.
-     * @param off Input data offset.
-     * @param length Input data length.
-     * @param outDat Output data. 32 bits per pixel: {palette index, red, green, blue}.
-     * @param prevDat Previous output data array. This is needed because the
-     * codec uses double buffering.  32 bits per pixel: {palette index, red, green, blue}.
-     * @param width Image width.
-     * @param height Image height.
-     * @param state Codec state.
-     * @return true if keyframe.
-     */
     private int majorVersion;
     private int minorVersion;
     private int compressionType;
@@ -160,9 +35,6 @@ public class ZMBVCodecCore {
     private byte[] blockDataBuf;
     private byte[] blockHeaderBuf;
 
-    /** Decodes to 32-bit RGB. 
-     * Returns true if a key-frame was decoded.
-     */
     public boolean decode(byte[] inDat, int off, int length, int[] outDat, int[] prevDat, int width, int height, boolean onlyDecodeIfKeyframe) {
         boolean isKeyframe = false;
         try {
@@ -177,7 +49,7 @@ public class ZMBVCodecCore {
             }
 
             if (isKeyframe) {
-                // => Key frame 
+                // => Key frame
                 //System.out.println("ZMBVCode Keyframe w,h=" + width + "," + height);
                 majorVersion = in.readUnsignedByte();
                 minorVersion = in.readUnsignedByte();
@@ -250,9 +122,6 @@ public class ZMBVCodecCore {
         return isKeyframe;
     }
 
-    /** Decodes to 8-bit palettised. 
-     * Returns true if a key-frame was decoded.
-     */
     public boolean decode(byte[] inDat, int off, int length, byte[] outDat, byte[] prevDat, int width, int height, boolean onlyDecodeIfKeyframe) {
         boolean isKeyframe = false;
         try {
@@ -267,7 +136,7 @@ public class ZMBVCodecCore {
             }
 
             if (isKeyframe) {
-                // => Key frame 
+                // => Key frame
                 //System.out.println("ZMBVCode Keyframe w,h=" + width + "," + height);
                 majorVersion = in.readUnsignedByte();
                 minorVersion = in.readUnsignedByte();
@@ -340,11 +209,6 @@ public class ZMBVCodecCore {
         return isKeyframe;
     }
 
-    /** Decodes to 8-bit, 15-bit, 16-bit or 32-bit RGB depending on input data. 
-     * Returns the number of decoded bits.
-     * Returns a negative number if keyframe.
-     * Returns 0 in case of failure.
-     */
     public int decode(byte[] inDat, int off, int length, Object[] outDatHolder, Object[] prevDatHolder, int width, int height, boolean onlyDecodeIfKeyframe) {
         boolean isKeyframe = false;
         int depth = 0;
@@ -360,7 +224,7 @@ public class ZMBVCodecCore {
             }
 
             if (isKeyframe) {
-                // => Key frame 
+                // => Key frame
                 //System.out.println("ZMBVCode Keyframe w,h=" + width + "," + height);
                 majorVersion = in.readUnsignedByte();
                 minorVersion = in.readUnsignedByte();
@@ -465,7 +329,7 @@ public class ZMBVCodecCore {
         boolean isKeyframe = (flags & 1) != 0;
         boolean isPaletteChange = (flags & 2) != 0;
 
-        // palette each entry contains a 32-bit entry constisting of: 
+        // palette each entry contains a 32-bit entry constisting of:
         // {palette index, red, green, blue}.
         if (palette == null) {
             palette = new int[256];
@@ -478,9 +342,9 @@ public class ZMBVCodecCore {
 
         byte[] buf = blockDataBuf;
         if (isKeyframe) {
-            // => Key frame. 
+            // => Key frame.
 
-            // Read palette 
+            // Read palette
             for (int i = 0; i < 256; i++) {
                 in.readFully(buf, 0, 3);
                 palette[i] = ((buf[2] & 0xff)) | ((buf[1] & 0xff) << 8) | ((buf[0] & 0xff) << 16) | (i << 24);
@@ -492,7 +356,7 @@ public class ZMBVCodecCore {
             }
 
         } else {
-            // => Delta frame. 
+            // => Delta frame.
 
             // Optionally update palette
             if (isPaletteChange) {
@@ -576,7 +440,7 @@ public class ZMBVCodecCore {
         boolean isKeyframe = (flags & 1) != 0;
         boolean isPaletteChange = (flags & 2) != 0;
 
-        // palette each entry contains a 32-bit entry constisting of: 
+        // palette each entry contains a 32-bit entry constisting of:
         // {palette index, red, green, blue}.
         if (palette == null) {
             palette = new int[256];
@@ -589,9 +453,9 @@ public class ZMBVCodecCore {
 
         byte[] buf = blockDataBuf;
         if (isKeyframe) {
-            // => Key frame. 
+            // => Key frame.
 
-            // Read palette 
+            // Read palette
             for (int i = 0; i < 256; i++) {
                 in.readFully(buf, 0, 3);
                 palette[i] = ((buf[2] & 0xff)) | ((buf[1] & 0xff) << 8) | ((buf[0] & 0xff) << 16) | (i << 24);
@@ -603,7 +467,7 @@ public class ZMBVCodecCore {
             }
 
         } else {
-            // => Delta frame. 
+            // => Delta frame.
 
             // Optionally update palette
             if (isPaletteChange) {
@@ -693,7 +557,7 @@ public class ZMBVCodecCore {
 
         byte[] buf = blockDataBuf;
         if (isKeyframe) {
-            // => Key frame. 
+            // => Key frame.
 
             // Process raw pixels
             for (int i = 0, n = width * height; i < n; i++) {
@@ -705,7 +569,7 @@ public class ZMBVCodecCore {
             }
 
         } else {
-            // => Delta frame. 
+            // => Delta frame.
 
             // Read block headers
             int nbx = (width + blockWidth - 1) / blockWidth;
@@ -790,7 +654,7 @@ public class ZMBVCodecCore {
 
         byte[] buf = blockDataBuf;
         if (isKeyframe) {
-            // => Key frame. 
+            // => Key frame.
 
             // Process raw pixels
             for (int i = 0, n = width * height; i < n; i++) {
@@ -799,7 +663,7 @@ public class ZMBVCodecCore {
             }
 
         } else {
-            // => Delta frame. 
+            // => Delta frame.
 
             // Read block headers
             int nbx = (width + blockWidth - 1) / blockWidth;
@@ -880,7 +744,7 @@ public class ZMBVCodecCore {
 
         byte[] buf = blockDataBuf;
         if (isKeyframe) {
-            // => Key frame. 
+            // => Key frame.
 
             // Process raw pixels
             for (int i = 0, n = width * height; i < n; i++) {
@@ -892,7 +756,7 @@ public class ZMBVCodecCore {
             }
 
         } else {
-            // => Delta frame. 
+            // => Delta frame.
 
             // Read block headers
             int nbx = (width + blockWidth - 1) / blockWidth;
@@ -972,7 +836,7 @@ public class ZMBVCodecCore {
 
         byte[] buf = blockDataBuf;
         if (isKeyframe) {
-            // => Key frame. 
+            // => Key frame.
 
             // Process raw pixels
             for (int i = 0, n = width * height; i < n; i++) {
@@ -981,7 +845,7 @@ public class ZMBVCodecCore {
             }
 
         } else {
-            // => Delta frame. 
+            // => Delta frame.
 
             // Read block headers
             int nbx = (width + blockWidth - 1) / blockWidth;
@@ -1057,7 +921,7 @@ public class ZMBVCodecCore {
 
         byte[] buf = blockDataBuf;
         if (isKeyframe) {
-            // => Key frame. 
+            // => Key frame.
 
             // Process raw pixels
             for (int i = 0, n = width * height; i < n; i++) {
@@ -1070,7 +934,7 @@ public class ZMBVCodecCore {
             }
 
         } else {
-            // => Delta frame. 
+            // => Delta frame.
 
             // Read block headers
             int nbx = (width + blockWidth - 1) / blockWidth;

@@ -1,13 +1,4 @@
-/*
- * @(#)ColorAdjustCodec.java  1.0  2012-01-16
- * 
- * Copyright (c) 2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.converter;
 
 import org.monte.media.BezierInterpolator;
@@ -23,12 +14,7 @@ import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 import static java.lang.Math.*;
 
-/**
- * Adjusts the colors of a buffered image.
- *
- * @author Werner Randelshofer
- * @version 1.0 2012-01-16 Created.
- */
+
 public class ColorAdjustCodec extends AbstractVideoCodec {
 
     private ColorAdjustModel model = new DefaultColorAdjustModel();
@@ -36,12 +22,12 @@ public class ColorAdjustCodec extends AbstractVideoCodec {
     public ColorAdjustCodec() {
         super(new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
                 },
                 new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
-                }//
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
+                }
                 );
         name = "Adjust Color";
     }
@@ -70,8 +56,8 @@ public class ColorAdjustCodec extends AbstractVideoCodec {
         BufferedImage imgOut = null;
         if (out.data instanceof BufferedImage) {
             imgOut = (BufferedImage) out.data;
-            if (imgOut.getWidth() != imgIn.getWidth()//
-                    || imgOut.getHeight() != imgIn.getHeight()//
+            if (imgOut.getWidth() != imgIn.getWidth()
+                    || imgOut.getHeight() != imgIn.getHeight()
                     || imgOut.getType()!=BufferedImage.TYPE_INT_RGB) {
                 imgOut = null;
             }
@@ -99,28 +85,28 @@ public class ColorAdjustCodec extends AbstractVideoCodec {
         if (TT) {
             cbShift = (-model.getTemperature() - model.getTint()) * invsqrt2;
             crShift = (model.getTemperature() - model.getTint()) * invsqrt2;
-//System.out.println("ColorAdjustCodec tmp,tnt="+model.getTemperature()+","+model.getTint());            
-//System.out.println("ColorAdjustCodec cb,cr="+cbShift+","+crShift);            
+
+
         } else {
             cbShift = crShift = 0;
         }
 
         SplineInterpolator sint;
-        sint = new SplineInterpolator(0.5f - model.getShadows() * 0.5f, 0.5f,//
+        sint = new SplineInterpolator(0.5f - model.getShadows() * 0.5f, 0.5f,
                 0.5f + model.getHighlights() * 0.5f, 0.5f);
 
         BezierInterpolator hilightsAndShadows;
         if (model.getShadows() == 0 && model.getHighlights() == 0) {
             hilightsAndShadows = null;
         } else {
-            hilightsAndShadows = new BezierInterpolator(new double[][]{//
-                        {0, 0},//
-                        {0.5f - model.getShadows() * 0.5f,//
-                            0.5f},//
+            hilightsAndShadows = new BezierInterpolator(new double[][]{
+                        {0, 0},
+                        {0.5f - model.getShadows() * 0.5f,
+                            0.5f},
                         {0.5, 0.5},
-                        {0.5f + model.getHighlights() * 0.5f,//
-                            0.5f}, //
-                        {1, 1}//
+                        {0.5f + model.getHighlights() * 0.5f,
+                            0.5f},
+                        {1, 1}
                     });
         }
         float brightness = model.getBrightness();
@@ -138,9 +124,7 @@ public class ColorAdjustCodec extends AbstractVideoCodec {
         float rnu = wbqm[1];
         float bmu = wbqm[2];
         float bnu = wbqm[3];
-        /*if (QM) {
-            System.out.println("ColorAdjustCodec mur=" + rmu + " nur=" + rnu + " mub=" + bmu + " nub=" + bnu);
-        }*/
+
 
         for (int i = 0; i < rgbIn.length; i++) {
             int p = rgbIn[i];
@@ -149,13 +133,13 @@ public class ColorAdjustCodec extends AbstractVideoCodec {
             rgb[2] = (p & 0xff);
 
             if (QM) {
-                // Note: QM operates on rgb values in the range [0,255]
+
                 float r = rgb[0], b = rgb[2];
                 rgb[0] = r * r * rmu + r * rnu;
                 rgb[2] = b * b * bmu + b * bnu;
             }
-            
-            // From now on, we work with values in the range [0,1].
+
+
             rgb[0] *= 1f / 255f;
             rgb[1] *= 1f / 255f;
             rgb[2] *= 1f / 255f;

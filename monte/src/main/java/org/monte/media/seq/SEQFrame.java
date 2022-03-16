@@ -1,25 +1,11 @@
-/*
- * @(#)SEQFrame.java  1.0  2010-12-25
- *
- * Copyright (c) 2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.seq;
 
 import java.awt.image.ColorModel;
 import java.util.*;
 import org.monte.media.image.BitmapImage;
 
-/**
- * Represents a frame in a movie track.
- *
- * @author  Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version 1.0 2010-12-25 Created.
- */
+
 public abstract class SEQFrame {
     protected ColorModel colorModel;
     protected byte[] data;
@@ -29,7 +15,7 @@ public abstract class SEQFrame {
     private int interleave;
     private int bits;
     protected final static int
-    // common BITs
+
     BadBitsOP_GeneralDelta = 0xffc0,
     BIT_LongData = 1,
     BIT_XOR = 2,
@@ -37,17 +23,13 @@ public abstract class SEQFrame {
     BIT_RLC = 8,
     BIT_Vertical = 16,
     BIT_LongInfoOffsets = 32,
-    // BITs for Vertical Delta 5 Kompression
+
     BadBitsOP_ByteVertical = 0xfff7;
     
-    /**
-     * Holds an array of audio commands associated with this ANM frame.
-     */
+    
     private SEQAudioCommand[] audioCommands;
     
-    /**
-     * Adds an audio command to this anim frame.
-     */
+    
     public void addAudioCommand(SEQAudioCommand command) {
         if (audioCommands == null) {
             audioCommands = new SEQAudioCommand[1];
@@ -59,17 +41,12 @@ public abstract class SEQFrame {
         audioCommands[audioCommands.length - 1] = command;
     }
     
-    /**
-     * Returns audio commands associated with this frame.
-     * Returns null if there are no audio commands available for this frame.
-     */
+    
     public SEQAudioCommand[] getAudioCommands() {
         return audioCommands;
     }
     
-    /**
-     * Removes duplicate audio commands.
-     */
+    
     public void cleanUpAudioCommands() {
         if (audioCommands != null && audioCommands.length > 1) {
         int i, j;
@@ -82,7 +59,7 @@ public abstract class SEQFrame {
                 }
             }
             if (j == i) v.addElement(audioCommands[i]);
-            //else System.out.println("AudioCommand eliminiert "+audioCommands[i].getSound());
+
         }
         audioCommands = new SEQAudioCommand[v.size()];
         v.copyInto(audioCommands);
@@ -97,11 +74,11 @@ public abstract class SEQFrame {
     
     public void setOperation(int operation) { this.operation = operation; }
     public void setStorageMethod(int storageMethod) { this.storageMethod = storageMethod; }
-    public void setWidth(int w) { /*w_ = w;*/ }
-    public void setHeight(int h) { /*h_ = h;*/ }
-    public void setX(int x) { /*x_ = x;*/ }
-    public void setY(int y) { /*y_ = y;*/ }
-    public void setAbsTime(long abstime) { /*abstime_ = abstime;*/ }
+    public void setWidth(int w) {  }
+    public void setHeight(int h) {  }
+    public void setX(int x) {  }
+    public void setY(int y) {  }
+    public void setAbsTime(long abstime) {  }
     public void setRelTime(long reltime) { this.reltime = reltime; }
     public void setInterleave(int interleave) { this.interleave = interleave; }
     public void setBits(int bits) { this.bits = bits; }
@@ -109,8 +86,8 @@ public abstract class SEQFrame {
     public int getOperation() { return this.operation; }
     public int getStorageMethod() { return this.storageMethod; }
     public int getBits() { return this.bits; }
-    //  public int getWidth() { /*return w_;*/ }
-    //  public int getHeight() { /*return h_;*/ }
+
+
     public long getRelTime() { return this.reltime; }
     public int getInterleave() { return this.interleave; }
     
@@ -121,12 +98,6 @@ public abstract class SEQFrame {
     public int getLeftBound(SEQMovieTrack track) { return 0; }
     public int getRightBound(SEQMovieTrack track) { return track.getWidth()-1; }
     
-    /** Returns true if the frame can be decoded over both the previous frame
-     * or the subsequent frame. Bidirectional frames can be used efficiently
-     * for forward and backward playing a movie.
-     * <p>
-     * All key frames are bidirectional. Delta frames which use an XOR OP-mode
-     * are bidirectional as well.
-     */
+    
     public boolean isBidirectional() {return true;}
 }

@@ -1,13 +1,4 @@
-/*
- * @(#)ColorCyclingMemoryImageSource.java  1.1  2010-08-03
- *
- * Copyright (c) 2009-2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.ilbm;
 
 import java.awt.Point;
@@ -30,15 +21,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import javax.swing.Timer;
 
-/**
- * ColorCyclingMemoryImageSource.
- *
- * @author Werner Randelshofer
- * @version 1.1 2010-08-03 Added method putProperties. Added support for
- * blended color cycles.
- * <br>1.0.1 2010-11-08 Fixed color cycling rate.
- * <br>1.0 2009-12-17 Created.
- */
+
 public class ColorCyclingMemoryImageSource extends MemoryImageSource {
 
     private int width;
@@ -51,48 +34,22 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
     private ArrayList<ColorCycle> colorCycles = new ArrayList<ColorCycle>();
     private Timer timer;
     private HashSet<ImageConsumer> consumers = new HashSet<ImageConsumer>();
-    /** Whether color cycling is available. */
+
     private boolean isColorCyclingAvailable;
-    /** Whether color cycling is started. */
+
     private boolean isStarted;
-    /** Whether color cycles are blended. */
+
     private boolean isBlendedColorCycling;
     private volatile ColorModel cycledModel;
 
-    /**
-     * Constructs an ImageProducer object which uses an array of bytes
-     * to produce data for an Image object.
-     * @param w the width of the rectangle of pixels
-     * @param h the height of the rectangle of pixels
-     * @param cm the specified <code>ColorModel</code>
-     * @param pix an array of pixels
-     * @param off the offset into the array of where to store the
-     *        first pixel
-     * @param scan the distance from one row of pixels to the next in
-     *        the array
-     * @see java.awt.Component#createImage
-     */
+
     public ColorCyclingMemoryImageSource(int w, int h, ColorModel cm,
             byte[] pix, int off, int scan) {
         super(w, h, cm, pix, off, scan);
         initialize(w, h, cm, (Object) pix, off, scan, new Hashtable());
     }
 
-    /**
-     * Constructs an ImageProducer object which uses an array of bytes
-     * to produce data for an Image object.
-     * @param w the width of the rectangle of pixels
-     * @param h the height of the rectangle of pixels
-     * @param cm the specified <code>ColorModel</code>
-     * @param pix an array of pixels
-     * @param off the offset into the array of where to store the
-     *        first pixel
-     * @param scan the distance from one row of pixels to the next in
-     *        the array
-     * @param props a list of properties that the <code>ImageProducer</code>
-     *        uses to process an image
-     * @see java.awt.Component#createImage
-     */
+
     public ColorCyclingMemoryImageSource(int w, int h, ColorModel cm,
             byte[] pix, int off, int scan,
             Hashtable<?, ?> props) {
@@ -100,40 +57,14 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
         initialize(w, h, cm, (Object) pix, off, scan, props);
     }
 
-    /**
-     * Constructs an ImageProducer object which uses an array of integers
-     * to produce data for an Image object.
-     * @param w the width of the rectangle of pixels
-     * @param h the height of the rectangle of pixels
-     * @param cm the specified <code>ColorModel</code>
-     * @param pix an array of pixels
-     * @param off the offset into the array of where to store the
-     *        first pixel
-     * @param scan the distance from one row of pixels to the next in
-     *        the array
-     * @see java.awt.Component#createImage
-     */
+
     public ColorCyclingMemoryImageSource(int w, int h, ColorModel cm,
             int[] pix, int off, int scan) {
         super(w, h, cm, pix, off, scan);
         initialize(w, h, cm, (Object) pix, off, scan, null);
     }
 
-    /**
-     * Constructs an ImageProducer object which uses an array of integers
-     * to produce data for an Image object.
-     * @param w the width of the rectangle of pixels
-     * @param h the height of the rectangle of pixels
-     * @param cm the specified <code>ColorModel</code>
-     * @param pix an array of pixels
-     * @param off the offset into the array of where to store the
-     *        first pixel
-     * @param scan the distance from one row of pixels to the next in
-     *        the array
-     * @param props a list of properties that the <code>ImageProducer</code>
-     *        uses to process an image
-     * @see java.awt.Component#createImage
-     */
+
     public ColorCyclingMemoryImageSource(int w, int h, ColorModel cm,
             int[] pix, int off, int scan,
             Hashtable<?, ?> props) {
@@ -181,20 +112,7 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
         super.newPixels(newpix, cycledModel == null ? newmodel : cycledModel, offset, scansize);
     }
 
-    /**
-     * Changes to a new int array to hold the pixels for this image.
-     * If the animation flag has been turned on through the setAnimated()
-     * method, then the new pixels will be immediately delivered to any
-     * ImageConsumers that are currently interested in the data for
-     * this image.
-     * @param newpix the new pixel array
-     * @param newmodel the specified <code>ColorModel</code>
-     * @param offset the offset into the array
-     * @param scansize the distance from one row of pixels to the next in
-     * the array
-     * @see #newPixels(int, int, int, int, boolean)
-     * @see #setAnimated
-     */
+
     @Override
     public synchronized void newPixels(int[] newpix, ColorModel newmodel,
             int offset, int scansize) {
@@ -239,7 +157,7 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
         }
     }
 
-    /** Starts or stops color cycling. */
+
     public void setColorCyclingStarted(boolean b) {
         isStarted = b;
         if (isColorCyclingAvailable && !consumers.isEmpty() && isStarted) {
@@ -249,17 +167,17 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
         }
     }
 
-    /** Returns true if color cycling is on. */
+
     public boolean isColorCyclingStarted() {
         return isStarted;
     }
 
-    /** Starts color cycling. */
+
     public void start() {
         setColorCyclingStarted(true);
     }
 
-    /** Stops color cycling. */
+
     public void stop() {
         setColorCyclingStarted(false);
     }
@@ -277,27 +195,27 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
             final int[] rgbs = new int[icm.getMapSize()];
             icm.getRGBs(rgbs);
 
-            // Calculate the timer delay
+
             int delay = 1000;
             int i = 0;
             if (isBlendedColorCycling) {
                 for (ColorCycle cc : colorCycles) {
                     if (cc.isActive()) {
-                        // Note: we divide 1000 by 4
-                        // 2 for Nyquist Theorem (double sample rate)
-                        // 2 for blending
+
+
+
                         int ccDelay = 1000 / 4 * cc.getTimeScale() / cc.getRate();
                         if (ccDelay < delay) {
                             delay = Math.max(1, ccDelay);
                         }
                     }
                 }
-                delay = Math.max(delay, 1000 / 60); // throttle at 60 fps
+                delay = Math.max(delay, 1000 / 60);
             } else {
                 for (ColorCycle cc : colorCycles) {
                     if (cc.isActive()) {
-                        // Note: we divide 1000 by 2 (=double sampling rate)
-                        // because of Nyquist theorem
+
+
                         int ccDelay = 1000 / 2 * cc.getTimeScale() / cc.getRate();
                         if (ccDelay < delay) {
                             delay = Math.max(1, ccDelay);
@@ -319,14 +237,14 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
                     for (ColorCycle cc : colorCycles) {
                         cc.doCycle(cycled, now - startTime);
                     }
-                    // We only fire new pixels, if the cycles have changed
+
                     if (!Arrays.equals(previousCycled, cycled)) {
-                        ColorCyclingMemoryImageSource.super.newPixels((byte[]) pixels, //
+                        ColorCyclingMemoryImageSource.super.newPixels((byte[]) pixels,
                                 cycledModel = new IndexColorModel(8, cycled.length, cycled, 0, false, -1, DataBuffer.TYPE_BYTE),
                                 pixeloffset,
                                 pixelscan);
                     }
-                    // swap cycled colors
+
                     int[] tmp = previousCycled;
                     previousCycled = cycled;
                     cycled = tmp;
@@ -342,8 +260,8 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
             timer.stop();
             timer = null;
             cycledModel = null;
-            // Reset colors to their initial state
-            ColorCyclingMemoryImageSource.super.newPixels((byte[]) pixels, //
+
+            ColorCyclingMemoryImageSource.super.newPixels((byte[]) pixels,
                     model,
                     pixeloffset,
                     pixelscan);
@@ -351,10 +269,10 @@ public class ColorCyclingMemoryImageSource extends MemoryImageSource {
 
     }
 
-    /** Creates a BufferedImage which shares its pixel data with this memory image source. */
+
     public BufferedImage toBufferedImage() {
-        DataBuffer buf = (pixels instanceof byte[]) ?//
-                new DataBufferByte((byte[]) pixels, pixelscan * height, pixeloffset) ://
+        DataBuffer buf = (pixels instanceof byte[]) ?
+                new DataBufferByte((byte[]) pixels, pixelscan * height, pixeloffset) :
                 new DataBufferInt((int[]) pixels, pixelscan * height, pixeloffset);
         SampleModel sm = model.createCompatibleSampleModel(width, height);
         WritableRaster raster = Raster.createWritableRaster(sm, buf, new Point());

@@ -1,13 +1,4 @@
-/*
- * @(#)QuickTimeInputStream.java  
- * 
- * Copyright (c) 2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.quicktime;
 
 import java.io.ByteArrayInputStream;
@@ -24,18 +15,10 @@ import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 import org.monte.media.io.ImageInputStreamAdapter;
 
-/**
- * Provides low-level support for reading encoded audio and video samples from a
- * QuickTime file.
- *
- * @author Werner Randelshofer
- * @version $Id: QuickTimeInputStream.java 307 2013-01-06 11:06:05Z werner $
- */
+
 public class QuickTimeInputStream extends AbstractQuickTimeStream {
 
-    /**
-     * Same as DataAtom in super class, but used for reading the meta data.
-     */
+
     private class InputAtom extends Atom {
 
         private byte[] data;
@@ -47,7 +30,7 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
 
         @Override
         public void finish() throws IOException {
-            //empty
+
         }
 
         @Override
@@ -55,14 +38,9 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
             return data.length;
         }
     }
-    /**
-     * The image input stream.
-     */
+
     protected final ImageInputStream in;
-    /**
-     * This variable is set to true when all meta-data has been read from the
-     * file.
-     */
+
     private boolean isRealized = false;
     static final HashSet<String> compositeAtoms;
 
@@ -73,7 +51,7 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         compositeAtoms.add("gmhd");
         compositeAtoms.add("trak");
         compositeAtoms.add("tref");
-        compositeAtoms.add("meta"); // sometimes has a special 4 byte header before its contents
+        compositeAtoms.add("meta");
         compositeAtoms.add("ilst");
         compositeAtoms.add("mdia");
         compositeAtoms.add("minf");
@@ -89,11 +67,7 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         compositeAtoms.add("mvex");
     }
 
-    /**
-     * Creates a new instance.
-     *
-     * @param file the input file
-     */
+
     public QuickTimeInputStream(File file) throws IOException {
 
         this.in = new FileImageInputStream(file);
@@ -101,11 +75,7 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         this.streamOffset = 0;
     }
 
-    /**
-     * Creates a new instance.
-     *
-     * @param in the input stream.
-     */
+
     public QuickTimeInputStream(ImageInputStream in) throws IOException {
         this.in = in;
         this.streamOffset = in.getStreamPosition();
@@ -126,130 +96,85 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         return duration;
     }
 
-    /**
-     * Gets the creation time of the movie.
-     */
+
     public Date getCreationTime() throws IOException {
         ensureRealized();
         return creationTime;
     }
 
-    /**
-     * Gets the modification time of the movie.
-     */
+
     public Date getModificationTime() throws IOException {
         ensureRealized();
         return modificationTime;
     }
 
-    /**
-     * Gets the preferred rate at which to play this movie. A value of 1.0
-     * indicates normal rate.
-     */
+
     public double getPreferredRate() throws IOException {
         ensureRealized();
         return preferredRate;
     }
 
-    /**
-     * Gets the preferred volume of this movie’s sound. A value of 1.0 indicates
-     * full volume.
-     */
+
     public double getPreferredVolume() throws IOException {
         ensureRealized();
         return preferredVolume;
     }
 
-    /**
-     * Gets the time value for current time position within the movie.
-     */
+
     public long getCurrentTime() throws IOException {
         ensureRealized();
         return currentTime;
     }
 
-    /**
-     * Gets the time value of the time of the movie poster.
-     */
+
     public long getPosterTime() throws IOException {
         ensureRealized();
         return posterTime;
     }
 
-    /**
-     * Gets the duration of the movie preview in movie time scale units.
-     */
+
     public long getPreviewDuration() throws IOException {
         ensureRealized();
         return previewDuration;
     }
 
-    /**
-     * Gets the time value in the movie at which the preview begins.
-     */
+
     public long getPreviewTime() throws IOException {
         ensureRealized();
         return previewTime;
     }
 
-    /**
-     * Gets the transformation matrix of the entire movie.
-     *
-     * @return The transformation matrix.
-     */
+
     public double[] getMovieTransformationMatrix() throws IOException {
         ensureRealized();
         return movieMatrix.clone();
     }
 
-    /**
-     * Returns the time scale of the movie. <p> The movie time scale is used for
-     * editing tracks. Such as for specifying the start time of a track.
-     *
-     * @return time scale
-     */
+
     public long getMovieTimeScale() throws IOException {
         ensureRealized();
         return movieTimeScale;
     }
 
-    /**
-     * Returns the time scale of the media in a track. <p> The media time scale
-     * is used for specifying the duration of samples in a track.
-     *
-     * @param track Track index.
-     * @return time scale
-     */
+
     public long getMediaTimeScale(int track) throws IOException {
         ensureRealized();
         return tracks.get(track).mediaTimeScale;
     }
 
-    /**
-     * Returns the media duration of a track in the media's time scale.
-     *
-     * @param track Track index.
-     * @return media duration
-     */
+
     public long getMediaDuration(int track) throws IOException {
         ensureRealized();
         return tracks.get(track).mediaDuration;
     }
 
-    /**
-     * Gets the transformation matrix of the specified track.
-     *
-     * @param track The track number.
-     * @return The transformation matrix.
-     */
+
     public double[] getTransformationMatrix(int track) throws IOException {
         ensureRealized();
         return tracks.get(track).matrix.clone();
     }
 
-    /**
-     * Ensures that all meta-data has been read from the file.
-     */
+
     protected void ensureRealized() throws IOException {
         if (!isRealized) {
             isRealized = true;
@@ -276,40 +201,40 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
             long size = in.readInt() & 0xffffffffL;
             int headerSize = 8;
             if (size == 0) {
-                // A zero len indicates that the size is the remainder of
-                // the parent atom.
+
+
                 size = remainingSize;
 
-                // skip 4 bytes after zero size.
+
                 if (headerSize + 4 <= remainingSize) {
                     in.skipBytes(4);
                     headerSize += 4;
                 }
 
             } else if (size == 1) {
-                // A size of 1 indicates a 64 bit size field
+
                 headerSize = 16;
                 size = in.readLong();
             }
             String type;
             long atomSize = size;
             if (size > remainingSize) {
-                //System.out.println("QuickTimeStructView truncating size: " + size + " to:" + (remainingSize));
+
                 size = remainingSize;
             }
 
             if (size - headerSize >= 0) {
                 type = intToType(in.readInt());
-                //System.out.println("QuickTimeStructView " + type + " size:" + size + " remaining:" + remainingSize);
+
             } else {
                 type = "";
             }
             remainingSize -= size;
 
-            // "stsd" atoms have a special structure if one of their parent
-            // atoms contains a "vmhd" or a "smhd" child atom.
+
+
             if (type.equals("stsd")) {
-                // handle stsd chunk
+
             }
 
             if (compositeAtoms.contains(type) && size - headerSize >= 8) {
@@ -335,7 +260,7 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
                     }
                 } else {
                     if (size < headerSize) {
-                        // Pad atom?
+
                         data = new byte[0];
                     } else {
                         data = new byte[(int) (size - headerSize)];
@@ -346,8 +271,8 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
                 atoms.put(path == null ? type : path + "." + type, atom);
 
                 if (type.equals("cmvd")) {
-                    // => We have found a compressed movie header.
-                    //    Decompress it and start over.
+
+
                     try {
                         InputStream in2 = new InflaterInputStream(new ByteArrayInputStream(data, 4, data.length - 4));
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -367,8 +292,8 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
                         e.printStackTrace();
                     }
                 } else if (type.equals("mvhd")) {
-                    // => We have found an uncompressed movie header.
-                    //    Parse it.
+
+
                     parseMovieHeader(data);
                 }
             }
@@ -380,56 +305,22 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         in.close();
     }
 
-    /**
-     * Parses the mvhd atom.
-     */
+
     private void parseMovieHeader(byte[] data) throws IOException {
-        /* Movie Header Atom -------------
-         * The data contained in this atom defines characteristics of the entire
-         * QuickTime movie, such as time scale and duration. It has an atom type
-         * value of 'mvhd'.
-         *
-         * typedef struct {
-         byte version;
-         byte[3] flags;
-         mactimestamp creationTime;
-         mactimestamp modificationTime;
-         int timeScale;
-         int duration;
-         fixed16d16 preferredRate;
-         fixed8d8 preferredVolume;
-         byte[10] reserved;
-         fixed16d16 matrixA;
-         fixed16d16 matrixB;
-         fixed2d30 matrixU;
-         fixed16d16 matrixC;
-         fixed16d16 matrixD;
-         fixed2d30 matrixV;
-         fixed16d16 matrixX;
-         fixed16d16 matrixY;
-         fixed2d30 matrixW;
-         int previewTime;
-         int previewDuration;
-         int posterTime;
-         int selectionTime;
-         int selectionDuration;
-         int currentTime;
-         int nextTrackId;
-         } movieHeaderAtom; 
-         */
+
         DataAtomInputStream i = new DataAtomInputStream(new ByteArrayInputStream(data));
         int version = i.readByte();
-        i.skipBytes(3);// flags
+        i.skipBytes(3);
         creationTime = i.readMacTimestamp();
         modificationTime = i.readMacTimestamp();
         movieTimeScale = i.readUInt();
         long movieDuration = i.readUInt();
         preferredRate = i.readFixed16D16();
         preferredVolume = i.readFixed8D8();
-        i.skipBytes(10);//reserved
-        // {a, b, u,
-        //  c, d, v,
-        //  tx,ty,w} // X- and Y-Translation
+        i.skipBytes(10);
+
+
+
         movieMatrix[0] = i.readFixed16D16();
         movieMatrix[1] = i.readFixed16D16();
         movieMatrix[2] = i.readFixed2D30();
@@ -448,9 +339,7 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         long nextTrackId = i.readUInt();
     }
 
-    /**
-     * Parses track atoms.
-     */
+
     private void parseTrack(HashMap<String, InputAtom> atoms) throws IOException {
         for (String p : atoms.keySet()) {
             System.out.println("QuickTimeInputStream " + p);
@@ -490,53 +379,14 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
     private void parseAudioTrack(AudioTrack t, HashMap<String, InputAtom> atoms) throws IOException {
     }
 
-    /**
-     * Parses a tkhd atom.
-     */
+
     private void parseTkhd(Track t, byte[] data) throws IOException {
-        /*
-         // Enumeration for track header flags
-         set {
-         TrackEnable = 0x1, // enabled track
-         TrackInMovie = 0x2, // track in playback
-         TrackInPreview = 0x4, // track in preview
-         TrackInPoster = 0x8 // track in poster
-         } TrackHeaderFlags;
-        
-        
-         typedef struct {
-         byte version;
-         byte flag0;
-         byte flag1;
-         byte set TrackHeaderFlags flag2;
-         mactimestamp creationTime;
-         mactimestamp modificationTime;
-         int trackId;
-         byte[4] reserved;
-         int duration;
-         byte[8] reserved;
-         short layer;
-         short alternateGroup;
-         fixed8d8 volume;
-         byte[2] reserved;
-         fixed16d16 matrixA;
-         fixed16d16 matrixB;
-         fixed2d30 matrixU;
-         fixed16d16 matrixC;
-         fixed16d16 matrixD;
-         fixed2d30 matrixV;
-         fixed16d16 matrixX;
-         fixed16d16 matrixY;
-         fixed2d30 matrixW;
-         fixed16d16 trackWidth;
-         fixed16d16 trackHeight;
-         } trackHeaderAtom;
-         */
+
         DataAtomInputStream dain = new DataAtomInputStream(new ByteArrayInputStream(data));
 
         int version = dain.readByte();
         dain.skipBytes(2);
-        // FIXME - trackHeaderFlag should be a parsed
+
         int trackHeaderFlags = dain.readUByte();
         Date creationTime = dain.readMacTimestamp();
         Date modificationTime = dain.readMacTimestamp();
@@ -549,9 +399,9 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         double volume = dain.readFixed8D8();
         dain.skipBytes(2);
 
-        // {a, b, u,
-        //  c, d, v,
-        //  tx,ty,w} // X- and Y-Translation
+
+
+
         t.matrix[0] = dain.readFixed16D16();
         t.matrix[1] = dain.readFixed16D16();
         t.matrix[2] = dain.readFixed2D30();
@@ -566,23 +416,9 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         t.height = dain.readFixed16D16();
     }
 
-    /**
-     * Parses a hdlr atom.
-     */
+
     private HashMap<String, Object> parseHdlr(byte[] data) throws IOException {
-        /*
-         typedef struct {
-         byte version;
-         byte[3] flags;
-         magic componentType;
-         magic componentSubtype;
-         magic componentManufacturer;
-         int componentFlags;
-         int componentFlagsMask;
-         pstring componentName;
-         ubyte[] extraData;
-         } handlerReferenceAtom;
-         */
+
         DataAtomInputStream i = new DataAtomInputStream(new ByteArrayInputStream(data));
 
         int version = i.readByte();
@@ -599,26 +435,11 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         return m;
     }
 
-    /**
-     * Parses an edts atom.
-     */
+
     private void parseEdts(Track t, byte[] data) throws IOException {
 
-        /* Edit List atom ------- */
-        /*
-         typedef struct {
-         byte version;
-         byte[3] flags;
-         int numberOfEntries;
-         editListTable editListTable[numberOfEntries];
-         } editListAtom;
-            
-         typedef struct {
-         int trackDuration;
-         int mediaTime;
-         fixed16d16 mediaRate;
-         } editListTable;
-         */
+
+
         DataAtomInputStream dain = new DataAtomInputStream(new ByteArrayInputStream(data));
 
         int version = dain.readByte();
@@ -631,21 +452,9 @@ public class QuickTimeInputStream extends AbstractQuickTimeStream {
         }
     }
 
-    /**
-     * Parses a mdhd atom.
-     */
+
     private void parseMdhd(Track t, byte[] data) throws IOException {
-        /* Media Header atom -------
-         typedef struct {
-         byte version;
-         byte[3] flags;
-         mactimestamp creationTime;
-         mactimestamp modificationTime;
-         int timeScale;
-         int duration;
-         short language;
-         short quality;
-         } mediaHeaderAtom;*/
+
 
         DataAtomInputStream dain = new DataAtomInputStream(new ByteArrayInputStream(data));
 

@@ -1,13 +1,4 @@
-/*
- * @(#)JTimelineEditor.java  1.0  2011-09-01
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.gui;
 
 import org.monte.media.Movie;
@@ -41,23 +32,11 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.SwingUtilities;
 import static java.lang.Math.*;
 
-/**
- * JTimelineEditor visualizes the movie timeline, an insertion point and
- * the start and end position of a movie clip.
- * <p>
- * The insertion point (playhead) also shows the current time of the movie.
- * <p>
- * If a movie has n time steps, then there are n+1 insertion points.
- * 
- * @author Werner Randelshofer
- * @version 1.0 2011-09-01 Created.
- */
+
 public class JTimelineEditor extends javax.swing.JPanel {
 
     private Movie movie;
-    /** Track number of the time-base track. Specify -1 for disabling the time
-     * track. 
-     */
+    
     private int timeTrack = 0;
     private Insets trackInsets = new Insets(6, 10, 6, 10);
     private Dimension inSize = new Dimension(9, 6);
@@ -76,7 +55,7 @@ public class JTimelineEditor extends javax.swing.JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            // do nothing?
+
         }
 
         @Override
@@ -101,7 +80,7 @@ public class JTimelineEditor extends javax.swing.JPanel {
                 int y = e.getY();
                 Rational time;
                 if (phBounds.contains(e.getX(), phBounds.y)) {
-                    // click occured in vertical area belonging to playhead => snap to playhead
+
                     time = movie.getInsertionPoint();
                 } else {
                     time = posToTime(e.getX());
@@ -109,10 +88,10 @@ public class JTimelineEditor extends javax.swing.JPanel {
 
                 movie.setInsertionPoint(time);
                 if (phBounds.contains(phBounds.x, y)) {
-                    // click occured in horizontal area belonging to playhead => move playhead
+
                     focusedHandle = pressedHandle = Handle.InsertionPoint;
                 } else if (inBounds.contains(inBounds.x, y)) {
-                    // click occured in horizontal area belonging to in and out point => move in or out point
+
                     int splitPos = (outBounds.x - inBounds.x - inBounds.width) / 2 + inBounds.x + inBounds.width;
                     if (e.getX() < splitPos) {
                         movie.setSelectionStart(time);
@@ -134,17 +113,17 @@ public class JTimelineEditor extends javax.swing.JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            // do nothing?
+
         }
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            // do nothing?
+
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            // do nothing?
+
         }
 
         @Override
@@ -175,12 +154,12 @@ public class JTimelineEditor extends javax.swing.JPanel {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            // do nothing?
+
         }
 
         @Override
         public void keyTyped(KeyEvent e) {
-            //throw new UnsupportedOperationException("Not supported yet.");
+
         }
 
         @Override
@@ -206,7 +185,7 @@ public class JTimelineEditor extends javax.swing.JPanel {
                         return;
                 }
 
-                long sample = movie.timeToSample(0, time); // FIXME - Must be video track
+                long sample = movie.timeToSample(0, time);
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     time = movie.sampleToTime(0, sample - 1);
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -232,7 +211,7 @@ public class JTimelineEditor extends javax.swing.JPanel {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            //throw new UnsupportedOperationException("Not supported yet.");
+
         }
 
         @Override
@@ -255,7 +234,7 @@ public class JTimelineEditor extends javax.swing.JPanel {
     }
     private Handler handler = new Handler();
 
-    /** Creates new form JTimelineEditor */
+    
     public JTimelineEditor() {
         initComponents();
         addMouseListener(handler);
@@ -265,7 +244,7 @@ public class JTimelineEditor extends javax.swing.JPanel {
         setPreferredSize(new Dimension(200, 22));
         setMinimumSize(new Dimension(100, 22));
         setFocusable(true);
-        // putClientProperty("style","textured");
+
     }
 
     public Movie getMovie() {
@@ -519,35 +498,23 @@ public class JTimelineEditor extends javax.swing.JPanel {
         return style == null ? "" : "." + style;
     }
 
-    /** Returns the track number used as a time base. If this value is -1,
-     * then no track is used as a time base.
-     * 
-     * @return The track number or -1.
-     */
+    
     public int getTimeTrack() {
         return timeTrack;
     }
 
-    /**
-     * Sets the track number used as a time base.
-     * 
-     * @param timeTrack Track number or -1.
-     */
+    
     public void setTimeTrack(int timeTrack) {
         this.timeTrack = timeTrack;
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
+    
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+
     private void initComponents() {
 
         setLayout(new java.awt.GridLayout(1, 0));
-    }// </editor-fold>//GEN-END:initComponents
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
+    }
+
+
 }

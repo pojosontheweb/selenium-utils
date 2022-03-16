@@ -1,30 +1,11 @@
-/*
- * @(#)Rational.java  
- * 
- * Copyright (c) 2009-2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.math;
 
 import static java.lang.Math.*;
 import java.math.BigInteger;
 import static org.monte.media.math.IntMath.*;
 
-/**
- * Represents a TIFF RATIONAL number. <p> Two LONGs 32-bit (4-byte) unsigned
- * integer: the first represents the numerator of a fraction; the second, the
- * denominator. </p> <p> Invariants: </p> <ul> <li>denominator>=0, the
- * denominator is always a positive integer</li> <li>0/1 is the unique
- * representation of 0.</li> <li>1/0,-1/0 are the unique representations of
- * infinity.</li> </ul>
- *
- * @author Werner Randelshofer
- * @version $Id: Rational.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class Rational extends Number {
 
     public static final Rational ONE = new Rational(1, 1,false);
@@ -43,15 +24,15 @@ public class Rational extends Number {
 
     private Rational(long numerator, long denominator, boolean reduceFraction) {
         if (numerator == 0) {
-            // Invariant: 0/1 is unique representation of 0
+
             denominator = 1;
         }
 
         if (denominator == 0) {
-            // Invariant: 1/0, -1/0 are unique representations of infinity
+
             numerator = (numerator > 0) ? 1 : -1;
         } else if (denominator < 0) {
-            // Invariant: denominator is always positive
+
             denominator = -denominator;
             numerator = -numerator;
         }
@@ -68,15 +49,15 @@ public class Rational extends Number {
 
     private Rational(BigInteger numerator, BigInteger denominator, boolean reduceFraction) {
         if (numerator.equals(BigInteger.ZERO)) {
-            // Invariant: 0/1 is unique representation of 0
+
             denominator = BigInteger.ONE;
         }
 
         if (denominator.equals(BigInteger.ZERO)) {
-            // Invariant: 1/0, -1/0 are unique representations of infinity
+
             numerator = (numerator.compareTo(BigInteger.ZERO) > 0) ? BigInteger.ONE : BigInteger.ONE.negate();
         } else if (denominator.compareTo(BigInteger.ZERO) < 0) {
-            // Invariant: denominator is always positive
+
             denominator = denominator.negate();
             numerator = numerator.negate();
         }
@@ -95,12 +76,12 @@ public class Rational extends Number {
             numB = numB.shiftRight(bitLength - 63);
             denB = denB.shiftRight(bitLength - 63);
             if (numB.equals(BigInteger.ZERO)) {
-                // Invariant: 0/1 is unique representation of 0
+
                 denB = BigInteger.ONE;
             }
 
             if (denB.equals(BigInteger.ZERO)) {
-                // Invariant: 1/0, -1/0 are unique representations of infinity
+
                 numB = (numB.compareTo(BigInteger.ZERO) > 0) ? BigInteger.ONE : BigInteger.ONE.negate();
 
             }
@@ -127,11 +108,11 @@ public class Rational extends Number {
 
     private Rational add(Rational that, boolean reduceFraction) {
         if (this.den == that.den) {
-            // => same denominator: add numerators 
+
             return new Rational(this.num + that.num, this.den, reduceFraction);
         }
 
-        // FIXME - handle overflow
+
         long s = scm(this.den, that.den);
         Rational result = new Rational(
                 this.num * (s / this.den) + that.num * (s / that.den),
@@ -140,19 +121,7 @@ public class Rational extends Number {
         return result;
     }
 
-    /**
-     * Warning. Rational is supposed to be immutable. *
-     *
-     * private Rational addAssign(Rational that) { if (this.den == that.den) {
-     * // => same denominator: add numerators this.num += that.num; return this;
-     * }
-     *
-     * // FIXME - handle overflow long s = scm(this.den, that.den); this.num =
-     * this.num * (s / this.den) + that.num * (s / that.den); this.den = s;
-     *
-     *
-     * return reduceAssign(); }
-     */
+    
     public Rational subtract(Rational that) {
         return add(that.negate());
     }
@@ -165,10 +134,7 @@ public class Rational extends Number {
         return valueOf(den, num, false);
     }
 
-    /**
-     * Returns the closest rational with the specified denominator which is
-     * smaller or equal than this number.
-     */
+    
     public Rational floor(long d) {
         if (d == den) {
             return valueOf(num, den);
@@ -184,10 +150,7 @@ public class Rational extends Number {
         }
     }
 
-    /**
-     * Returns the closest rational with the specified denominator which is
-     * greater or equal than this number.
-     */
+    
     public Rational ceil(long d) {
         if (d == den) {
             return valueOf(num, den);
@@ -254,17 +217,14 @@ public class Rational extends Number {
 
     @Override
     public String toString() {
-        //long gcd = IntMath.gcd(num, den);
+
         if (num == 0) {
             return "0";
         } else if (den == 1) {
             return Long.toString(num);
         } else {
             return num + "/" + den;
-            /*
-             } else {
-             return Float.toString((float) num / den);
-             */
+            
         }
     }
 
@@ -312,12 +272,10 @@ public class Rational extends Number {
         return compareTo(that) == 0;
     }
 
-    /**
-     * return { -1, 0, +1 } if a < b, a = b, or a > b.
-     */
+    
     public int compareTo(Rational that) {
-        // The following code avoids BigInteger allocation if the denominators 
-        // are equal 
+
+
         if (this.den == that.den) {
             if (this.num < that.num) {
                 return -1;
@@ -328,7 +286,7 @@ public class Rational extends Number {
             }
         }
 
-        // Work with longs if overflow can not occur
+
         if (abs(this.num) < Integer.MAX_VALUE
                 && abs(this.den) < Integer.MAX_VALUE
                 && abs(that.num) < Integer.MAX_VALUE
@@ -344,7 +302,7 @@ public class Rational extends Number {
             }
         }
 
-        // Use big integers to avoid overflows
+
         BigInteger lhs;
         BigInteger rhs;
         lhs = BigInteger.valueOf(this.num).multiply(BigInteger.valueOf(that.den));
@@ -387,7 +345,7 @@ public class Rational extends Number {
             return valueOf((long) signum(d), 0);
         }
         if (Double.isNaN(d)) {
-            return valueOf(0, 1); // no way to express a NaN :-(
+            return valueOf(0, 1);
         }
         return toRational(d, Integer.MAX_VALUE, 100);
     }
@@ -420,12 +378,7 @@ public class Rational extends Number {
         return new Rational(num, den, reduceFraction);
     }
 
-    /**
-     * Iteratively computes rational from double. <p>Reference:<br> <a
-     * href="http://www2.fz-juelich.de/video/cpp/html/exercises/exercise/Rational_cpp.html">
-     * http://www2.fz-juelich.de/video/cpp/html/exercises/exercise/Rational_cpp.html</a>
-     * </p>
-     */
+    
     private static Rational toRational(double x, double limit, int iterations) {
         double intpart = Math.floor(x);
         double fractpart = x - intpart;
@@ -469,15 +422,7 @@ public class Rational extends Number {
         return num < 0;
     }
 
-    /**
-     * Parses a string.
-     *
-     * A rational can be represented in the following ways: <li>As a long
-     * number</li> <li>As a double number</li> <li>As an integer/integer
-     * rational number</li>
-     *
-     * @throws NumberFormatException if str can not be parsed.
-     */
+    
     public static Rational valueOf(String str) {
         int p = str.indexOf('/');
         if (p != -1) {

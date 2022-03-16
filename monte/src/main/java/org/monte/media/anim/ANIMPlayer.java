@@ -1,13 +1,4 @@
-/*
- * @(#)ANIMPlayer.java  3.0.2  2011-08-23
- *
- * Copyright (c) 1999-2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.anim;
 
 import org.monte.media.MovieControl;
@@ -33,173 +24,77 @@ import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.event.*;
 
 
-/**
- * Player for IFF cel animations.
- *
- * @author  Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version 3.0.2 2011-08-23 Frame duration was too long by one jiffie.
- * <br>3.0.1 2010-12-25 Minor fixes for J2SE 5.
- * <br>3.0 2010-08-04 Moved listener methods into inner class.
- * <br>2.7 2010-08-03 Added support for blended color cycling.
- * <br>2.6 2009-12-25 Added support for color cycling.
- * <br>2.5 2009-11-20 Added support for bidirectional frames.
- * <br>2.4 2006-10-01 Property "Debug" added.
- * <br>2.3 2005-09-16 Property "SwapSpeakers" added.
- * <br>2.2.1 2005-07-10 Do a full planar to chunky conversion if the
- * palette changes regardless whether byte or integer chunky pixels are used.
- * <br>2.2 2005-07-09 Made changes due to new threading model in class
- * AbstractPlayer. Mute audio while timeModel value is adjusted by the user.
- * Reimplemented support for preferred color model.
- * <br>2.1.1 2005-05-04 Fixed a lifelock from occuring when no frames are
- * contained in the animation file.
- * <br>2.1 2004-01-22 Methods setPlayWrapupFrames and isPlayWrapupFrames added.
- * <br>2.0 2003-04-26 Sound support added.
- * <br>1.2.1 2003-04-02 Moved to package org.monte.media.anim from
- * org.monte.media.
- * <br>1.2 2003-03-30 More getters added.
- * <br>1.1.1 2002-02-12 When player is started and playhead is at end,
- * set playhead to start of timeline.
- * <br>1.1 2000-10-02 Method #isPaused and #setPaused removed.
- * <br>1.0  1999-10-19
- */
+
 public class ANIMPlayer
         extends AbstractPlayer
         implements ColorCyclePlayer {
 
-    /**
-     * The memory image source handles the image
-     * producer/consumer protocol.
-     */
+
     private ColorCyclingMemoryImageSource memoryImage;
-    /**
-     * Bounded range indicates the number of frames and the
-     * index of the current frame.
-     */
+
     private BoundedRangeModel timeModel;
-    /**
-     * Bounded range indicates the amount of data being
-     * fetched from the data source.
-     */
+
     private BoundedRangeInputStream cachingControlModel;
-    /**
-     * The Input stream containing the movie data.
-     */
+
     private InputStream in;
-    /**
-     * The size of the input file. If the size is not known then
-     * this attribute is set to -1.
-     */
+
     private int inputFileSize = -1;
-    /**
-     * The movie track built from the movie data.
-     */
+
     private ANIMMovieTrack track;
-    /** Two bitmaps are needed for double buffering. */
+
     private BitmapImage bitmapEven, bitmapOdd;
-    /**
-     * Index of the frame, that has been prepared
-     * in its even or odd bitmap buffer for display.
-     */
+
     private int preparedEven, preparedOdd;
-    /**
-     * Index of the frame which has been delta
-     * decoded in its even or odd bitmap buffer.
-     */
+
     private int fetchedEven, fetchedOdd;
-    /**
-     * Index of the frame currently being displayed.
-     */
+
     private int displayFrame = -1;
-    /** Indicates wether frames may be skipped or not. */
+
     private boolean isPlayEveryFrame = false;
-    /** Indicates wether playback shall loop or not. */
+
     private volatile boolean isLoop = true;
-    /** Indicates wether the player is in pause mode. */
-    //private volatile boolean isPaused = true;
-    /**
-     * Jiffies are used be IFF ANIM's for timing.
-     * Jiffies is the number of frames or fields per second.
-     * The variable jiffieMillis is a conversion of Jiffies into milliseconds.
-     */
+
+
+
     private float jiffieMillis = 1000f / 60f;
-    /**
-     * Setting the global frame duration overrides all
-     * frame duration settings in the frames of the the movie track.
-     *
-     * Frame Duration in Jiffies. Set this to
-     * -1 if you do not want to override the frame durations in
-     * the frames of the movie track.
-     */
+
     private int globalFrameDuration = -1;
-    /**
-     * The visual component contains the display area
-     * for movie images.
-     */
-    private ImagePanel /*ImagePanelAWT*/ visualComponent;
-    /**
-     * The visual component contains control elements
-     * for starting and stopping the movie.
-     */
+
+    private ImagePanel  visualComponent;
+
     private MovieControl controlComponent;
-    /**
-     * This lock is being used to coordinate the
-     * decoder with the player.
-     */
+
     private Object decoderLock = new Object();
-    /**
-     * The preferred color model for this player.
-     */
+
     private ColorModel preferredColorModel = null;
-    /**
-     * Indicates wether all data has been cached.
-     * Acts like a latch: Once set to true never changes
-     * its value anymore.
-     */
+
     private volatile boolean isCached = false;
-    /**
-     * The amiga has four audio channels.
-     * There can be only four active audio commands at all times.
-     */
+
     private ANIMAudioCommand[] audioChannels = new ANIMAudioCommand[4];
-    /**
-     * Turns audio on or off.
-     */
+
     private boolean isAudioEnabled = true;
-    /**
-     * Determines whether audio is being loaded or not.
-     */
+
     private boolean isLoadAudio;
-    /** */
+
     private boolean debug = false;
-    /** */
+
     private Hashtable properties;
-    /**
-     * This variable is set to true when during decoding of the
-     * input stream at least one audio clip is detected.
-     */
+
     private boolean isAudioAvailable;
-    /**
-     * This variable is set to true when during decoding of the
-     * input stream at least one color cycle is detected.
-     */
+
     private boolean isColorCyclingAvailable;
-    /** Whether color cycling is started. */
+
     private boolean isColorCyclingStarted;
-    /**
-     * Set this to true, if the delta frames of the animation can be decoded
-     * relative to the previous frame and relative to the subsequent frame.
-     */
+
     private boolean isPingPong = true;
-    /**
-     * Direction of the play head: +1 for forward playing, -1 for backward playing.
-     */
+
     private int playDirection = 1;
 
     private class Handler implements MouseListener, PropertyChangeListener, ChangeListener {
 
-        // ------------------------
-        // MouseListener
-        // ------------------------
+
+
+
         @Override
         public void mouseClicked(MouseEvent event) {
             if (getState() != CLOSED && event.getModifiers() == InputEvent.BUTTON1_MASK) {
@@ -227,9 +122,9 @@ public class ANIMPlayer
         public void mouseReleased(MouseEvent event) {
         }
 
-        // ------------------------
-        // PropertyChangeListener
-        // ------------------------
+
+
+
         @Override
         public void propertyChange(PropertyChangeEvent event) {
             if (timeModel != null) {
@@ -246,20 +141,20 @@ public class ANIMPlayer
             }
         }
 
-        // ------------------------
-        // ChangeListener
-        // ------------------------
+
+
+
         @Override
         public void stateChanged(ChangeEvent evt) {
-            // Time model changed and player in prefetched state?
+
             if (evt.getSource() == timeModel) {
                 if (getState() == STARTED) {
-                    // Wake the worker thread up.
+
                     synchronized (this) {
                         notifyAll();
                     }
                 } else {
-                    // Render the video on the worker thread.
+
                     dispatcher.dispatch(
                             new Runnable() {
 
@@ -278,47 +173,27 @@ public class ANIMPlayer
         this(in, -1, true);
     }
 
-    /**
-     * Creates a new instance.
-     * @param in InputStream containing an IFF ANIM file.
-     * @param inputFileSize The size of the input file. Provide the value -1
-     * if this is not known.
-     * @param loadAudio Provide value false if this player should not load audio
-     * data.
-     */
+
     public ANIMPlayer(InputStream in, int inputFileSize, boolean loadAudio) {
         this.in = in;
         this.inputFileSize = inputFileSize;
         this.isLoadAudio = loadAudio;
     }
 
-    /**
-     * Sets the preferred color model.
-     * If this color model is the same as the one used by the
-     * screen device showing the animation, then this may considerably
-     * improve the performance of the player.
-     * Setting this to null will let the player choose a color model
-     * that best suits the media being played.
-     * Calling this method has no effect, if the player is already realized.
-     */
+
     public void setPreferredColorModel(ColorModel cm) {
         if (bitmapEven == null) {
             preferredColorModel = cm;
         }
     }
 
-    /**
-     * Returns the bounded range model that represents
-     * the time line of the player.
-     */
+
     @Override
     public BoundedRangeModel getTimeModel() {
         return timeModel;
     }
 
-    /**
-     * Enables or disables audio playback.
-     */
+
     @Override
     public void setAudioEnabled(boolean newValue) {
         boolean oldValue = isAudioEnabled;
@@ -328,17 +203,13 @@ public class ANIMPlayer
                 (newValue) ? Boolean.TRUE : Boolean.FALSE);
     }
 
-    /**
-     * Returns true if audio playback is enabled.
-     */
+
     @Override
     public boolean isAudioEnabled() {
         return isAudioEnabled;
     }
 
-    /**
-     * Swaps left and right speakers if set to true.
-     */
+
     public void setSwapSpeakers(boolean newValue) {
         boolean oldValue = track.isSwapSpeakers();
         track.setSwapSpeakers(newValue);
@@ -347,49 +218,32 @@ public class ANIMPlayer
                 (newValue) ? Boolean.TRUE : Boolean.FALSE);
     }
 
-    /**
-     * Returns true if left and right speakers are swapped.
-     */
+
     public boolean isSwapSpeakers() {
         return track.isSwapSpeakers();
     }
 
-    /**
-     * Returns the bounded range model that represents
-     * the amount of data being fetched from the file
-     * the movie is stored in.
-     */
+
     @Override
     public BoundedRangeModel getCachingModel() {
         return cachingControlModel;
     }
 
-    /**
-     * Returns the image producer that produces
-     * the animation frames.
-     */
+
     protected ImageProducer getImageProducer() {
         return memoryImage;
     }
 
-    /**
-     * Returns the movie track.
-     */
+
     public ANIMMovieTrack getMovieTrack() {
         return track;
     }
 
-    /**
-     * Obtain the display Component for this Player.
-     * The display Component is where visual media is rendered.
-     * If this Player has no visual component, getVisualComponent
-     * returns null. For example, getVisualComponent might return
-     * null if the Player only plays audio.
-     */
+
     @Override
     public synchronized Component getVisualComponent() {
         if (visualComponent == null) {
-            visualComponent = /*new ImagePanelAWT()*/ new ImagePanel();
+            visualComponent =  new ImagePanel();
             if (getImageProducer() != null) {
                 visualComponent.setImage(visualComponent.getToolkit().createImage(getImageProducer()));
             }
@@ -398,12 +252,7 @@ public class ANIMPlayer
         return visualComponent;
     }
 
-    /**
-     * Obtain the Component that provides the default user
-     * interface for controlling this Player. If this Player
-     * has no default control panel, getControlPanelComponent
-     * returns null.
-     */
+
     @Override
     public synchronized Component getControlPanelComponent() {
         if (controlComponent == null) {
@@ -413,16 +262,12 @@ public class ANIMPlayer
         return controlComponent.getComponent();
     }
 
-    /**
-     * Does the unrealized state.
-     */
+
     @Override
     protected void doUnrealized() {
     }
 
-    /**
-     * Does the realizing state.
-     */
+
     @Override
     protected void doRealizing() {
         timeModel = new DefaultBoundedRangeModel(0, 0, 0, 0);
@@ -435,17 +280,17 @@ public class ANIMPlayer
         track = new ANIMMovieTrack();
         track.addPropertyChangeListener(handler);
 
-        // If the components of the player have been created before
-        // we arrived here, then they may not have been initialized properly.
-        // So we reinitialize them here.
+
+
+
         synchronized (this) {
             if (controlComponent != null) {
                 controlComponent.setPlayer(this);
             }
         }
 
-        // Decode the file asynchronously. So the player
-        // can play files while they are being decoded.
+
+
         Thread t = new Thread() {
 
             @Override
@@ -456,9 +301,9 @@ public class ANIMPlayer
                     isCached = true;
                     cachingControlModel.setValue(cachingControlModel.getMaximum());
                     propertyChangeSupport.firePropertyChange("cached", Boolean.FALSE, Boolean.TRUE);
-                    //setPaused(false);
 
-                    // No frames in track? Close player.
+
+
                     if (track.getFrameCount() == 0) {
                         synchronized (decoderLock) {
                             setTargetState(CLOSED);
@@ -484,9 +329,9 @@ public class ANIMPlayer
         };
         t.start();
 
-        // Wait until enough information has been decoded.
-        // (The player is not realized until at least the
-        // header data of the movie has been decoded.)
+
+
+
         synchronized (decoderLock) {
             while (track.getFrameCount() < 1 && getTargetState() != CLOSED) {
                 try {
@@ -496,8 +341,8 @@ public class ANIMPlayer
             }
         }
 
-        // Initialize the player. Needs header information
-        // from the movie track to do this.
+
+
         ColorModel cm;
         int width = track.getWidth();
         int height = track.getHeight();
@@ -520,7 +365,7 @@ public class ANIMPlayer
                 height,
                 nbPlanes + (masking == ANIMMovieTrack.MSK_HAS_MASK ? 1 : 0),
                 cm);
-//bitmapOdd=bitmapEven;
+
         jiffieMillis = 1000f / (float) track.getJiffies();
 
         if (track.getColorCycles().isEmpty()) {
@@ -528,7 +373,7 @@ public class ANIMPlayer
             bitmapOdd.setPreferredChunkyColorModel(preferredColorModel);
         }
 
-        /*Hashtable*/ properties = new Hashtable();
+         properties = new Hashtable();
         properties.put(
                 "aspect",
                 new Double((double) track.getXAspect() / (double) track.getYAspect()));
@@ -587,9 +432,9 @@ public class ANIMPlayer
             properties.put("renderMode", bitmapEven.getChunkyColorModel());
         }
 
-        // If the components of the player have been created before
-        // we arrived here, then they may not have been initialized properly.
-        // So we reinitialize them here.
+
+
+
         synchronized (this) {
             if (visualComponent != null) {
                 visualComponent.setImage(visualComponent.getToolkit().createImage(getImageProducer()));
@@ -597,25 +442,19 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Does the realized state.
-     */
+
     @Override
     protected void doRealized() {
-        // Free resources being achieved during prefetch.
+
     }
 
-    /**
-     * Does the prefetching state.
-     */
+
     @Override
     protected void doPrefetching() {
         renderVideo(timeModel.getValue());
     }
 
-    /**
-     * Does the prefetched state.
-     */
+
     @Override
     protected void doPrefetched() {
     }
@@ -624,10 +463,7 @@ public class ANIMPlayer
         isPlayEveryFrame = newValue;
     }
 
-    /**
-     * Set this to true to treat the two wrapup frames at the end of the
-     * animation like regular frames.
-     */
+
     public void setPlayWrapupFrames(boolean newValue) {
         track.setPlayWrapupFrames(newValue);
 
@@ -635,10 +471,7 @@ public class ANIMPlayer
         timeModel.setMaximum(count > 0 ? count - 1 : 0);
     }
 
-    /**
-     * Set this to true to treat the two wrapup frames at the end of the
-     * animation like regular frames.
-     */
+
     public void setDebug(boolean newValue) {
         this.debug = newValue;
         if (newValue == false && visualComponent != null) {
@@ -646,22 +479,12 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Returns true, if the two wrapup frames at the end of the animation
-     * are treated like regular frames.
-     */
+
     public boolean isPlayWrapupFrames() {
         return track.isPlayWrapupFrames();
     }
 
-    /**
-     * Setting frames per second overrides all
-     * frame duration settings in the frames of the the movie track.
-     *
-     * @param framesPerSecond Frames per section. Set this to
-     * 0f if you do not want to override the frame durations in
-     * the frames of the movie track.
-     */
+
     public void setFramesPerSecond(float framesPerSecond) {
         if (framesPerSecond <= 0f) {
             setGlobalFrameDuration(-1);
@@ -670,14 +493,7 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Setting the global frame duration overrides all
-     * frame duration settings in the frames of the the movie track.
-     *
-     * @param frameDuration Frame Duration in milliseconds. Set this to
-     * -1 if you do not want to override the frame durations in
-     * the frames of the movie track.
-     */
+
     public void setGlobalFrameDuration(int frameDuration) {
         this.globalFrameDuration = frameDuration;
     }
@@ -737,19 +553,14 @@ public class ANIMPlayer
         return s + " OP(" + op + ")";
     }
 
-    /**
-     * Does the started state.
-     * Is called by run().
-     * Does not change the value of targetState but may
-     * change state in case of an error.
-     */
+
     @Override
     protected void doStarted() {
         long mediaTime = System.currentTimeMillis() + (long) jiffieMillis;
         int index;
         long sleepTime;
 
-        // Start from beginning when playhead is at end of timeline
+
         if (timeModel.getValue() == timeModel.getMaximum()) {
             timeModel.setValue(timeModel.getMinimum());
         }
@@ -837,7 +648,7 @@ public class ANIMPlayer
                 }
             }
         }
-        /*}*/
+
 
         renderVideo(timeModel.getValue());
         muteAudio();
@@ -852,9 +663,7 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Closes the player.
-     */
+
     @Override
     protected void doClosed() {
         try {
@@ -870,7 +679,7 @@ public class ANIMPlayer
 
         BitmapImage bitmap;
         if (interleave == 1 || (index & 1) == 0) {
-            // even?
+
             if (fetchedEven == index) {
                 return;
             }
@@ -889,7 +698,7 @@ public class ANIMPlayer
                 }
             }
         } else {
-            // odd?
+
             if (fetchedOdd == index) {
                 return;
             }
@@ -916,16 +725,14 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Prepare video data for the specified frame index.
-     */
+
     private void prepareVideo(int index) {
         BitmapImage bitmap;
         int prepared;
         int interleave = track.getInterleave();
 
         if (interleave == 1 || (index & 1) == 0) {
-            // even?
+
             if (preparedEven == index) {
                 return;
             }
@@ -933,7 +740,7 @@ public class ANIMPlayer
             preparedEven = index;
             bitmap = bitmapEven;
         } else {
-            // odd?
+
             if (preparedOdd == index) {
                 return;
             }
@@ -942,16 +749,16 @@ public class ANIMPlayer
             bitmap = bitmapOdd;
         }
 
-        // Fetch the frame from the underlying storage system
-        // and decode delta information.
+
+
         fetchFrame(index);
 
-        // Convert planar to chunky.
+
         ANIMFrame frame = (ANIMFrame) track.getFrame(index);
         ColorModel cm = frame.getColorModel();
         bitmap.setPlanarColorModel(cm);
-        if (prepared == index - interleave && //
-                (bitmap.getPixelType() == BitmapImage.BYTE_PIXEL || //
+        if (prepared == index - interleave &&
+                (bitmap.getPixelType() == BitmapImage.BYTE_PIXEL ||
                 cm == ((ANIMFrame) track.getFrame(prepared)).getColorModel())) {
             bitmap.convertToChunky(
                     frame.getTopBound(track),
@@ -959,8 +766,8 @@ public class ANIMPlayer
                     frame.getBottomBound(track),
                     frame.getRightBound(track));
 
-        } else if (isPingPong && prepared == index + interleave &&//
-                (bitmap.getPixelType() == BitmapImage.BYTE_PIXEL || //
+        } else if (isPingPong && prepared == index + interleave &&
+                (bitmap.getPixelType() == BitmapImage.BYTE_PIXEL ||
                 cm == ((ANIMFrame) track.getFrame(prepared)).getColorModel())) {
             frame = (ANIMFrame) track.getFrame(index + interleave);
             bitmap.convertToChunky(
@@ -973,9 +780,7 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Prepare audio data for the specified frame index.
-     */
+
     private void prepareAudio(int index) {
         ANIMFrame frame = (ANIMFrame) track.getFrame(index);
         ANIMAudioCommand[] audioCommands = frame.getAudioCommands();
@@ -986,9 +791,7 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Show the video data for the specified frame index.
-     */
+
     private void renderVideo(int index) {
         if (displayFrame == index) {
             return;
@@ -997,10 +800,10 @@ public class ANIMPlayer
 
         BitmapImage bitmap;
         if (interleave == 1 || (index & 1) == 0) {
-            // even?
+
             bitmap = bitmapEven;
         } else {
-            // odd?
+
             bitmap = bitmapOdd;
         }
 
@@ -1067,13 +870,11 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Show the audio data for the specified frame index.
-     */
+
     private synchronized void renderAudio(int index) {
         prepareAudio(index);
 
-        // Play audio data
+
         if (isActive()) {
 
             ANIMFrame frame = (ANIMFrame) track.getFrame(index);
@@ -1086,31 +887,23 @@ public class ANIMPlayer
         }
     }
 
-    /**
-     * Returns the total duration in milliseconds.
-     */
+
     @Override
     public long getTotalDuration() {
-        if (globalFrameDuration == -1) {            
+        if (globalFrameDuration == -1) {
             return (long) (track.getTotalDuration() * jiffieMillis);
         } else {
             return track.getFrameCount() * globalFrameDuration;
         }
     }
 
-    /**
-     * Returns true when the player has completely cached all movie data.
-     * This player informs all property change listeners, when the value of this
-     * property changes. The name of the property is 'cached'.
-     */
+
     @Override
     public boolean isCached() {
         return isCached;
     }
 
-    /** Returns true if audio is available.
-     *
-     */
+
     @Override
     public boolean isAudioAvailable() {
         return isAudioAvailable;
@@ -1141,13 +934,13 @@ public class ANIMPlayer
         propertyChangeSupport.firePropertyChange("colorCyclingAvailable", oldValue, newValue);
     }
 
-    /** Returns true if color cycling is available in the movie track. */
+
     @Override
     public boolean isColorCyclingStarted() {
         return isColorCyclingStarted;
     }
 
-    /** Starts or stops color cycling. */
+
     @Override
     public void setColorCyclingStarted(boolean newValue) {
         boolean oldValue = isColorCyclingStarted;
@@ -1158,13 +951,13 @@ public class ANIMPlayer
         }
     }
 
-    /** Starts or stops color cycling. */
+
     @Override
     public boolean isColorCyclingAvailable() {
         return isColorCyclingAvailable;
     }
 
-    /** Sets whether colors are blended during color cycling. */
+
     @Override
     public void setBlendedColorCycling(boolean newValue) {
         if (memoryImage != null) {
@@ -1174,7 +967,7 @@ public class ANIMPlayer
         }
     }
 
-    /** Returns true if colors are blended during color cycling. */
+
     @Override
     public boolean isBlendedColorCycling() {
         return memoryImage == null ? false : memoryImage.isBlendedColorCycling();

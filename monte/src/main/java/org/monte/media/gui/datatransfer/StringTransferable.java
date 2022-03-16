@@ -1,36 +1,11 @@
-/*
- * @(#)StringTransferable.java  1.0  22. August 2007
- *
- * Copyright (c) 2007 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 
 package org.monte.media.gui.datatransfer;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.IOException;
-/**
- * StringTransferable.
- * <p>
- * Note: This transferable should always be used in conjunction with 
- * PlainTextTransferable.
- * <p>
- * Usage:
- * <pre>
- * String text = "bla";
- * CompositeTransfer t = new CompositeTransferable();
- * t.add(new StringTransferable(text));
- * t.add(new PlainTextTransferable(text));
- * </pre>
- *
- * @author Werner Randelshofer
- * @version 1.0 22. August 2007 Created.
- */
+
 public class StringTransferable extends AbstractTransferable {
     private String string;
     

@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.monte.media.converter;
 
 import org.monte.media.Buffer;
@@ -11,12 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * {@code CodecChain}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-09-07 Created.
- */
+
 public class CodecChain implements Codec {
 
     private Codec first;
@@ -38,7 +30,7 @@ public class CodecChain implements Codec {
     }
 
     public static Codec createCodecChain(Codec... codecs) {
-        // get rid of all null values
+
         ArrayList<Codec> clist = new ArrayList<Codec>();
         for (Codec c : codecs) {
             if (c != null) {
@@ -102,7 +94,7 @@ public class CodecChain implements Codec {
 
 
         if (CODEC_INPUT_NOT_CONSUMED == (secondState & CODEC_INPUT_NOT_CONSUMED)) {
-            // => second codec needs to process tmpBuffer again
+
             long start = System.currentTimeMillis();
             secondState = second.process(tmpBuf, out);
             secondElapsed += System.currentTimeMillis() - start;
@@ -117,7 +109,7 @@ public class CodecChain implements Codec {
             return firstState;
         }
         if (CODEC_OUTPUT_NOT_FILLED == (firstState & CODEC_OUTPUT_NOT_FILLED)) {
-            // => first codec needs to process tmpBuffer again
+
             return firstState;
         }
 

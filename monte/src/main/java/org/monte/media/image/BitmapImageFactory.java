@@ -1,13 +1,4 @@
-/*
- * @(#)BitmapImageFactory.java  1.0  December 25, 2006
- *
- * Copyright (c) 2006 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 
 package org.monte.media.image;
 
@@ -20,31 +11,18 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.Hashtable;
 
-/**
- * Creates a BufferedImage from a BitmapImage.
- * <p>
- * We put these factory methods into this class instead of into class BitmapImage,
- * because we don't want to put this additional code into Java applets that
- * don't need this functionality.
- *
- * @author Werner Randelshofer
- * @version 1.0 December 25, 2006 Created.
- */
+
 public class BitmapImageFactory {
     
-    /** Prevent instance creation. */
+    
     private BitmapImageFactory() {
     }
     
-    /**
-     * Creates a BufferedImage using the provided BitmapImage.
-     *
-     * @param bm The BitmapImage holding the image data.
-     */
+    
     public static BufferedImage toBufferedImage(BitmapImage bm) {
         BufferedImage image = null;
         Hashtable properties = new Hashtable() ;
-        //properties.put("comment","BitmapImage");
+
         
         bm.convertToChunky();
         switch (bm.getPixelType()) {
@@ -116,78 +94,29 @@ public class BitmapImageFactory {
         ByteArrayOutputStream buf;
         MC68000OutputStream struct;
         
-        // Write BMHD Chunk
+
         
-        /*  Masking techniques  * /
-        enum {
-            none=0, hasMask=1, hasTransparentColor=2, lasso=3
-        } bmhdMasking;
-         
-        /*  Compression methods * /
-        enum {
-            none=0, byteRun1=1
-        } bmhdCompression;
-         
-        typedef struct {
-            UWORD   width; UWORD height;           /* Width, height in pixels * /
-            WORD    xPosition; WORD yPosition;           /* x, y position for this bitmap  * /
-            UBYTE   numberOfPlanes;        /* # of planes (not including mask) * /
-            UBYTE enum bmhdMasking masking;        /* a masking technique listed above * /
-            UBYTE enum bmhdCompression compression;    /* cmpNone or cmpByteRun1 * /
-            UBYTE   reserved1;      /* must be zero for now * /
-            UWORD   transparentColor;
-            UBYTE   xAspect; UBYTE yAspect;
-            WORD    pageWidth; WORD pageHeight;
-        } ilbmBitmapHeaderChunk;
-         */
+        
         struct = new MC68000OutputStream(buf = new ByteArrayOutputStream());
-        struct.writeUWORD(bm.getWidth()); // width
-        struct.writeUWORD(bm.getHeight()); // height
-        struct.writeWORD(0); // xPosition
-        struct.writeWORD(0); // yPosition
-        struct.writeUBYTE(bm.getDepth()); // numberOfPlanes
-        struct.writeUBYTE(0); // masking
-        struct.writeUBYTE(1); // compression
-        struct.writeUBYTE(0); // reserved1
-        struct.writeUWORD(0); // transparentColor
-        struct.writeUBYTE(10); // xAspect
-        struct.writeUBYTE(11); // yAspect
-        struct.writeWORD(bm.getWidth()); // pageWidth
-        struct.writeWORD(bm.getHeight()); // pageHeight
+        struct.writeUWORD(bm.getWidth());
+        struct.writeUWORD(bm.getHeight());
+        struct.writeWORD(0);
+        struct.writeWORD(0);
+        struct.writeUBYTE(bm.getDepth());
+        struct.writeUBYTE(0);
+        struct.writeUBYTE(1);
+        struct.writeUBYTE(0);
+        struct.writeUWORD(0);
+        struct.writeUBYTE(10);
+        struct.writeUBYTE(11);
+        struct.writeWORD(bm.getWidth());
+        struct.writeWORD(bm.getHeight());
         struct.close();
         form.add(new MutableIFFChunk("BMHD", buf.toByteArray()));
         
         
         ColorModel cm = bm.getPlanarColorModel();
-        /*
-         * ILBM CAMG Amiga Viewport Mode Display ID
-         * --------------------------------------------
-         * /
-        /* The CAMG chunk is used to store the Amiga display mode in which
-         * an ILBM is meant to be displayed.  This is very important, especially
-         * for special display modes such as HAM and HALFBRITE where the
-         * pixels are interpreted differently.
-         * Under V37 and higher, store a 32-bit Amiga DisplayID (aka. ModeID)
-         * in the ULONG ViewModes CAMG variable (from GetVPModeID(viewport)).
-         * Pre-V37, instead store the 16-bit viewport->Modes.
-         * See the current IFF manual for information on screening for bad CAMG
-         * chunks when interpreting a CAMG as a 32-bit DisplayID or 16-bit ViewMode.
-         * The chunk's content is declared as a ULONG.
-         * /
-         
-        set {
-           Interlace      = 0x00004,
-           ExtraHalfbrite = 0x00080,
-           DualPlayfield  = 0x00400,
-           HoldAndModify  = 0x00800,
-           Hires          = 0x08000,
-           Super          = 0x08020
-        } ilbmAmigaViewModes;
-         
-        typedef struct {
-            ULONG set ilbmAmigaViewModes ViewModes;
-        } ilbmAmigaViewportModeDisplayIDChunk;
-         */
+        
         struct = new MC68000OutputStream(buf = new ByteArrayOutputStream());
         int viewMode = 0;
         if (cm instanceof HAMColorModel) {
@@ -197,19 +126,7 @@ public class BitmapImageFactory {
         struct.close();
         form.add(new MutableIFFChunk("CAMG", buf.toByteArray()));
         
-        /*
-         * ILBM CMAP Color map
-         * --------------------------------------------
-         * /
-        /* A CMAP chunk is a packed array of ColorRegisters (3 bytes each). * /
-        typedef struct {
-            UBYTE red; UBYTE green; UBYTE blue;   /* MUST be UBYTEs so ">> 4" won't sign extend.* /
-        } ilbmColorRegister;
-         
-        typedef struct {
-            ilbmColorRegister color[];
-        } ilbmColorMapChunk;
-         */
+        
         if (cm instanceof HAMColorModel) {
             HAMColorModel hcm = (HAMColorModel) cm;
             struct = new MC68000OutputStream(buf = new ByteArrayOutputStream());
@@ -227,9 +144,9 @@ public class BitmapImageFactory {
             struct.close();
             form.add(new MutableIFFChunk("CMAP", buf.toByteArray()));
         }
-        // XXX - Add support for index color model
+
         
-        /* Write BODY Chunk */
+        
         struct = new MC68000OutputStream(buf = new ByteArrayOutputStream());
         for (int y=0, height=bm.getHeight(); y < height; y++) {
             for (int d=0, depth=bm.getDepth(); d < depth; d++) {

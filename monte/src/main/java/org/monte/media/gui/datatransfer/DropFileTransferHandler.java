@@ -1,13 +1,4 @@
-/*
- * @(#)DropFileTransferHandler.java  1.0  2011-09-04
- *
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.gui.datatransfer;
 
 import java.awt.datatransfer.*;
@@ -19,16 +10,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.text.*;
 
-/**
- * The DropFileTransferHandler can be used to add drag and drop
- * support. When a file is dropped, the supplied ActionListner is invoked.
- * The filename is passed in the action command.
- *
- * @author Werner Randelshofer
- * @version 1.2 2010-10-03 Adds support for file filter.
- * <br>1.1 2008-12-03 Added file selection mode.
- * <br>1.0 September 8, 2007 Created.
- */
+
 public class DropFileTransferHandler extends TransferHandler {
 
     private boolean shouldRemove;
@@ -38,27 +20,21 @@ public class DropFileTransferHandler extends TransferHandler {
     private FileFilter fileFilter;
     private ActionListener actionListener;
 
-    /** Creates a new instance. */
+
     public DropFileTransferHandler() {
         this(JFileChooser.FILES_ONLY);
     }
 
-    /** Creates a new instance.
-     * @param fileSelectionMode JFileChooser file selection mode.
-     */
+
     public DropFileTransferHandler(int fileSelectionMode) {
         this(fileSelectionMode, null);
     }
 
-    /** Creates a new instance.
-     * @param fileSelectionMode JFileChooser file selection mode.
-     */
+
     public DropFileTransferHandler(int fileSelectionMode, FileFilter filter) {
         this(fileSelectionMode,filter,null);
     }
-    /** Creates a new instance.
-     * @param fileSelectionMode JFileChooser file selection mode.
-     */
+
     public DropFileTransferHandler(int fileSelectionMode, FileFilter filter,ActionListener l) {
         this.fileFilter = filter;
         if (fileSelectionMode != JFileChooser.FILES_AND_DIRECTORIES
@@ -69,7 +45,7 @@ public class DropFileTransferHandler extends TransferHandler {
         this.fileSelectionMode = fileSelectionMode;
         setActionListener(l);
     }
-    
+
     public void setActionListener(ActionListener l) {
         this.actionListener=l;
     }
@@ -110,9 +86,9 @@ public class DropFileTransferHandler extends TransferHandler {
                 }
                 imported = true;
             } catch (UnsupportedFlavorException ex) {
-                //   ex.printStackTrace();
+
             } catch (IOException ex) {
-                //   ex.printStackTrace();
+
             }
         }
 
@@ -140,16 +116,7 @@ public class DropFileTransferHandler extends TransferHandler {
         return false;
     }
 
-    /**
-     * Try to find a flavor that can be used to import a Transferable.
-     * The set of usable flavors are tried in the following order:
-     * <ol>
-     *     <li>First, an attempt to find a text/plain flavor is made.
-     *     <li>Second, an attempt to find a flavor representing a String reference
-     *         in the same VM is made.
-     *     <li>Lastly, DataFlavor.stringFlavor is searched for.
-     * </ol>
-     */
+
     protected DataFlavor getImportFlavor(DataFlavor[] flavors, JComponent c) {
         DataFlavor plainFlavor = null;
         DataFlavor refFlavor = null;
@@ -173,49 +140,26 @@ public class DropFileTransferHandler extends TransferHandler {
         return null;
     }
 
-    // --- TransferHandler methods ------------------------------------
-    /**
-     * This is the type of transfer actions supported by the source.  Some models are
-     * not mutable, so a transfer operation of COPY only should
-     * be advertised in that case.
-     *
-     * @param comp  The component holding the data to be transfered.  This
-     *  argument is provided to enable sharing of TransferHandlers by
-     *  multiple components.
-     * @return  This is implemented to return NONE if the component is a JPasswordField
-     *  since exporting data via user gestures is not allowed.  If the text component is
-     *  editable, COPY_OR_MOVE is returned, otherwise just COPY is allowed.
-     */
+
+
     @Override
     public int getSourceActions(JComponent comp) {
             return NONE;
-        
+
     }
 
-    /**
-     * This method is called after data has been exported.  This method should remove
-     * the data that was transfered if the action was MOVE.
-     *
-     * @param comp The component that was the source of the data.
-     * @param data   The data that was transferred or possibly null
-     *               if the action is <code>NONE</code>.
-     * @param action The actual action that was performed.
-     */
+
     @Override
     protected void exportDone(JComponent comp, Transferable data, int action) {
-        //
+
     }
 
-    /**
-     * @return the fileFilter
-     */
+
     public FileFilter getFileFilter() {
         return fileFilter;
     }
 
-    /**
-     * @param fileFilter the fileFilter to set
-     */
+
     public void setFileFilter(FileFilter fileFilter) {
         this.fileFilter = fileFilter;
     }

@@ -1,13 +1,4 @@
-/*
- * @(#)MPOImageReader.java  1.1  2011-02-01
- * 
- * Copyright (c) 2009-2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.mpo;
 
 import org.monte.media.io.SubImageInputStream;
@@ -34,33 +25,25 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 import org.monte.media.jpeg.CMYKJPEGImageReader;
 
-/**
- * Reads an image in the MultiPicture Object format (MPO).
- * <p>
- * See: <a href="http://www.cipa.jp/english/hyoujunka/kikaku/pdf/DC-007_E.pdf">MPO Format Specification</a>.
- *
- * @author Werner Randelshofer
- * @version 1.1 2011-02-01 Improves performance of method getImageMetadata.
- * <br>1.0 2009-12-14 Created.
- */
+
 public class MPOImageReader extends ImageReader {
 
     private static DirectColorModel RGB = new DirectColorModel(24, 0xff0000, 0xff00, 0xff, 0x0);
-    /** Number of images. -1 if not known. */
+
     private int numImages = -1;
-    /** Image offsets. null if not known. */
+
     private long[] imageOffsets;
-    /** Image lengths. null if not known. */
+
     private long[] imageLengths;
-    /** Thumbnail offsets. null if not known. */
+
     private long[] thumbOffsets;
-    /** Thumbnail lengths. null if not known. */
+
     private long[] thumbLengths;
-    /** Width of the images. */
+
     private int width = -1;
-    /** Height of the images. */
+
     private int height = -1;
-    /** Metadata of all images. */
+
     private IIOMetadata[] imageMetadata;
     private EXIFReader er;
 
@@ -131,9 +114,7 @@ public class MPOImageReader extends ImageReader {
         return super.getNumThumbnails(imageIndex);
     }
 
-    /** Reads the header.
-     * Does nothing if the header has already been loaded.
-     */
+
     private void readHeader() throws IOException {
         if (numImages == -1) {
             ImageInputStream in = (ImageInputStream) getInput();
@@ -142,7 +123,7 @@ public class MPOImageReader extends ImageReader {
             er.setFirstImageOnly(false);
             er.read();
 
-            // Get some information that is easy to obtain through a map
+
             {
                 HashMap<TIFFTag, TIFFField> m = er.getMetaDataMap();
                 TIFFField mde;
@@ -165,13 +146,13 @@ public class MPOImageReader extends ImageReader {
                 imageLengths[0] = in.length();
             }
 
-            // Get now at the tough part
+
             int index = 0;
             for (Iterator<TIFFNode> e = er.getMetaDataTree().preorderIterator(); e.hasNext();) {
                 TIFFNode n = e.next();
                 if (n instanceof TIFFDirectory) {
                     TIFFDirectory dir = (TIFFDirectory) n;
-                    //System.out.println("dir:" + dir.getName());
+
                     if (dir.getName() != null && dir.getName().equals("MPEntry")) {
                         long dirOffset = dir.getFileSegments().get(0).getOffset();
                         TIFFField offsetField = dir.getField(MPEntryTagSet.IndividualImageDataOffset);
@@ -187,7 +168,7 @@ public class MPOImageReader extends ImageReader {
             }
 
 
-            // Store metadata for later access
+
             String formatName = "com_sun_media_imageio_plugins_tiff_image_1.0";
             imageMetadata = new IIOMetadata[numImages];
             for (int i = 0; i < numImages; i++) {

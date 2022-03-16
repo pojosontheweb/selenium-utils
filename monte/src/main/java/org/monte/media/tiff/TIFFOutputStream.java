@@ -1,13 +1,4 @@
-/*
- * @(#)TIFFOutputStream.java  1.0  2011-02-27
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.tiff;
 
 import java.io.IOException;
@@ -16,18 +7,7 @@ import java.nio.ByteOrder;
 import java.util.Stack;
 import javax.imageio.stream.ImageOutputStream;
 
-/**
- * {@code TIFFOutputStream}.
- * <p>
- * References:
- * <p>
- * TIFF TM Revision 6.0. Final — June 3, 1992.
- * Adobe Systems Inc.
- * http://www.exif.org/specifications.html
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-02-27 Created.
- */
+
 public class TIFFOutputStream extends OutputStream {
 
     private ImageOutputStream out;
@@ -114,11 +94,11 @@ public class TIFFOutputStream extends OutputStream {
     private void ensureStarted() throws IOException {
         if (state == State.INITIALIZED) {
             if (getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
-                writeSHORT(0x4949); // "II" little endian marker
+                writeSHORT(0x4949);
             } else {
-                writeSHORT(0x4D4D); // "MM" big endian marker
+                writeSHORT(0x4D4D);
             }
-            writeSHORT(42); // magic number
+            writeSHORT(42);
 
             state = State.STARTED;
         }
@@ -136,11 +116,11 @@ public class TIFFOutputStream extends OutputStream {
         }
     }
 
-    /** Writes a 32-bit unsigned integer. */
+
     public void writeLONG(long v) throws IOException {
         out.writeInt((int) v);
     }
-    /** Writes a 12-bit unsigned integer. */
+
     public void writeSHORT(int v) throws IOException {
         out.writeShort((short) v);
     }
