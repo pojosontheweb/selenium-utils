@@ -7,6 +7,15 @@ defaults: &defaults
   working_directory: ~/repo
 
 jobs:
+  prepare:
+    <<: *defaults
+
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
   build:
     working_directory: ~/repo
     docker:
@@ -37,4 +46,6 @@ jobs:
 workflows:
   build:
     jobs:
-      - build
+      - build:
+          requires:
+            - prepare
