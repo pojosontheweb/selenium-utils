@@ -15,6 +15,8 @@
         <webtests.browser>chrome</webtests.browser>
         <webtests.locales>en</webtests.locales>
         <webtests.findr.verbose>true</webtests.findr.verbose>
+        <webtests.video.enabled>true</webtests.video.enabled>
+        <webtests.video.failures.only>false</webtests.video.failures.only>
     </properties>
     <dependencies>
         <dependency>
@@ -54,7 +56,6 @@
                         <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
                         <webtests.video.dir>${project.build.directory}/webtests-videos</webtests.video.dir>
                         <webtests.video.failures.only>${webtests.video.failures.only}</webtests.video.failures.only>
-                        <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
