@@ -1,13 +1,4 @@
-/*
- * @(#)FileMultiplexer.java  1.0  2011-02-20
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.imgseq;
 
 import org.monte.media.Buffer;
@@ -18,12 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * Multiplexes samples into individual files.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-02-20 Created.
- */
+
 @Deprecated
 public class FileMultiplexer implements Multiplexer {
 
@@ -88,6 +74,6 @@ public class FileMultiplexer implements Multiplexer {
 
     @Override
     public void close() throws IOException {
-        //
+
     }
 }

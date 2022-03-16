@@ -1,13 +1,4 @@
-/*
- * @(#)EightSVXDecoder.java  1.0  1999-10-19
- *
- * Copyright (c) 1999 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.eightsvx;
 
 import org.monte.media.AbortException;
@@ -19,102 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.applet.AudioClip;
 
-/**
- * Creates a collection of EightSVXAudioClip objects by
- * reading an IFF 8SVX file.
- *
- * <p><b>8SVX Type Definitions</b>
- * <pre>
- * #define ID_8SVX MakeID('8', 'S', 'V', 'X')
- * #define ID_VHDR MakeID('V', 'H', 'D', 'R')
- *
- * typedef LONG Fixed;     // A Fixed-point value, 16 bits to the left of
- * // the point and 16 to the right. A Fixed is a number
- * // of 2^16ths, i.e., 65536ths.
- * #define Unity 0x10000L  // Unity = Fixed 1.0 = maximum volume
- *
- * // sCompression: Choice of compression algorithm applied to the samples.
- * #define sCmpNone   0  // not compressed
- * #define sCmpFibDelta 1  // Fibonacci-delta encoding.
- * // Can be more kinds in the future.
- *
- * typedef struct {
- * ULONG oneShotHiSamples,   // # samples in the high octave 1-shot part
- * repeatHiSamples,   // # samples in the high octave repeat part
- * samplesPerHiCycle; // # samples/cycle in high octave, else 0
- * UWORD samplesPerSec;     // data sampling rate
- * UBYTE ctOctave,          // # octaves of waveform
- * sCompression;      // data compression technique used
- * Fixed volume;            // playback volume form 0 to Unity (full
- * // volume). Map this value into the output
- * // hardware's dynamic range.
- * } Voice8Header;
- *
- * #define ID_NAME MakeID('N', 'A', 'M', 'E')
- * // NAME chunk contains a CHAR[], the voice's name.
- *
- * #define ID_Copyright MakeID('(', 'c', ')', ' ')
- * // "(c) " chunk contains a CHAR[], the FORM's copyright notice.
- *
- * #define ID_AUTH MakeID('A', 'U', 'T', 'H')
- * // AUTH chunk contains a CHAR[], the author's name.
- *
- * #define ID_ANNO MakeID('A', 'N', 'N', 'O')
- * // ANNO chunk contains a CHAR[], author's text annotations.
- *
- * #define ID_ATAK MakeID('A', 'T', 'A', 'K')
- * #define ID_RLSE MakeID('R', 'L', 'S', 'E')
- *
- * typedef struct {
- * UWORD duration; // segment duration in milliseconds, > 0
- * Fixed dest;     // destination volume factor
- * } EGPoint;
- *
- * // ATAK and RLSE chunks contain an EGPoint[], piecewise-linear envelope.
- * // The envelope defines a function of time returning Fixed values. It's
- * // used to scale the nominal volume specified in the Voice8Header.
- *
- * #define RIGHT    4L
- * #define LEFT     2L
- * #define STEREO   6L
- *
- * #define ID_CHAN MakeID('C', 'H', 'A', 'N')
- * typedef sampletype LONG;
- *
- * #define ID_PAN MakeID('P', 'A', 'N', ' ')
- * typedef sposition Fixed; // 0 <= sposition <= Unity
- * // Unity refers to the maximum possible volume.
- *
- *
- * #define ID_BODY MakeID('B', 'O', 'D', 'Y')
- * typedef character BYTE; // 8 bit signed number, -128 thru 127.
- * // BODY chunk contains a BYTE[], array of audio data samples
- * </pre>
- *
- * <p><b>8SVX Regular Expression</b>
- * <pre>
- * 8SVX       ::= "FORM" #{ "8SVX" VHDR [NAME] [Copyright] [AUTH] ANNO* [ATAK] [RLSE] [CHAN] [PAN] BODY }
- *
- * VHDR       ::= "VHDR" #{ Voice8Header }
- * NAME       ::= "NAME" #{ CHAR* } [0]
- * Copyright  ::= "(c) " #{ CHAR* } [0]
- * AUTH       ::= "AUTH" #{ CHAR* } [0]
- * ANNO       ::= "ANNO" #{ CHAR* } [0]
- *
- * ATAK       ::= "ATAK" #{ EGPoint* }
- * RLSE       ::= "RLSE" #{ EGPoint* }
- * CHAN       ::= "CHAN" #{ sampletype }
- * PAN        ::= "PAN " #{ sposition }
- * BODY       ::= "BODY" #{ BYTE* } [0]
- * </pre>
- * The token "#" represents a ckSize LONG count of the following {braced} data bytes.
- * E.g., a VHDR's "#" should equal sizeof(Voicd8Header). Literal items are shown in
- * "quotes", [square bracket items] are optional, and "*" means 0 ore more replications.
- * A sometimes-needed pad byte is shown als "[0]".
- *
- * @author  Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version  1.0  1999-10-19
- */
 public class EightSVXDecoder
 implements IFFVisitor {
     /* Constants */
@@ -129,24 +24,12 @@ implements IFFVisitor {
     public final static int CHAN_ID = IFFParser.stringToID("CHAN");
     //public final static int PAN_ID = IFFParser.stringToID("PAN ");
     public final static int BODY_ID = IFFParser.stringToID("BODY");
-    
+
     /* Instance variables */
     private Vector samples_ = new Vector();
     private boolean within8SVXGroup_ = false;
-    
+
     /* Constructors  */
-    /**
-     * Creates a new Audio Source from the specified InputStream.
-     *
-     * Pre condition
-     * InputStream must contain IFF 8SVX data.
-     * Post condition
-     * -
-     * Obligation
-     * -
-     *
-     * @param  in The input stream.
-     */
     public EightSVXDecoder(InputStream in)
     throws IOException {
         try {
@@ -164,15 +47,15 @@ implements IFFVisitor {
             in.close();
         }
     }
-    
+
     public EightSVXDecoder() {
     }
-    
+
     /* Accessors */
     public Vector getSamples() {
         return samples_;
     }
-    
+
     /* Actions */
     public void registerChunks(IFFParser iff) {
         iff.declareGroupChunk(EIGHT_SVX_ID,IFFParser.ID_FORM);
@@ -184,26 +67,7 @@ implements IFFVisitor {
         iff.declarePropertyChunk(EIGHT_SVX_ID,CHAN_ID);
         iff.declareDataChunk(EIGHT_SVX_ID,BODY_ID);
     }
-    
-    /**
-     * Visits the start of an IFF GroupChunkExpression.
-     *
-     * Altough this method is declared as public it may only
-     * be called from an IFFParser that has been invoked
-     * by this class.
-     *
-     * Pre condition
-     * Vector <clips> must not be null.
-     * This method espects only FORM groups of type 8SVX.
-     * Post condition
-     * -
-     * Obligation
-     * -
-     *
-     * @param  group Group Chunk to be visited.
-     * @exception ParseException
-     * When an error has been encountered.
-     */
+
     public void enterGroup(IFFChunk group) {
         if (group.getType() == EIGHT_SVX_ID) { within8SVXGroup_ = true;}
     }
@@ -230,38 +94,11 @@ implements IFFVisitor {
             }
         }
     }
-    
+
     public void addAudioClip(AudioClip clip) {
         samples_.addElement(clip);
     }
-    
-    /**
-     * The Voice 8 Header (VHDR) property chunk holds the playback parameters for the
-     * sampled waveform.
-     * <pre>
-     * typedef LONG Fixed;     // A Fixed-point value, 16 bits to the left of
-     * // the point and 16 to the right. A Fixed is a number
-     * // of 2^16ths, i.e., 65536ths.
-     * #define Unity 0x10000L  // Unity = Fixed 1.0 = maximum volume
-     *
-     * // sCompression: Choice of compression algorithm applied to the samples.
-     * #define sCmpNone   0  // not compressed
-     * #define sCmpFibDelta 1  // Fibonacci-delta encoding.
-     * // Can be more kinds in the future.
-     *
-     * typedef struct {
-     * ULONG oneShotHiSamples,   // # samples in the high octave 1-shot part
-     * repeatHiSamples,   // # samples in the high octave repeat part
-     * samplesPerHiCycle; // # samples/cycle in high octave, else 0
-     * UWORD samplesPerSec;     // data sampling rate
-     * UBYTE ctOctave,          // # octaves of waveform
-     * sCompression;      // data compression technique used
-     * Fixed volume;            // playback volume form 0 to Unity (full
-     * // volume). Map this value into the output
-     * // hardware's dynamic range.
-     * } Voice8Header;
-     * </pre>
-     */
+
     protected void decodeVHDR(EightSVXAudioClip sample,IFFChunk chunk)
     throws ParseException {
         try {
@@ -280,35 +117,35 @@ implements IFFVisitor {
             throw new ParseException("Error parsing 8SVX VHDR:" +e.getMessage());
         }
     }
-    
+
     protected void decodeCHAN(EightSVXAudioClip sample,IFFChunk chunk)
     throws ParseException {
         if (chunk != null) {
             sample.setSampleType(chunk.getData()[3]);
         }
     }
-    
+
     protected void decodeNAME(EightSVXAudioClip sample,IFFChunk chunk)
     throws ParseException {
         if (chunk != null) {
             sample.setName(new String(chunk.getData()));
         }
     }
-    
+
     protected void decodeCOPYRIGHT(EightSVXAudioClip sample,IFFChunk chunk)
     throws ParseException {
         if (chunk != null) {
             sample.setCopyright(new String(chunk.getData()));
         }
     }
-    
+
     protected void decodeAUTH(EightSVXAudioClip sample,IFFChunk chunk)
     throws ParseException {
         if (chunk != null) {
             sample.setAuthor(new String(chunk.getData()));
         }
     }
-    
+
     protected void decodeANNO(EightSVXAudioClip sample,IFFChunk[] chunks)
     throws ParseException {
         if (chunks != null) {
@@ -318,7 +155,7 @@ implements IFFVisitor {
             }
         }
     }
-    
+
     protected void decodeBODY(EightSVXAudioClip sample,IFFChunk chunk)
     throws ParseException {
         if (chunk != null) {
@@ -326,5 +163,5 @@ implements IFFVisitor {
             sample.set8SVXBody(data);
         }
     }
-    
+
 }

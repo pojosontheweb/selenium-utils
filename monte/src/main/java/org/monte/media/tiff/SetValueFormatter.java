@@ -1,27 +1,13 @@
-/*
- * @(#)IFDEnum.java  1.0  2010-03-22
- * 
- * Copyright (c) 2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.tiff;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 
-/**
- * Formats integer values as a set.
- *
- * @author Werner Randelshofer
- * @version 1.0 2010-03-22 Created.
- */
+
 public class SetValueFormatter implements ValueFormatter {
 
-    /** Defines an entry of the set. */
+
     private class Entry {
         public Entry(String name, int bits) {
             this.name=name;
@@ -33,23 +19,16 @@ public class SetValueFormatter implements ValueFormatter {
             this.bits=bits;
             this.mask=mask;
         }
-        /* the bits that must be set. */
+
         int bits;
-        /* a mask which is considered for the bits. */
+
         int mask;
-        /* the descriptive name of the value. */
+
         String name;
     }
     private LinkedList<Entry> setDefinition;
 
-    /** Creates a new enumeration.
-     * The enumeration consists of a list of String=Integer or
-     * String=Integer Integer pairs.
-     * <p>
-     * If only one integer is provided, it specifies the bits which must
-     * be set.
-     * If two integers are provided, the second value specifies a bit mask.
-     */
+
     public SetValueFormatter(Object... set) {
         setDefinition = new LinkedList<Entry>();
         for (int i = 0; i < set.length; ) {

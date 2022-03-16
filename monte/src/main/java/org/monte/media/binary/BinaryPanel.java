@@ -1,13 +1,4 @@
-/*
- * @(#)BinaryPanel.java  1.2  2010-09-07
- *
- * Copyright (c) 1999-2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.binary;
 
 import java.awt.Color;
@@ -25,29 +16,18 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
 
-/**
- * Panel for untyped binary data.
- *
- * @author  Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version 1.2 2010-09-07 Adds tool tip support.
- * <br>1.1 2010-01-06 Adds method addHighlight().
- * <br>1.0.3 2009-12-29 Shifts layout one character to the left
- * <br>1.0.2.1 2001-06-16 Upgrade to JKD 1.3 is in progress...
- * <br> 1.0.2   2000-10-08 Set small font when Platinum LAF is active.
- * <br> 1.0.1  2000-06-12
- * <br>1.0 1999-10-19
- */
+
 public class BinaryPanel
         extends JComponent {
 
     public final static Color[] HIGHLIGHT_COLORS = new Color[]{
-        new Color(0xff756c), // red
-        new Color(0xfab555), // orange
-        new Color(0xf2df5a), // yellow
-        new Color(0xbddc5a), // green
-        new Color(0xcb9dde), // purple
-        new Color(0x66b1ff), // blue
-        new Color(0xb5b5b5), // gray
+        new Color(0xff756c),
+        new Color(0xfab555),
+        new Color(0xf2df5a),
+        new Color(0xbddc5a),
+        new Color(0xcb9dde),
+        new Color(0x66b1ff),
+        new Color(0xb5b5b5),
     };
     private BinaryModel model_;
     private final char[] HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -125,19 +105,13 @@ public class BinaryPanel
         addHighlights(h);
     }
 
-    /** Returns the offset in the binary data at the specified location.
-     * Returns -1 if there is no binary data at the specified location.
-     *
-     * @param x
-     * @param y
-     * @return
-     */
+    
     private int getOffsetAt(int x, int y) {
         FontMetrics fm = getFontMetrics(getFont());
         int row = y / fm.getHeight();
         int column = x / fm.getWidths()['0'];
         int offset;
-        if (column < 10) {//00000000> (address)
+        if (column < 10) {
             offset = -1;
         } else if (column < 10+8) {
             offset = row * 16 + (column - 10) / 2;
@@ -177,7 +151,7 @@ public class BinaryPanel
 
     private Highlight getHighlightAt(int x, int y) {
         int offset = getOffsetAt(x, y);
-        //System.out.println("BinaryPanel offset:" + offset);
+
         if (offset == -1) {
             return null;
         }
@@ -206,14 +180,14 @@ public class BinaryPanel
         byte[] bytes = new byte[16];
         char[] chars = new char[69];
 
-        // for each visible line
+
         for (; startLine < endLine; startLine++) {
             Arrays.fill(chars, ' ');
 
             int offset = 0;
             int startOfData = 0;
 
-            // write the line address
+
             int address = startLine * 16;
             for (int i = 0; i < 8; i++) {
                 chars[offset++] = HEX[address >>> 28];
@@ -226,11 +200,11 @@ public class BinaryPanel
             int len = model_.getBytes(startLine * 16, 16, bytes);
 
             for (int i = 0; i < len; i++) {
-                // write the data as hexadecimal digits
+
                 chars[offset++] = HEX[(bytes[i] >>> 4) & 0x0f];
                 chars[offset++] = HEX[bytes[i] & 0x0f];
 
-                // write the data as characters
+
                 char ch = (char) (bytes[i] & 0xff);
                 chars[i + 48 + i / 4] = Character.isISOControl(ch) ? '.' : ch;
 

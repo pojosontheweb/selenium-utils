@@ -1,52 +1,25 @@
-/*
- * @(#)IFDEntry.java  2.0  2010-07-24
- * 
- * Copyright (c) 2009-2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.tiff;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-/**
- * Represents a directory entry in a TIFF Image File Directory (IFD).
- * <p>
- * Each 12-byte IFD entry has the following format:
- * <ul>
- * <li>Bytes 0-1 The Tag that identifies the field.</li>
- * <li>Bytes 2-3 The field Type.</li>
- * <li>Bytes 4-7 The number of values, Count of the indicated Type.</li>
- * <li>Bytes 8-11 The Value Offset, the file offset (in bytes) of the Value for the
- * field. The Value is expected to begin on a word boundary; the corresponding
- * Value Offset will thus be an even number. This file offset may point anywhere
- * in the file, even after the image data.</li>
- * </ul>
- * @author Werner Randelshofer
- * @version 2.1 2010-09-07 Stores ifdOffset.
- * <br>2.0 2010-07-24 Reworked.
- * <br>1.0 2009-12-26 Created.
- */
+
 public class IFDEntry {
 
-    /** The Tag number that identifies the field. */
+
     private int tagNumber;
-    /** The field Type. */
+
     private int typeNumber;
-    /** The number of values, Count of the indicated Type. */
+
     private long count;
-    /** The Value Offset stores the value or the offset of the value depending
-     * on typeNumber and on count. */
+
     private long valueOffset;
-    /** The Entry Offset stores the location of the entry in the file. */
+
     private long entryOffset;
-    /** The IFD Offset stores the location of the IFD in the file. */
+
     private long ifdOffset;
-    /* The entry data. */
+
     private Object data;
 
     public IFDEntry(int tagNumber, int typeNumber, long count, long valueOffset, long entryOffset) {
@@ -69,16 +42,12 @@ public class IFDEntry {
         return typeNumber;
     }
 
-    /** The value offset may either contain the data or point to the data
-     * depending on the type and the count.
-     *
-     * @return The value offset.
-     */
+
     public long getValueOffset() {
         return valueOffset;
     }
 
-    /** The offset to the data. */
+
     public long getDataOffset() {
         return isDataInValueOffset() ? entryOffset + 8 : valueOffset+ifdOffset;
     }
@@ -96,30 +65,30 @@ public class IFDEntry {
 
     public boolean isDataInValueOffset() {
         switch (IFDDataType.valueOf(typeNumber)) {
-            case ASCII://8-bit byte that contains a 7-bit ASCII code; the last byte
-                //must be NUL (binary zero).
+            case ASCII:
+
                 return false;
-            case BYTE://8-bit unsigned integer.
+            case BYTE:
                 return count <= 4;
-            case SHORT://16-bit (2-byte) unsigned integer.
+            case SHORT:
                 return count <= 2;
-            case LONG://32-bit (4-byte) unsigned integer.
+            case LONG:
                 return count <= 1;
-            case RATIONAL://Two LONGs: the first represents the numerator of a fraction; the second, the denominator.
+            case RATIONAL:
                 return false;
-            case SBYTE: //An 8-bit signed (twos-complement) integer.
+            case SBYTE:
                 return count <= 4;
-            case UNDEFINED://An 8-bit byte that may contain anything, depending on the definition of the field.
+            case UNDEFINED:
                 return count <= 4;
-            case SSHORT://A 16-bit (2-byte) signed (twos-complement) integer.
+            case SSHORT:
                 return count <= 2;
-            case SLONG://A 32-bit (4-byte) signed (twos-complement) integer.
+            case SLONG:
                 return count <= 1;
-            case SRATIONAL://Two SLONG’s: the first represents the numerator of a fraction, the second the denominator.
+            case SRATIONAL:
                 return false;
-            case FLOAT://Single precision (4-byte) IEEE prettyFormat.
+            case FLOAT:
                 return count <= 1;
-            case DOUBLE:// Double precision (8-byte) IEEE prettyFormat.
+            case DOUBLE:
                 return false;
             default:
                 return true;
@@ -128,48 +97,48 @@ public class IFDEntry {
 
     public long getLength() {
         switch (IFDDataType.valueOf(typeNumber)) {
-            case ASCII://8-bit byte that contains a 7-bit ASCII code; the last byte
+            case ASCII:
                 return count;
-            case BYTE://8-bit unsigned integer.
+            case BYTE:
                 return count;
-            case SHORT://16-bit (2-byte) unsigned integer.
+            case SHORT:
                 return count * 2;
-            case LONG://32-bit (4-byte) unsigned integer.
+            case LONG:
                 return count * 4;
-            case RATIONAL://Two LONGs: the first represents the numerator of a fraction; the second, the denominator.
+            case RATIONAL:
                 return count * 8;
-            case SBYTE: //An 8-bit signed (twos-complement) integer.
+            case SBYTE:
                 return count;
-            case UNDEFINED://An 8-bit byte that may contain anything, depending on the definition of the field.
+            case UNDEFINED:
                 return count;
-            case SSHORT://A 16-bit (2-byte) signed (twos-complement) integer.
+            case SSHORT:
                 return count * 2;
-            case SLONG://A 32-bit (4-byte) signed (twos-complement) integer.
+            case SLONG:
                 return count * 4;
-            case SRATIONAL://Two SLONG’s: the first represents the numerator of a fraction, the second the denominator.
+            case SRATIONAL:
                 return count * 8;
-            case FLOAT://Single precision (4-byte) IEEE prettyFormat.
+            case FLOAT:
                 return count * 4;
-            case DOUBLE:// Double precision (8-byte) IEEE prettyFormat.
+            case DOUBLE:
                 return count * 8;
             default:
                 return 0;
         }
     }
 
-    /** Reads value data with ifdDataOffset=0*/
+
     public Object readData(TIFFInputStream in) throws IOException {
         return readData(in, ifdOffset);
     }
 
-    /** Reads value data with the specified ifdDataOffset.*/
+
     public Object readData(TIFFInputStream in, long ifdDataOffset) throws IOException {
         Object d = null;
         IFDDataType tt = IFDDataType.valueOf(typeNumber);
         if (tt != null) {
             switch (tt) {
-                case ASCII://8-bit byte that contains a 7-bit ASCII code; the last byte
-                    //must be NUL (binary zero).
+                case ASCII:
+
                     if (count <= 4) {
                         StringBuilder buf = new StringBuilder();
                         int data = (int) valueOffset;
@@ -188,7 +157,7 @@ public class IFDEntry {
                     } else {
                         return in.readASCII(valueOffset + ifdDataOffset, count);
                     }
-                case SHORT://16-bit (2-byte) unsigned integer.
+                case SHORT:
                     if (count == 1) {
                         if (in.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
                             d = (int) (valueOffset & 0xffff);
@@ -201,21 +170,21 @@ public class IFDEntry {
                         d = in.readSHORT(valueOffset + ifdDataOffset, count);
                     }
                     break;
-                case LONG://32-bit (4-byte) unsigned integer.
+                case LONG:
                     if (count == 1) {
                         d = valueOffset;
                     } else {
                         d = in.readLONG(valueOffset + ifdDataOffset, count);
                     }
                     break;
-                case RATIONAL://Two LONGs: the first represents the numerator of a fraction; the second, the denominator.
+                case RATIONAL:
                     if (count == 1) {
                         d = in.readRATIONAL(valueOffset + ifdDataOffset);
                     } else {
                         d = in.readRATIONAL(valueOffset + ifdDataOffset, count);
                     }
                     break;
-                case BYTE://8-bit unsigned integer.
+                case BYTE:
                     if (count == 1) {
                         d = (short) (valueOffset & 0xff);
                     } else if (count == 2) {
@@ -234,8 +203,8 @@ public class IFDEntry {
                         d = s;
                     }
                     break;
-                case SBYTE: //An 8-bit signed (twos-complement) integer.
-                case UNDEFINED://An 8-bit byte that may contain anything, depending on the definition of the field.
+                case SBYTE:
+                case UNDEFINED:
                     if (count == 1) {
                         d = (byte) valueOffset;
                     } else if (count == 2) {
@@ -250,7 +219,7 @@ public class IFDEntry {
                         d = b;
                     }
                     break;
-                case SSHORT://A 16-bit (2-byte) signed (twos-complement) integer.
+                case SSHORT:
                     if (count == 1) {
                         if (in.getByteOrder() == ByteOrder.LITTLE_ENDIAN) {
                             d = (short) (valueOffset & 0xffff);
@@ -263,17 +232,17 @@ public class IFDEntry {
                         d = in.readSSHORT(valueOffset + ifdDataOffset, count);
                     }
                     break;
-                case SLONG://A 32-bit (4-byte) signed (twos-complement) integer.
+                case SLONG:
                     throw new IOException("Format " + typeNumber + " not implemented");
-                case SRATIONAL://Two SLONG’s: the first represents the numerator of a fraction, the second the denominator.
+                case SRATIONAL:
                     if (count == 1) {
                         d = in.readSRATIONAL(valueOffset + ifdDataOffset);
                     } else {
                         d = in.readSRATIONAL(valueOffset + ifdDataOffset, count);
                     }
                     break;
-                case FLOAT://Single precision (4-byte) IEEE prettyFormat.
-                case DOUBLE:// Double precision (8-byte) IEEE prettyFormat.
+                case FLOAT:
+                case DOUBLE:
                 default:
                     throw new IOException("Format " + typeNumber + " not implemented");
             }
@@ -289,7 +258,7 @@ public class IFDEntry {
         return data;
     }
 
-    /** FIXME Output is used by EXIFView */
+
     @Override
     public String toString() {
         return "IFD Entry: tag:0x" + Integer.toHexString(tagNumber) + " type:0x" + Integer.toHexString(typeNumber) + " count:0x" + Long.toHexString(count) + " valueOffset:0x" + Long.toHexString(valueOffset);

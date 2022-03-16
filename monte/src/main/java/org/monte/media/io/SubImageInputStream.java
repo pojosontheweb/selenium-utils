@@ -1,24 +1,10 @@
-/*
- * @(#)SubImageInputStream.java  
- * 
- * Copyright (c) 2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.io;
 
 import java.io.IOException;
 import javax.imageio.stream.ImageInputStream;
 
-/**
- * SubImageInputStream.
- *
- * @author Werner Randelshofer
- * @version $Id: SubImageInputStream.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class SubImageInputStream extends ImageInputStreamImpl2 {
 
     private ImageInputStream in;
@@ -32,7 +18,7 @@ public class SubImageInputStream extends ImageInputStreamImpl2 {
         if (in.length() != -1 && offset + length > in.length()) {
             throw new IllegalArgumentException("Offset too large. offset="+offset+" length="+length+" in.length="+in.length());
         }
-       // setByteOrder(in.getByteOrder());
+
         in.seek(offset);
     }
 
@@ -86,19 +72,13 @@ public class SubImageInputStream extends ImageInputStreamImpl2 {
         return in.getFlushedPosition() - offset;
     }
 
-    /**
-     * Default implementation returns false.  Subclasses should
-     * override this if they cache data.
-     */
+    
     @Override
     public boolean isCached() {
         return in.isCached();
     }
 
-    /**
-     * Default implementation returns false.  Subclasses should
-     * override this if they cache data in main memory.
-     */
+    
     @Override
     public boolean isCachedMemory() {
         return in.isCachedMemory();

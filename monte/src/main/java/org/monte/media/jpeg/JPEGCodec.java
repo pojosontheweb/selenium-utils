@@ -1,13 +1,4 @@
-/*
- * @(#)JPGCodec.java 
- *
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.jpeg;
 
 import org.monte.media.io.ByteArrayImageInputStream;
@@ -25,48 +16,32 @@ import javax.imageio.ImageWriter;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * {@code JPEGCodec} encodes a BufferedImage as a byte[] array.
- * <p>
- * Supported input formats:
- * <ul>
- * {@code VideoFormat} with {@code BufferedImage.class}, any width, any height,
- * any depth.
- * </ul>
- * Supported output formats:
- * <ul>
- * {@code VideoFormat} with {@code byte[].class}, same width and height as input
- * format, depth=24.
- * </ul>
- *
- * @author Werner Randelshofer
- * @version $Id: JPEGCodec.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class JPEGCodec extends AbstractVideoCodec {
 
     public JPEGCodec() {
         super(new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_QUICKTIME,
-                    EncodingKey, ENCODING_QUICKTIME_JPEG,//
-                    CompressorNameKey, COMPRESSOR_NAME_QUICKTIME_JPEG, //
-                    DataClassKey, byte[].class, DepthKey, 24), //
-                    //
+                    EncodingKey, ENCODING_QUICKTIME_JPEG,
+                    CompressorNameKey, COMPRESSOR_NAME_QUICKTIME_JPEG,
+                    DataClassKey, byte[].class, DepthKey, 24),
+
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_AVI,
-                    EncodingKey, ENCODING_AVI_MJPG, DataClassKey, byte[].class, DepthKey, 24), //
+                    EncodingKey, ENCODING_AVI_MJPG, DataClassKey, byte[].class, DepthKey, 24),
                 },
                 new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
-                    new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_QUICKTIME,//
-                    EncodingKey, ENCODING_QUICKTIME_JPEG,//
-                    CompressorNameKey, COMPRESSOR_NAME_QUICKTIME_JPEG, //
-                    DataClassKey, byte[].class, DepthKey, 24), //
-                    //
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
+                    new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_QUICKTIME,
+                    EncodingKey, ENCODING_QUICKTIME_JPEG,
+                    CompressorNameKey, COMPRESSOR_NAME_QUICKTIME_JPEG,
+                    DataClassKey, byte[].class, DepthKey, 24),
+
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_AVI,
-                    EncodingKey, ENCODING_AVI_MJPG, DataClassKey, byte[].class, DepthKey, 24), //
-                }//
+                    EncodingKey, ENCODING_AVI_MJPG, DataClassKey, byte[].class, DepthKey, 24),
+                }
                 );
         name = "JPEG Codec";
     }
@@ -136,7 +111,7 @@ public class JPEGCodec extends AbstractVideoCodec {
         ByteArrayImageInputStream tmp = new ByteArrayImageInputStream(data);
 
         try {
-            // ImageReader ir = (ImageReader) ImageIO.getImageReadersByMIMEType("image/jpeg").next();
+
             ImageReader ir = new MJPGImageReader(new MJPGImageReaderSpi());
             ir.setInput(tmp);
             out.data = ir.read(0);

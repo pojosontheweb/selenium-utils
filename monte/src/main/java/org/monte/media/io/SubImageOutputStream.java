@@ -1,13 +1,4 @@
-/*
- * @(#)SubImageOutputStream.java  1.0  2011-07-20
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.io;
 
 import java.io.IOException;
@@ -15,19 +6,14 @@ import java.nio.ByteOrder;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.ImageOutputStreamImpl;
 
-/**
- * {@code SubImageOutputStream}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-07-20 Created.
- */
+
 public class SubImageOutputStream extends ImageOutputStreamImpl {
 
     private ImageOutputStream out;
     private long offset;
     private long length;
-    
-    /** Whether flush and close request shall be forwarded to underlying stream.*/
+
+
     private boolean forwardFlushAndClose;
 
     public SubImageOutputStream(ImageOutputStream out, ByteOrder bo,boolean forwardFlushAndClose) throws IOException {
@@ -38,7 +24,7 @@ public class SubImageOutputStream extends ImageOutputStreamImpl {
         this.out = out;
         this.offset = offset;
         this.forwardFlushAndClose=forwardFlushAndClose;
-        setByteOrder(bo); 
+        setByteOrder(bo);
         out.seek(offset);
     }
 
@@ -102,19 +88,13 @@ public class SubImageOutputStream extends ImageOutputStreamImpl {
         return out.getFlushedPosition() - offset;
     }
 
-    /**
-     * Default implementation returns false.  Subclasses should
-     * override this if they cache data.
-     */
+
     @Override
     public boolean isCached() {
         return out.isCached();
     }
 
-    /**
-     * Default implementation returns false.  Subclasses should
-     * override this if they cache data in main memory.
-     */
+
     @Override
     public boolean isCachedMemory() {
         return out.isCachedMemory();
@@ -141,7 +121,7 @@ public class SubImageOutputStream extends ImageOutputStreamImpl {
         out.write(b,off,len);
         length = Math.max(out.getStreamPosition()-offset,length);
     }
-    
+
     public void dispose() throws IOException {
         if (forwardFlushAndClose) {
         checkClosed();

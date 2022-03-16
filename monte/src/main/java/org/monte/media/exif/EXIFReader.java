@@ -1,13 +1,4 @@
-/*
- * @(#)EXIFReader.java 
- * 
- * Copyright (c) 2009-2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.exif;
 
 import org.monte.media.io.ImageInputStreamAdapter;
@@ -48,44 +39,18 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
 
-/**
- * Reads EXIF and MP meta data from a JPEG, MPO or AVI file. <p> Creates a tree
- * structure of {@code DefaultMutableTreeNode}s. Nodes with a String user object
- * describe the hierarchy of the meta data. Nodes with an MetaDataEntry as user
- * object hold the actual meta data. <p> Sources: <p> Exchangeable image file
- * format for digital still cameras: EXIF Version 2.2. (April, 2002). Standard
- * of Japan Electronics and Information Technology Industries Association. JEITA
- * CP-3451. <a
- * href="http://www.exif.org/Exif2-2.PDF">http://www.exif.org/Exif2-2.PDF</a>
- * <p> Multi-Picture Format (February 4, 2009). Standard of the Camera & Imaging
- * Products Association. CIPA DC-007-Translation-2009. <a
- * href="http://www.cipa.jp/english/hyoujunka/kikaku/pdf/DC-007_E.pdf">
- * http://www.cipa.jp/english/hyoujunka/kikaku/pdf/DC-007_E.pdf</a>
- *
- * @author Werner Randelshofer
- * @version $Id: EXIFReader.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class EXIFReader {
 
     private File file;
     private ImageInputStream iin;
-    /**
-     * When this is set to true, the reader stops after heaving read the
-     * metadata of the first image.
-     */
+
     private boolean firstImageOnly;
-    /**
-     * Whether data from the file container shall be added to the Exif data. For
-     * most file types, this adds the width and height of the image to the Exif.
-     */
+
     private boolean includeContainerMetadata = true;
-    /**
-     * Meta data tree.
-     */
+
     private TIFFNode root;
-    /**
-     * Contains offsets to additional images.
-     */
+
     private TreeSet<Long> imageOffsets = new TreeSet<Long>();
 
     public EXIFReader(File f) {
@@ -112,30 +77,27 @@ public class EXIFReader {
         return includeContainerMetadata;
     }
 
-    /**
-     * Reads the meta data from the file or input stream that has been set on
-     * the constructor.
-     */
+
     public void read() throws IOException {
         if (file != null) {
             iin = new FileImageInputStream(file);
         }
         try {
             iin.seek(0);
-            // Determine file type
+
             int magic = iin.readInt();
             iin.seek(0);
             if (magic == 0x49492a00) {
-                // Little-Endian TIFF File
-                // XXX - Implement Little-Endian TIFF File support
+
+
             } else if (magic == 0x4d4d002a) {
-                // Big-Endian TIFF File
-                // XXX - Implement Big-Endian TIFF File support
+
+
             } else if (magic == 0x52494646) {
-                // Little-Endian RIFF File
+
                 readRIFF(iin);
             } else {
-                // JFIF File
+
                 readJFIF(iin);
             }
         } finally {
@@ -145,9 +107,7 @@ public class EXIFReader {
         }
     }
 
-    /**
-     * Reads the metadata from a JFIF file.
-     */
+
     private void readJFIF(ImageInputStream iin) throws IOException {
         root = new TIFFDirectory(null, null, -1);
 
@@ -164,7 +124,7 @@ public class EXIFReader {
         TIFFDirectory imageNode = null;
 
 
-        // Collect APP2_MARKER data segments with Exif content
+
         Extraction:
         for (Segment seg = in.getNextSegment(); seg != null; seg = in.getNextSegment()) {
             switch (seg.marker) {
@@ -172,27 +132,19 @@ public class EXIFReader {
                 case JFIFInputStream.SOF1_MARKER:
                 case JFIFInputStream.SOF2_MARKER:
                 case JFIFInputStream.SOF3_MARKER:
-                //case JFIFInputStream.SOF4_MARKER:
+
                 case JFIFInputStream.SOF5_MARKER:
                 case JFIFInputStream.SOF6_MARKER:
                 case JFIFInputStream.SOF7_MARKER:
-                //case JFIFInputStream.SOF8_MARKER:
+
                 case JFIFInputStream.SOF9_MARKER:
                 case JFIFInputStream.SOFA_MARKER:
                 case JFIFInputStream.SOFB_MARKER:
-                //case JFIFInputStream.SOFC_MARKER:
+
                 case JFIFInputStream.SOFD_MARKER:
                 case JFIFInputStream.SOFE_MARKER:
                 case JFIFInputStream.SOFF_MARKER:
-                    /*
-                     * typedef struct {
-                     * ubyte   samplePrecision;
-                     * ushort  numberOfLines;
-                     * ushort  numberOfSamplesPerLine;
-                     * ubyte   numberOfComponentsInFrame;
-                     * SOFFrameComponent[numberOfComponentsInFrame] frameComponent;
-                     * } SOF0;
-                     */
+
                     if (includeContainerMetadata && imageNode != null) {
                         int samplePrecision = in.read() & 0xff;
                         int numberOfLines = ((in.read() & 0xff) << 8) | (in.read());
@@ -216,17 +168,17 @@ public class EXIFReader {
 
                     break;
                 case JFIFInputStream.APP1_MARKER:
-                    // Test whether segment starts with Exif identifier.
+
                     try {
                         in.read(buf, 0, 6);
                         if (!new String(buf, 0, 6, "ASCII").equals("Exif\u0000\u0000")) {
-                            // the segment does not start with the double 
-                            // zero-terminated string Exif. skip it.
+
+
                             continue;
                         }
                     } catch (IOException e) {
-                        // the segment does not start with a zero-terminated string.
-                        // skip it.
+
+
                         continue;
                     }
                     exifSeg.add(new FileSegment(seg.offset + 6, seg.length - 6));
@@ -235,17 +187,17 @@ public class EXIFReader {
                     }
                     break;
                 case JFIFInputStream.APP2_MARKER:
-                    // Test whether segment starts with MPF identifier.
+
                     try {
                         in.read(buf, 0, 4);
                         if (!new String(buf, 0, 4, "ASCII").equals("MPF\u0000")) {
-                            // the segment does not start with the
-                            // zero-terminated string MPF. skip it
+
+
                             continue;
                         }
                     } catch (IOException e) {
-                        // the segment does not start with a zero-terminated string.
-                        // skip it.
+
+
                         continue;
                     }
                     mpSeg.add(new FileSegment(seg.offset + 4, seg.length - 4));
@@ -256,13 +208,13 @@ public class EXIFReader {
                 case JFIFInputStream.EOI_MARKER:
                     break;
                 case JFIFInputStream.SOS_MARKER:
-                    // Extract the Exif data
+
                     if (exifStream.size() > 0) {
                         TIFFInputStream tin = new TIFFInputStream(new ByteArrayImageInputStream(exifStream.toByteArray()));
                         readTIFFIFD(tin, imageNode, exifSeg);
                         exifStream.reset();
                     }
-                    // Extract the MP data
+
                     if (mpStream.size() > 0) {
                         TIFFInputStream tin = new TIFFInputStream(new ByteArrayImageInputStream(mpStream.toByteArray()));
                         readMPFIFD(tin, imageNode, null, mpSeg);
@@ -284,9 +236,7 @@ public class EXIFReader {
         }
     }
 
-    /**
-     * Reads the Exif metadata from an AVI RIFF file.
-     */
+
     private void readRIFF(ImageInputStream iin) throws IOException {
         root = new TIFFDirectory(null, null, -1);
 
@@ -341,8 +291,8 @@ public class EXIFReader {
                             tiffSeg.add(new FileSegment(chunk.getScan() + 8, chunk.getSize() - 8));
                             readTIFFIFD(tin, trackNode, tiffSeg);
 
-                            //}
-                            //System.out.println("EXIFReader.readRIFF magic:" + RIFFParser.idToString(magic));
+
+
                         } catch (IOException ex) {
                             ParseException e = new ParseException("Error parsing AVI strd chunk.");
                             e.initCause(ex);
@@ -364,15 +314,13 @@ public class EXIFReader {
         } catch (ParseException ex) {
             ex.printStackTrace();
         } catch (AbortException ex) {
-            // aborts are explicitly done by the visitor
+
         }
     }
 
-    /**
-     * Reads the Exif metadata from an AVI RIFF file.
-     */
+
     public void readAVIstrdChunk(byte[] data) throws IOException {
-        int track = 0; // track number
+        int track = 0;
         int scan = 0;
 
         root = new TIFFDirectory(null, null, -1);
@@ -421,7 +369,7 @@ public class EXIFReader {
                 entryCount++;
             }
 
-            // Hack the thumbnail image in, if one is present
+
             if (thumbnailOffset > 0 && thumbnailLength > 0) {
                 byte[] buf = new byte[(int) thumbnailLength];
                 tin.read(thumbnailOffset, buf, 0, (int) thumbnailLength);
@@ -445,7 +393,7 @@ public class EXIFReader {
                     if (readMakerNoteIFD(tin, entry.getValueOffset(), ifdNode, entry, tiffSeg)) {
                         break;
                     } else {
-                        // fall through
+
                     }
                 } else {
                     ifdNode.add(new TIFFField(tagSet.getTag(entry.getTagNumber()), entry.readData(tin), entry));
@@ -504,9 +452,7 @@ public class EXIFReader {
         }
     }
 
-    /**
-     * imageCount*16 byte MP Entry Information.
-     */
+
     private void readMPEntries(TIFFInputStream tin, IFDEntry mpEntryInformation, TIFFDirectory parent, ArrayList<FileSegment> tiffSeg) throws IOException {
         byte[] buf = (byte[]) mpEntryInformation.readData(tin);
         TagSet tagSet = MPEntryTagSet.getInstance();
@@ -536,19 +482,19 @@ public class EXIFReader {
                 long mptc = (imageAttr & 0xffffffL);
                 ifdNode.add(new TIFFField(tagSet.getTag(MPEntryTagSet.TAG_MPTypeCode), mptc));
 
-                // Read the individual image size
+
                 long imageSize = in.readInt() & 0xffffffffL;
                 ifdNode.add(new TIFFField(tagSet.getTag(MPEntryTagSet.TAG_IndividualImageSize), imageSize));
 
-                // Read the individual data offset
+
                 long imageOffset = in.readInt() & 0xffffffffL;
                 ifdNode.add(new TIFFField(tagSet.getTag(MPEntryTagSet.TAG_IndividualImageDataOffset), imageOffset));
                 imageOffsets.add(imageOffset);
-                // Read the dependent image 1 entry number
+
                 int dependentImageEntryNumber = in.readUnsignedShort();
                 ifdNode.add(new TIFFField(tagSet.getTag(MPEntryTagSet.TAG_DependentImage1EntryNumber), dependentImageEntryNumber));
 
-                // Read the dependent image 2 entry number
+
                 dependentImageEntryNumber = in.readUnsignedShort();
                 ifdNode.add(new TIFFField(tagSet.getTag(MPEntryTagSet.TAG_DependentImage2EntryNumber), dependentImageEntryNumber));
             }
@@ -560,7 +506,7 @@ public class EXIFReader {
     }
 
     private boolean readMakerNoteIFD(TIFFInputStream tin, long offset, TIFFDirectory parent, IFDEntry parentEntry, ArrayList<FileSegment> tiffSeg) throws IOException {
-        // Test whether segment starts with FUJIFILM magic.
+
         try {
             String magic = tin.readASCII(offset, 10);
             if (magic.equals("FUJIFILM\u000c")) {
@@ -569,7 +515,7 @@ public class EXIFReader {
                 return readSonyMakerNoteIFD(tin, offset, parent, parentEntry, tiffSeg);
             }
         } catch (IOException e) {
-            // the segment does not start with a magic. Return false.
+
             return false;
         }
         return false;
@@ -584,7 +530,7 @@ public class EXIFReader {
                 parent.add(ifdNode);
                 int entryCount = 0;
                 for (IFDEntry entry : ifd.getEntries()) {
-                    // Note: FujifilmMakerNode Data pointers are offset by IFD offset
+
                     entry.setIFDOffset(offset);
 
                     ifdNode.add(new TIFFField(tagSet.getTag(entry.getTagNumber()), entry.readData(tin), entry));
@@ -592,7 +538,7 @@ public class EXIFReader {
                 }
             }
         } catch (IOException e) {
-            // the IFD is incomplete or otherwise damaged
+
             return false;
         }
         return true;
@@ -612,30 +558,23 @@ public class EXIFReader {
                 }
             }
         } catch (IOException e) {
-            // the IFD is incomplete or otherwise damaged
+
             return false;
         }
         return true;
     }
 
-    /**
-     * Gets the meta data as a Swing TreeNode structure.
-     */
+
     public TIFFNode getMetaDataTree() {
         return root;
     }
 
-    /**
-     * Returns the number of images that are described with EXIF. Returns -1 if
-     * not known.
-     */
+
     public int getImageCount() {
         return root == null ? -1 : root.getChildCount();
     }
 
-    /**
-     * Returns all IFDDirectories of the specified tag set for the given image.
-     */
+
     public ArrayList<TIFFDirectory> getDirectories(int image, TagSet tagSet) {
         ArrayList<TIFFDirectory> dirs = new ArrayList<TIFFDirectory>();
         Stack<TIFFDirectory> stack = new Stack<TIFFDirectory>();
@@ -646,7 +585,7 @@ public class EXIFReader {
                 if (node instanceof TIFFDirectory) {
                     TIFFDirectory dirNode = (TIFFDirectory) node;
                     if (dirNode.getTagSet() == tagSet) {
-                        dirs.add(0, dirNode); // must insert first because we traverse in post-order
+                        dirs.add(0, dirNode);
                     } else {
                         stack.push(dirNode);
                     }
@@ -657,9 +596,7 @@ public class EXIFReader {
         return dirs;
     }
 
-    /**
-     * Returns all thumbnails.
-     */
+
     public ArrayList<BufferedImage> getThumbnails(boolean suppressException) throws IOException {
         ArrayList<BufferedImage> thumbnails = new ArrayList<BufferedImage>();
         Stack<TIFFDirectory> stack = new Stack<TIFFDirectory>();
@@ -678,7 +615,7 @@ public class EXIFReader {
                     if (field.getTag() == BaselineTagSet.JPEGThumbnailImage) {
                         try {
                             thumbnails.add(0, ImageIO.read(new ByteArrayImageInputStream((byte[]) field.getData())));
-                            // must insert first because we traverse in post-order
+
                         } catch (IOException e) {
                             if (!suppressException) {
                                 throw e;
@@ -691,9 +628,7 @@ public class EXIFReader {
         return thumbnails;
     }
 
-    /**
-     * Returns a flat hash map of the metadata.
-     */
+
     public HashMap<TIFFTag, TIFFField> getMetaDataMap() {
         HashMap<TIFFTag, TIFFField> m = new HashMap<TIFFTag, TIFFField>();
 
@@ -708,157 +643,6 @@ public class EXIFReader {
         return m;
     }
 
-    /**
-     * Gets the metadata as an ImageIO structure. <p> Format description
-     * replicated from <a
-     * href="http://download.java.net/media/jai-imageio/javadoc/1.1/com/sun/media/imageio/plugins/tiff/package-summary.html"
-     * >http://download.java.net/media/jai-imageio/javadoc/1.1/com/sun/media/imageio/plugins/tiff/package-summary.html</a>:
-     * <p> The DTD for the native image metadata format is as follows:
-     * <pre>
-     * The DTD for the native image metadata format is as follows:
-     * &lt;!DOCTYPE "com_sun_media_imageio_plugins_tiff_image_1.0" [
-     *
-     *  &lt;!ELEMENT "com_sun_media_imageio_plugins_tiff_image_1.0" (TIFFIFD)*&gt;
-     *
-     *    &lt;!ELEMENT "TIFFIFD" (TIFFField | TIFFIFD)*&gt;
-     *      &lt;!-- An IFD (directory) containing fields --&gt;
-     *      &lt;!ATTLIST "TIFFIFD" "tagSets" #CDATA #REQUIRED&gt;
-     *        &lt;!-- Data type: String --&gt;
-     *      &lt;!ATTLIST "TIFFIFD" "parentTagNumber" #CDATA #IMPLIED&gt;
-     *        &lt;!-- The tag number of the field pointing to this IFD --&gt;
-     *        &lt;!-- Data type: Integer --&gt;
-     *      &lt;!ATTLIST "TIFFIFD" "parentTagName" #CDATA #IMPLIED&gt;
-     *        &lt;!-- A mnemonic name for the field pointing to this IFD, if known
-     *             --&gt;
-     *        &lt;!-- Data type: String --&gt;
-     *
-     *      &lt;!ELEMENT "TIFFField" (TIFFBytes | TIFFAsciis |
-     *        TIFFShorts | TIFFSShorts | TIFFLongs | TIFFSLongs |
-     *        TIFFRationals | TIFFSRationals |
-     *        TIFFFloats | TIFFDoubles | TIFFUndefined)&gt;
-     *        &lt;!-- A field containing data --&gt;
-     *        &lt;!ATTLIST "TIFFField" "number" #CDATA #REQUIRED&gt;
-     *          &lt;!-- The tag number asociated with the field --&gt;
-     *          &lt;!-- Data type: String --&gt;
-     *        &lt;!ATTLIST "TIFFField" "name" #CDATA #IMPLIED&gt;
-     *          &lt;!-- A mnemonic name associated with the field, if known --&gt;
-     *          &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFBytes" (TIFFByte)*&gt;
-     *          &lt;!-- A sequence of TIFFByte nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFByte" EMPTY&gt;
-     *            &lt;!-- An integral value between 0 and 255 --&gt;
-     *            &lt;!ATTLIST "TIFFByte" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *            &lt;!ATTLIST "TIFFByte" "description" #CDATA #IMPLIED&gt;
-     *              &lt;!-- A description, if available --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFAsciis" (TIFFAscii)*&gt;
-     *          &lt;!-- A sequence of TIFFAscii nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFAscii" EMPTY&gt;
-     *            &lt;!-- A String value --&gt;
-     *            &lt;!ATTLIST "TIFFAscii" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFShorts" (TIFFShort)*&gt;
-     *          &lt;!-- A sequence of TIFFShort nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFShort" EMPTY&gt;
-     *            &lt;!-- An integral value between 0 and 65535 --&gt;
-     *            &lt;!ATTLIST "TIFFShort" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *            &lt;!ATTLIST "TIFFShort" "description" #CDATA #IMPLIED&gt;
-     *              &lt;!-- A description, if available --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFSShorts" (TIFFSShort)*&gt;
-     *          &lt;!-- A sequence of TIFFSShort nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFSShort" EMPTY&gt;
-     *            &lt;!-- An integral value between -32768 and 32767 --&gt;
-     *            &lt;!ATTLIST "TIFFSShort" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *            &lt;!ATTLIST "TIFFSShort" "description" #CDATA #IMPLIED&gt;
-     *              &lt;!-- A description, if available --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFLongs" (TIFFLong)*&gt;
-     *          &lt;!-- A sequence of TIFFLong nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFLong" EMPTY&gt;
-     *            &lt;!-- An integral value between 0 and 4294967295 --&gt;
-     *            &lt;!ATTLIST "TIFFLong" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *            &lt;!ATTLIST "TIFFLong" "description" #CDATA #IMPLIED&gt;
-     *              &lt;!-- A description, if available --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFSLongs" (TIFFSLong)*&gt;
-     *          &lt;!-- A sequence of TIFFSLong nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFSLong" EMPTY&gt;
-     *            &lt;!-- An integral value between -2147483648 and 2147482647 --&gt;
-     *            &lt;!ATTLIST "TIFFSLong" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *            &lt;!ATTLIST "TIFFSLong" "description" #CDATA #IMPLIED&gt;
-     *              &lt;!-- A description, if available --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFRationals" (TIFFRational)*&gt;
-     *          &lt;!-- A sequence of TIFFRational nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFRational" EMPTY&gt;
-     *            &lt;!-- A rational value consisting of an unsigned numerator and
-     *                 denominator --&gt;
-     *            &lt;!ATTLIST "TIFFRational" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The numerator and denominator, separated by a slash --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFSRationals" (TIFFSRational)*&gt;
-     *          &lt;!-- A sequence of TIFFSRational nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFSRational" EMPTY&gt;
-     *            &lt;!-- A rational value consisting of a signed numerator and
-     *                 denominator --&gt;
-     *            &lt;!ATTLIST "TIFFSRational" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The numerator and denominator, separated by a slash --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFFloats" (TIFFFloat)*&gt;
-     *          &lt;!-- A sequence of TIFFFloat nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFFloat" EMPTY&gt;
-     *            &lt;!-- A single-precision floating-point value --&gt;
-     *            &lt;!ATTLIST "TIFFFloat" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFDoubles" (TIFFDouble)*&gt;
-     *          &lt;!-- A sequence of TIFFDouble nodes --&gt;
-     *
-     *          &lt;!ELEMENT "TIFFDouble" EMPTY&gt;
-     *            &lt;!-- A double-precision floating-point value --&gt;
-     *            &lt;!ATTLIST "TIFFDouble" "value" #CDATA #IMPLIED&gt;
-     *              &lt;!-- The value --&gt;
-     *              &lt;!-- Data type: String --&gt;
-     *
-     *        &lt;!ELEMENT "TIFFUndefined" EMPTY&gt;
-     *          &lt;!-- Uninterpreted byte data --&gt;
-     *          &lt;!ATTLIST "TIFFUndefined" "value" #CDATA #IMPLIED&gt;
-     *            &lt;!-- A list of comma-separated byte values --&gt;
-     *            &lt;!-- Data type: String --&gt;
-     *]&gt;
-     * </pre>
-     */
     public IIOMetadataNode getIIOMetadataTree(String formatName, int imageIndex) {
         if (formatName != null && !formatName.equals("com_sun_media_imageio_plugins_tiff_image_1.0")) {
             throw new IllegalArgumentException("Unsupported formatName:" + formatName);

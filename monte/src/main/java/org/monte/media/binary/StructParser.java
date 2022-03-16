@@ -1,13 +1,4 @@
-/*
- * @(#)StructParser.java  
- *
- * Copyright (c) 2000-2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.binary;
 
 import org.monte.media.math.ExtendedReal;
@@ -20,41 +11,7 @@ import java.text.*;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
-/**
- * Parses structured binary data using C-like data declarations.
- *
- * Syntax:
- * <pre><code>
- * Declarations ::= { MagicDeclaration | DescriptionDeclaration | EnumDeclaration | SetDeclaration | TypedefDeclaration } EOF
- * MagicDeclaration ::= "magic" identifier ("ushort" hexLiteral[".." hexLiteral] | stringLiteral) ";"
- * DescriptionDeclaration ::= "description" identifier stringLiteral "," stringLiteral ";"
- * EnumDeclaration ::= EnumSpecifier identifier ";"
- * SetDeclaration ::= SetSpecifier identifier ";"
- * TypedefDeclaration ::= "typedef" TypeSpecifier identifier ";"
- * EnumSpecifier ::= "enum" ( identifier | "{" identifier ["=" magicOrIntLiteral] {"," identifier ["=" intLiteral]} "}" )
- * SetSpecifier ::= "set" ( identifier | "{" identifier "=" intLiteral {"," identifier "=" intLiteral} "}" )
- * TypeSpecifier ::= ( StructSpecifier | (PrimitiveSpecifier [EnumSpecifier | SetSpecifier]) ) [ArrayList]
- * StructSpecifier ::= "struct (identifier | "{" MemberDeclaration {"," MemberDeclaration } "}" )
- * MemberDeclaration ::= TypeSpecifier identifier [ArrayList] ";"
- * PrimitiveSpecifier ::= "uint1" | "uint2" | "uint4" | "uint5" | "uint8" 
- *                         | "uint12" | "uint16" | "uint31LE" | "uint32"
- *                         | "int9" | "int16" | "int32"
- *                         | "ubyte" | "byte" | "short"
- *                         | "ushort" | "int" | "long" | "float" | "double"
- *                         | "extended"
- *                         | "char" | "charbyte" | "cstring" | "utf8" | "pstring"
- *                         | "pstring32"
- *                         | "utf16le" | "magic" | "mactimestamp" | "bcd2"
- *                         | "bcd4"
- *                         | "fixed16d16" | "fixed2d30" | "fixed8d8"
- *                         | "ataricolor"
- * ArrayList ::= "[" [ArraySize] "]" {"," identifier "[" [ArraySize] "]" }
- * ArraySize ::= () | intLiteral [("-"|"+"|"=="|"!=") intLiteral]
- * </code></pre>
- * @author Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Swityerland
- *
- * @version $Id: StructParser.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class StructParser extends Object {
 
     protected static final long MAC_TIMESTAMP_EPOCH = new GregorianCalendar(1904, GregorianCalendar.JANUARY, 1).getTimeInMillis();
@@ -99,7 +56,7 @@ public class StructParser extends Object {
     public boolean isTypeDeclared(Object magic) {
         TypedefDeclaration typedef = null;
 
-        //DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
+
         MagicDeclaration magicdef = (MagicDeclaration) declarations.magics.get(magic);
         if (magicdef == null) {
             return false;
@@ -146,18 +103,12 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * Consumes the number of bytes needed by the specified struct from the
-     * input stream, and returns them as a byte array.
-     */
+    
     private static String errorMsg(String text, StreamPosTokenizer scanner) {
         StringBuffer b = new StringBuffer();
         b.append("line ");
         b.append(Integer.toString(scanner.lineno()));
-        /*        b.append(' ');
-        b.append(Integer.toString(scanner.getStartPosition()));
-        b.append("..");
-        b.append(Integer.toString(scanner.getEndPosition()));*/
+        
         b.append(": ");
         b.append(text);
         b.append(" instead of ");
@@ -202,7 +153,7 @@ public class StructParser extends Object {
         scanner.wordChars(128 + 32, 255);
         scanner.wordChars('_', '_');
         scanner.whitespaceChars(0, ' ');
-        //scanner.commentChar('/');
+
         scanner.quoteChar('"');
         scanner.quoteChar('\'');
         scanner.parseNumbers();
@@ -220,13 +171,7 @@ public class StructParser extends Object {
         declarations = new Declarations(scanner);
     }
 
-    /**
-     * Declarations expression.
-     *
-     * <pre><code>
-     * Declarations ::= { MagicDeclaration | DescriptionDeclaration | EnumDeclaration | SetDeclaration | TypedefDeclaration }
-     * </code></pre>
-     */
+    
     protected static class Declarations {
 
         public Hashtable magics = new Hashtable();
@@ -277,11 +222,11 @@ public class StructParser extends Object {
             Vector result = new Vector();
             TypedefDeclaration typedef = null;
 
-            //DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
+
             MagicDeclaration magicdef = (MagicDeclaration) magics.get(magic);
             if (magicdef == null) {
-                //System.out.println("StructParser.StructTableModel.readStruct() unknow magic:"+magic);
-                //new Exception().printStackTrace();
+
+
                 if (magic instanceof Integer) {
                     throw new IOException("unknown magic:" + Integer.toHexString((Integer) magic));
                 } else {
@@ -290,7 +235,7 @@ public class StructParser extends Object {
             }
             typedef = (TypedefDeclaration) typedefs.get(magicdef.identifier);
             if (typedef == null) {
-                //System.out.println("StructParser.StructTableModel.readStruct() typedef not found for magic:"+magic+" magicdef.identifier:"+magicdef.identifier);
+
                 throw new IOException("unknown type:" + magicdef.identifier);
             }
             try {
@@ -307,17 +252,11 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * MagicDeclaration expression.
-     *
-     * <pre><code>
-     * MagicDeclaration ::= "magic" identifier ("ushort" hexLiteral[".." hexLiteral] | stringLiteral) ";"
-     * </code></pre>
-     */
+    
     protected static class MagicDeclaration {
 
         public String identifier;
-        /** If magic is null, then ushortMagicFrom/ushortMagicTo is used. */
+        
         public String magic;
         public int ushortMagicFrom;
         public int ushortMagicTo;
@@ -361,25 +300,9 @@ public class StructParser extends Object {
             }
         }
     }
-    /*
-    private static int parseHexLiteral(StreamPosTokenizer scanner)
-    throws IOException, ParseException {
-    scanner.
-    if (scanner.nextToken() != StreamPosTokenizer.TT_NUMBER || scanner.nval != 0) {
-    throw new ParseException(errorMsg("MagicDeclaration: hex literal expected",scanner));
-    }
-    System.out.println("StructParser.MagicDeclaration nval::"+scanner.nval);
-    System.out.println("StructParser.MagicDeclaration next TOken:"+scanner.nextToken());
     
-    }*/
 
-    /**
-     * DescriptionDeclaration expression.
-     *
-     * <pre><code>
-     * DescriptionDeclaration ::= "description" identifier stringLiteral "," stringLiteral ";"
-     * </code></pre>
-     */
+    
     protected static class DescriptionDeclaration {
 
         public String identifier;
@@ -419,13 +342,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * EnumDeclaration expression.
-     *
-     * <pre><code>
-     * EnumDeclaration ::= EnumSpecifier identifier ";"
-     * </code></pre>
-     */
+    
     protected static class EnumDeclaration {
 
         public EnumSpecifier enumSpecifier;
@@ -446,13 +363,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * SetDeclaration expression.
-     *
-     * <pre><code>
-     * SetDeclaration ::= SetSpecifier identifier ";"
-     * </code></pre>
-     */
+    
     protected static class SetDeclaration {
 
         public SetSpecifier setSpecifier;
@@ -473,13 +384,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * TypedefDeclaration expression.
-     *
-     * <pre><code>
-     * TypedefDeclaration ::= "typedef" TypeSpecifier identifier ";"
-     * </code></pre>
-     */
+    
     protected static class TypedefDeclaration {
 
         public TypeSpecifier typeSpecifier;
@@ -501,7 +406,7 @@ public class StructParser extends Object {
             if (scanner.nextToken() != ';') {
                 throw new ParseException(errorMsg("TypedefDeclaration: ';' expected", scanner));
             }
-            //System.out.println("typedef "+typeSpecifier+" "+identifier+";");
+
         }
 
         private int getResolvedType(Declarations declarations) throws IOException {
@@ -514,13 +419,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * EnumSpecifier expression.
-     *
-     * <pre><code>
-     * EnumSpecifier ::= "enum" ( identifier | "{" identifier ["=" intLiteral] {"," identifier ["=" intLiteral]} "}" )
-     * </code></pre>
-     */
+    
     protected static class EnumSpecifier {
 
         public Hashtable members;
@@ -585,9 +484,7 @@ public class StructParser extends Object {
                     buf.append('"');
                 } else {
                     buf.append(Integer.toString(value));
-                    /*
-                    buf.append("0x");
-                    buf.append(Integer.toHexString(value));*/
+                    
                 }
                 buf.append(" {");
                 if (members.get(intValue) != null) {
@@ -615,13 +512,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * SetSpecifier expression.
-     *
-     * <pre><code>
-     * SetSpecifier ::= "set" ( identifier | "{" identifier "=" intLiteral {"," identifier "=" intLiteral} "}" )
-     * </code></pre>
-     */
+    
     protected static class SetSpecifier {
 
         public Hashtable members;
@@ -695,14 +586,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * TypeSpecifier expression.
-     *
-     * <pre><code>
-     * TypeSpecifier ::= ( StructSpecifier | (PrimitiveSpecifier [EnumSpecifier | SetSpecifier]) ) [ArrayList]
-     * ArrayList ::= "[" [ArraySize] "]" {"," identifier "[" [ArraySize] "]" }
-     * </code></pre>
-     */
+    
     protected static class TypeSpecifier {
 
         public StructSpecifier structSpecifier;
@@ -732,7 +616,7 @@ public class StructParser extends Object {
                 }
             }
 
-            // ArrayList Begin
+
             if (scanner.nextToken() == '[') {
                 arrayList = new Vector();
                 do {
@@ -745,7 +629,7 @@ public class StructParser extends Object {
             } else {
                 scanner.pushBack();
             }
-            // ArrayList End
+
         }
 
         private int getResolvedPrimitiveType(Declarations declarations) throws IOException {
@@ -762,7 +646,7 @@ public class StructParser extends Object {
                 throws IOException {
             if (structSpecifier != null) {
                 if (arrayList != null) {
-                    // ArrayList Begin
+
                     Enumeration enm = arrayList.elements();
                     while (enm.hasMoreElements()) {
                         ArraySize arraySize = (ArraySize) enm.nextElement();
@@ -803,7 +687,7 @@ public class StructParser extends Object {
                     buf.append('\"');
                     boolean hasValue = false;
 
-                    // ArrayList Begin
+
                     Enumeration enm = arrayList.elements();
                     while (enm.hasMoreElements()) {
                         ArraySize arraySize = (ArraySize) enm.nextElement();
@@ -811,9 +695,9 @@ public class StructParser extends Object {
                         if (size == ArraySize.REMAINDER) {
                             try {
                                 for (int i = 0;; i++) {
-                                    //if (i > 0) {
-                                    //  buf.append(", ");
-                                    //}
+
+
+
                                     Object value = readValue(in, parentIdentifier + "[" + i + "]", declarations, result);
                                     if (value != null) {
                                         hasValue = true;
@@ -828,9 +712,9 @@ public class StructParser extends Object {
                             }
                         } else {
                             for (int i = 0; i < size; i++) {
-                                //if (i > 0) {
-                                //    buf.append(", ");
-                                //}
+
+
+
                                 Object value = readValue(in, parentIdentifier + "[" + i + "]", declarations, result);
                                 if (value != null) {
                                     hasValue = true;
@@ -843,7 +727,7 @@ public class StructParser extends Object {
                             }
                         }
                     }
-                    // ArrayList End
+
                     if (hasValue) {
                         buf.append('\"');
                         return buf.toString();
@@ -860,7 +744,7 @@ public class StructParser extends Object {
                     buf.append("0x");
                     boolean hasValue = false;
 
-                    // ArrayList Begin
+
                     Enumeration enm = arrayList.elements();
                     while (enm.hasMoreElements()) {
                         ArraySize arraySize = (ArraySize) enm.nextElement();
@@ -868,9 +752,9 @@ public class StructParser extends Object {
                         if (size == ArraySize.REMAINDER) {
                             try {
                                 for (int i = 0;; i++) {
-                                    //if (i > 0) {
-                                    //  buf.append(", ");
-                                    //}
+
+
+
                                     Integer value = (Integer) readValue(in, parentIdentifier + "[" + i + "]", declarations, result);
                                     if (value != null) {
                                         hasValue = true;
@@ -886,9 +770,9 @@ public class StructParser extends Object {
                             }
                         } else {
                             for (int i = 0; i < size; i++) {
-                                //if (i > 0) {
-                                //    buf.append(", ");
-                                //}
+
+
+
                                 Integer value = (Integer) readValue(in, parentIdentifier + "[" + i + "]", declarations, result);
                                 if (value != null) {
                                     hasValue = true;
@@ -902,12 +786,12 @@ public class StructParser extends Object {
                             }
                         }
                     }
-                    // ArrayList End
+
                     if (hasValue) {
                         if (true) {
                             return bout.toByteArray();
                         }
-                        //buf.append('}');
+
                         return buf.toString();
                     } else {
                         return null;
@@ -921,7 +805,7 @@ public class StructParser extends Object {
                     buf.append('{');
                     boolean hasValue = false;
 
-                    // ArrayList Begin
+
                     Enumeration enm = arrayList.elements();
                     while (enm.hasMoreElements()) {
                         ArraySize arraySize = (ArraySize) enm.nextElement();
@@ -958,7 +842,7 @@ public class StructParser extends Object {
                             }
                         }
                     }
-                    // ArrayList End
+
                     if (hasValue) {
                         buf.append('}');
                         return buf.toString();
@@ -1004,13 +888,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * StructSpecifier expression.
-     *
-     * <pre><code>
-     * StructSpecifier ::= "struct (identifier | "{" MemberDeclaration { MemberDeclaration } "}" )
-     * </code></pre>
-     */
+    
     protected static class StructSpecifier {
 
         public String identifier;
@@ -1039,29 +917,17 @@ public class StructParser extends Object {
 
         private void read(ImageInputStream in, String parentIdentifier, Declarations declarations, Vector result)
                 throws IOException {
-            //try {
+
             Enumeration enm = members.elements();
             while (enm.hasMoreElements()) {
                 MemberDeclaration aMember = (MemberDeclaration) enm.nextElement();
                 aMember.read(in, parentIdentifier, declarations, result);
             }
-            /*
-            } catch (IOException e) {
-            System.out.println("StructParser.StructSpecifier.read(...) IOException @ "+identifier);
-            e.printStackTrace();
-            throw e;
-            }*/
+            
         }
     }
 
-    /**
-     * MemberDeclaration expression.
-     *
-     * <pre><code>
-     * MemberDeclaration ::= TypeSpecifier identifier [ArrayList] ";"
-     * ArrayList ::= "[" [ArraySize] "]" {"," identifier "[" [ArraySize] "]" }
-     * </code></pre>
-     */
+    
     protected static class MemberDeclaration {
 
         public TypeSpecifier typeSpecifier;
@@ -1077,7 +943,7 @@ public class StructParser extends Object {
             }
             identifier = scanner.sval;
 
-            // ArrayList Begin
+
             if (scanner.nextToken() == '[') {
                 arrayList = new Vector();
                 do {
@@ -1090,7 +956,7 @@ public class StructParser extends Object {
             } else {
                 scanner.pushBack();
             }
-            // ArrayList End
+
 
             if (scanner.nextToken() == ';') {
             } else if (scanner.ttype == '}') {
@@ -1103,7 +969,7 @@ public class StructParser extends Object {
         private void read(ImageInputStream in, String parentIdentifier, Declarations declarations, Vector result)
                 throws IOException {
             if (arrayList != null) {
-                // ArrayList Begin
+
                 Enumeration enm = arrayList.elements();
                 while (enm.hasMoreElements()) {
                     ArraySize arraySize = (ArraySize) enm.nextElement();
@@ -1137,7 +1003,7 @@ public class StructParser extends Object {
                         }
                     }
                 }
-                // ArrayList End
+
             } else {
                 Object obj = typeSpecifier.read(in, parentIdentifier + "." + identifier, declarations, identifier, result);
                 if (obj != null) {
@@ -1152,108 +1018,94 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * PrimitiveSpecifier expression.
-     *
-     * <pre><code>
-     * PrimitiveSpecifier ::= "uint" n | "ubyte" | "byte" | "short" | "ushort" |
-     *                         | "int" | "long" | "float" | "double" | "extended"
-     *                         | "char" | "charbyte" | "cstring" | "utf8" | "pstring"
-     *                         | "pstring32"
-     *                         | "utf16le" |"magic" | "mactimestamp"
-     *                         | "bcd2" | "bcd4"
-     * </code></pre>
-     */
+    
     protected static class PrimitiveSpecifier {
 
         private final static int NON_PRIMITIVE = -1;
         private final static char[] HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        /* 8 bits signed. */
+        
         public final static int BYTE = 0;
-        /* 8 bits unsigned. */
+        
         public final static int UBYTE = 1;
-        /* 16 bits signed big endian. */
+        
         public final static int SHORT = 2;
-        /* 16 bits unsigned big endian. */
+        
         public final static int USHORT = 3;
-        /* 32 bits signed big endian. */
+        
         public final static int INT = 4;
-        /* 32 bits unsigned big endian. */
+        
         public final static int UINT = 5;
-        /* 64 bits signed big endian. */
+        
         public final static int LONG = 6;
-        /* 32 bits IEEE 754. */
+        
         public final static int FLOAT = 7;
-        /* 64 bits IEEE 754. */
+        
         public final static int DOUBLE = 8;
-        /* 80 bits IEEE 754. */
+        
         public final static int EXTENDED = 9;
-        /* 8 bits ASCII. */
+        
         public final static int CHARBYTE = 10;
-        /* 16 bits UTF-16. */
+        
         public final static int CHAR = 11;
-        /* C-Style Zero terminated ASCII String. */
+        
         public final static int CSTRING = 12;
-        /* Pascal Style String. Starting with an 8 or 16 bit long length value. */
+        
         public final static int PSTRING = 13;
-        /* Pascal Style String. Starting with an 8 or 16 bit long length value.
-        padded to 32 bytes. */
+        
         public final static int PSTRING32 = 30;
-        /* UTF-8 zero terminated string. */
+        
         public final static int UTF8 = 32;
-        /* UTF-16 little endian zero terminated string. */
+        
         public final static int UTF16LE = 29;
-        /* 4 ASCII characters in 4 subsequent bytes. */
+        
         public final static int MAGIC = 14;
-        /* 32 bit signed count of seconds since 1904. */
+        
         public final static int MAC_TIMESTAMP = 15;
-        /* A typedef type. */
+        
         public final static int TYPEDEF_TYPE = 16;
-        /* 16 bits signed little endian. */
+        
         public final static int SHORTLE = 17;
-        /* 16 bits unsigned little endian. */
+        
         public final static int USHORTLE = 18;
-        /* 32 bits signed little endian. */
+        
         public final static int INTLE = 19;
-        /* 32 bits unsigned little endian. */
+        
         public final static int UINTLE = 20;
-        /* 64 bits signed little endian. */
+        
         public final static int LONGLE = 21;
-        /* 2 Digits Binary Coded Decimal (=1 byte). */
+        
         public final static int BCD2 = 22;
-        /* 4 Digits Binary Coded Decimal (=2 bytes). */
+        
         public final static int BCD4 = 23;
-        /* 32-bit fixed decimal divided by 16.16 (=4 bytes). */
+        
         public final static int FIXED_16D16 = 24;
-        /* 32-bit fixed decimal divided by 2.30 (=4 bytes). */
+        
         public final static int FIXED_2D30 = 25;
-        /* 16-bit fixed decimal divided by 8.8 (=2 bytes). */
+        
         public final static int FIXED_8D8 = 26;
-        /* 1 bit unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT1 = 34;
-        /* 2 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT2 = 35;
-        /* 3 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT3 = 36;
-        /* 4 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT4 = 27;
-        /* 5 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT5 = 37;
-        /* 5 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT9 = 41;
-        /* 8 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT8 = 33;
-        /* 16 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT12 = 38;
-        /* 16 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT16 = 39;
-        /* 31 bits unsigned. Does not need to start at byte boundaries. */
+        
         public final static int UINT31LE = 42;
-        /* 9 bits signed. Does not need to start at byte boundaries. */
+        
         public final static int INT9 = 40;
-        /* Atari 16 bit color value with 3 bits per channel:
-         *      RGB 00000rrr0ggg0bbb
-         */
+        
         public final static int ATARI_COLOR = 31;
         public int type;
         public String typedef;
@@ -1440,21 +1292,21 @@ public class StructParser extends Object {
                     int size = in.read();
                     if (size == 0) {
                         size = in.read();
-                        in.read(); // why do we skip two bytes here?
+                        in.read();
                         in.read();
                     }
                     if (size < 0) {
                         return "";
                     }
                     byte[] bytes = new byte[size];
-                    //in.readFully(bytes);
+
                     int n = 0;
                     while (n < size) {
                         int count = in.read(bytes, n, size - n);
                         if (count < 0) {
                             System.out.println("StructParser.PrimitiveSpecifier.read not enough bytes for pstring. Expected size:" + size + " actual size:" + n);
                             break;
-                            //throw new EOFException();
+
                         }
                         n += count;
                     }
@@ -1474,14 +1326,14 @@ public class StructParser extends Object {
                         size = 32 - used;
                     }
                     byte[] bytes = new byte[size];
-                    //in.readFully(bytes);
+
                     int n = 0;
                     while (n < size) {
                         int count = in.read(bytes, n, size - n);
                         if (count < 0) {
                             System.out.println("StructParser.PrimitiveSpecifier.read not enough bytes for pstring. Expected size:" + size + " actual size:" + n);
                             break;
-                            //throw new EOFException();
+
                         }
                         n += count;
                     }
@@ -1653,7 +1505,7 @@ public class StructParser extends Object {
                     }
                     buf.append(hex);
                     buf.append(" {rgb:0x");
-                    int rgb = ((red << 5) | (red << 2) | (red >>> 1)) << 16//
+                    int rgb = ((red << 5) | (red << 2) | (red >>> 1)) << 16
                             | ((green << 5) | (green << 2) | (green >>> 1)) << 8
                             | ((blue << 5) | (blue << 2) | (blue >>> 1));
                     hex = Integer.toHexString(rgb);
@@ -1676,13 +1528,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * ArraySize expression.
-     *
-     * <pre><code>
-     * ArraySize ::= () | intLiteral ["-" intLiteral]
-     * </code></pre>
-     */
+    
     protected static class ArraySize {
 
         public final static int REMAINDER = -1;
@@ -1798,7 +1644,7 @@ public class StructParser extends Object {
                 case NEGATIVE_VARIABLE:
                     int sign = type == NEGATIVE_VARIABLE ? -1 : 1;
 
-                    // Search for variable with the same name
+
                     for (int i = result.size() - 1; i > -1; i--) {
                         StructTableModel.Value value = (StructTableModel.Value) result.elementAt(i);
                         if (value.declaration.equals(variable)) {
@@ -1806,7 +1652,7 @@ public class StructParser extends Object {
                             return variableValue * sign + offset;
                         }
                     }
-                    // Search for fully qualified variable with the same name
+
                     for (int i = result.size() - 1; i > -1; i--) {
                         StructTableModel.Value value = (StructTableModel.Value) result.elementAt(i);
                         if (value.qualifiedIdentifier.equals(variable)) {
@@ -1814,7 +1660,7 @@ public class StructParser extends Object {
                             return variableValue * sign + offset;
                         }
                     }
-                    // Search for fully qualified variable with the same name ending
+
                     for (int i = result.size() - 1; i > -1; i--) {
                         StructTableModel.Value value = (StructTableModel.Value) result.elementAt(i);
                         if (value.qualifiedIdentifier.endsWith(variable)) {
@@ -1828,21 +1674,21 @@ public class StructParser extends Object {
                     int trueValue = type == EQUAL ? 1 : 0;
                     int falseValue = 1 - trueValue;
 
-                    // Search for variable with the same name
+
                     for (int i = result.size() - 1; i > -1; i--) {
                         StructTableModel.Value value = (StructTableModel.Value) result.elementAt(i);
                         if (value.declaration.equals(variable)) {
                             return ((Number)equal).intValue()==value.intValue? trueValue : falseValue;
                         }
                     }
-                    // Search for fully qualified variable with the same name
+
                     for (int i = result.size() - 1; i > -1; i--) {
                         StructTableModel.Value value = (StructTableModel.Value) result.elementAt(i);
                         if (value.qualifiedIdentifier.equals(variable)) {
                             return ((Number)equal).intValue()==((Number)value.value).intValue() ? trueValue : falseValue;
                         }
                     }
-                    // Search for fully qualified variable with the same name ending
+
                     for (int i = result.size() - 1; i > -1; i--) {
                         StructTableModel.Value value = (StructTableModel.Value) result.elementAt(i);
                         if (value.qualifiedIdentifier.endsWith(variable)) {
@@ -1858,13 +1704,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * IntLiteral expression.
-     *
-     * <pre><code>
-     * IntLiteral ::= intLiteral | hexLiteral
-     * </code></pre>
-     */
+    
     protected static class IntLiteral {
 
         public int value;
@@ -1874,7 +1714,7 @@ public class StructParser extends Object {
             if (scanner.nextToken() != StreamPosTokenizer.TT_NUMBER) {
                 throw new ParseException(errorMsg("IntLiteral: numeric value expected", scanner));
             }
-            value = (int)((long) scanner.nval);// Must cast like this to get proper signs
+            value = (int)((long) scanner.nval);
             if (scanner.nval == 0.0) {
                 if (scanner.nextToken() == StreamPosTokenizer.TT_WORD && scanner.sval.startsWith("x")) {
                     value = Integer.valueOf(scanner.sval.substring(1), 16).intValue();
@@ -1889,13 +1729,7 @@ public class StructParser extends Object {
         }
     }
 
-    /**
-     * MagicOrIntLiteral expression.
-     *
-     * <pre><code>
-     * MagicOrIntLiteral ::= magicLiteral | intLiteral | hexLiteral
-     * </code></pre>
-     */
+    
     protected static class MagicOrIntLiteral {
 
         public int intValue;

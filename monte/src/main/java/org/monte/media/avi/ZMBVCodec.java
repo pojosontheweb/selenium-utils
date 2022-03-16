@@ -1,13 +1,4 @@
-/*
- * @(#)ZMBVCodec.java 
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.avi;
 
 import java.awt.image.DataBufferUShort;
@@ -29,18 +20,7 @@ import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
 
-/**
- * Implements the DosBox Capture Codec {@code "ZMBV"}.
- * <p>
- * This codec currently only supports decoding from the file format into
- * a {@code BufferedImage}. Encoding support may be added in the future.
- * <p>
- * For details seee {@link ZMBVCodecCore}.
- * </p>
- *
- * @author Werner Randelshofer
- * @version $Id: ZMBVCodec.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class ZMBVCodec extends AbstractVideoCodec {
 
     private ZMBVCodecCore state;
@@ -49,12 +29,12 @@ public class ZMBVCodec extends AbstractVideoCodec {
 
     public ZMBVCodec() {
         super(new Format[]{
-                    new Format(MediaTypeKey, MediaType.VIDEO, 
-                    EncodingKey, ENCODING_AVI_DOSBOX_SCREEN_CAPTURE, DataClassKey, byte[].class, FixedFrameRateKey, true), //
+                    new Format(MediaTypeKey, MediaType.VIDEO,
+                    EncodingKey, ENCODING_AVI_DOSBOX_SCREEN_CAPTURE, DataClassKey, byte[].class, FixedFrameRateKey, true),
                 },
                 new Format[]{
-                    new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA, 
-                            EncodingKey, ENCODING_BUFFERED_IMAGE, FixedFrameRateKey, true), //
+                    new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
+                            EncodingKey, ENCODING_BUFFERED_IMAGE, FixedFrameRateKey, true),
                 });
         name = "ZMBV Codec";
     }
@@ -94,7 +74,7 @@ public class ZMBVCodec extends AbstractVideoCodec {
         }
         switch (depth) {
             case 8: {
-                int imgType = BufferedImage.TYPE_BYTE_INDEXED; // FIXME - Don't hardcode this value
+                int imgType = BufferedImage.TYPE_BYTE_INDEXED;
                 if (img == null || img.getWidth() != width || img.getHeight() != height || img.getType() != imgType) {
                     int[] cmap = new int[256];
                     IndexColorModel icm = new IndexColorModel(8, 256, cmap, 0, false, -1, DataBuffer.TYPE_BYTE);
@@ -111,7 +91,7 @@ public class ZMBVCodec extends AbstractVideoCodec {
             }
             break;
             case 15: {
-                int imgType = BufferedImage.TYPE_USHORT_555_RGB; // FIXME - Don't hardcode this value
+                int imgType = BufferedImage.TYPE_USHORT_555_RGB;
                 if (img == null || img.getWidth() != width || img.getHeight() != height || img.getType() != imgType) {
                     DirectColorModel cm = new DirectColorModel(15, 0x1f << 10, 0x1f << 5, 0x1f << 0);
                     img = new MyBufferedImage(cm, Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), new Point(0, 0)), false, new Hashtable());
@@ -124,7 +104,7 @@ public class ZMBVCodec extends AbstractVideoCodec {
             }
             break;
             case 16: {
-                int imgType = BufferedImage.TYPE_USHORT_565_RGB; // FIXME - Don't hardcode this value
+                int imgType = BufferedImage.TYPE_USHORT_565_RGB;
                 if (img == null || img.getWidth() != width || img.getHeight() != height || img.getType() != imgType) {
                     DirectColorModel cm = new DirectColorModel(15, 0x1f << 11, 0x3f << 5, 0x1f << 0);
                     img = new MyBufferedImage(cm, Raster.createWritableRaster(cm.createCompatibleSampleModel(width, height), new Point(0, 0)), false, new Hashtable());

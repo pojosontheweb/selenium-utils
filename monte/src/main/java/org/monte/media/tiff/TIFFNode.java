@@ -1,13 +1,4 @@
-/*
- * @(#)TIFFNode.java  1.0  2010-07-25
- * 
- * Copyright (c) 2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.tiff;
 
 import java.util.ArrayList;
@@ -18,22 +9,15 @@ import java.util.NoSuchElementException;
 import java.util.Stack;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-/**
- * TIFFNode.
- *
- * @author Werner Randelshofer
- * @version 1.0 2010-07-25 Created.
- */
+
 public abstract class TIFFNode {
 
-    /** The tag which identifies this node.*/
+
     protected TIFFTag tag;
-    /** The children. */
+
     private ArrayList<TIFFNode> children = new ArrayList<TIFFNode>();
     private TIFFNode parent;
-    /** The IFDEntry from which this node was read.
-     * IFDEntry is null, if this node has not been read from a TIFF file.
-     */
+
     protected IFDEntry ifdEntry;
 
     public TIFFNode(TIFFTag tag) {
@@ -48,7 +32,7 @@ public abstract class TIFFNode {
         return tag;
     }
 
-    /** Returns the tag number or -1 if not known. */
+
     public int getTagNumber() {
         return tag != null ? tag.getNumber() : -1;
     }
@@ -170,7 +154,7 @@ public abstract class TIFFNode {
         public void remove() {
             current.removeFromParent();
         }
-    }  // End of class PostorderEnumeration
+    }
     static private final Iterator<TIFFNode> EMPTY_ITERATOR = new Iterator<TIFFNode>() {
 
         @Override

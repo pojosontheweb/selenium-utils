@@ -1,13 +1,4 @@
-/*
- * @(#)DataAtomInputStream.java  
- * 
- * Copyright (c) 2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.quicktime;
 
 import java.io.DataInputStream;
@@ -19,12 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-/**
- * {@code DataAtomInputStream}.
- *
- * @author Werner Randelshofer
- * @version $Id
- */
+
 public class DataAtomInputStream extends FilterInputStream {
 
     protected static final long MAC_TIMESTAMP_EPOCH = new GregorianCalendar(1904, GregorianCalendar.JANUARY, 1).getTimeInMillis();
@@ -114,19 +100,13 @@ public class DataAtomInputStream extends FilterInputStream {
         }
     }
 
-    /**
-     * Reads a 32-bit Mac timestamp (seconds since 1902).
-     * @return date
-     * @throws java.io.IOException
-     */
+    
     public Date readMacTimestamp() throws IOException {
         long timestamp = ((long) readInt()) & 0xffffffffL;
         return new Date(MAC_TIMESTAMP_EPOCH + timestamp * 1000);
     }
 
-    /**
-     * Reads 32-bit fixed-point number divided as 16.16.
-     */
+    
     public double readFixed16D16() throws IOException {
         int wholePart = readUShort();
         int fractionPart = readUShort();
@@ -134,9 +114,7 @@ public class DataAtomInputStream extends FilterInputStream {
         return new Double(wholePart + fractionPart / 65536.0);
     }
 
-    /**
-     * Reads 32-bit fixed-point number divided as 2.30.
-     */
+    
     public double readFixed2D30() throws IOException {
         int fixed = readInt();
         int wholePart = fixed >>> 30;
@@ -145,9 +123,7 @@ public class DataAtomInputStream extends FilterInputStream {
         return new Double(wholePart + fractionPart / (double) 0x3fffffff);
     }
 
-    /**
-     * Reads 16-bit fixed-point number divided as 8.8.
-     */
+    
     public double readFixed8D8() throws IOException {
         int fixed = readUShort();
         int wholePart = fixed >>> 8;
@@ -176,21 +152,21 @@ public class DataAtomInputStream extends FilterInputStream {
         int size = in.read();
         if (size == 0) {
             size = in.read();
-            in.read(); // why do we skip two bytes here?
+            in.read();
             in.read();
         }
         if (size < 0) {
             return "";
         }
         byte[] b = new byte[size];
-        //in.readFully(bytes);
+
         int n = 0;
         while (n < size) {
             int count = in.read(b, n, size - n);
             if (count < 0) {
                 System.out.println("StructParser.PrimitiveSpecifier.read not enough bytes for pstring. Expected size:" + size + " actual size:" + n);
                 break;
-                //throw new EOFException();
+
             }
             n += count;
         }

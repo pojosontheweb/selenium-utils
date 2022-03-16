@@ -1,13 +1,4 @@
-/*
- * @(#)BitmapCodec.java  1.0  2011-02-20
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.image;
 
 import org.monte.media.AbstractVideoCodec;
@@ -28,21 +19,16 @@ import javax.imageio.ImageIO;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * Decodes media data into a {@code Bitmap}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-02-20 Created.
- */
+
 public class BitmapCodec extends AbstractVideoCodec {
   public BitmapCodec() {
         super(new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
                 },
                 new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BITMAP_IMAGE, DataClassKey, BitmapImage.class), //
+                    EncodingKey, ENCODING_BITMAP_IMAGE, DataClassKey, BitmapImage.class),
                 });
     }
 

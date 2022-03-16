@@ -1,13 +1,4 @@
-/*
- * @(#)AmigaVideoFormatKeys.java 
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance onlyWith the
- * license agreement you entered into onlyWith Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.anim;
 
 import org.monte.media.Format;
@@ -17,18 +8,12 @@ import org.monte.media.math.Rational;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/**
- * {@code AmigaVideoFormatKeys}.
- *
- * @author Werner Randelshofer
- * @version $Id$
- */
+
 public class AmigaVideoFormatKeys extends VideoFormatKeys {
 
-    /** The Amiga monitor id. 
-     */
+    
     public final static FormatKey<Integer> MonitorIdKey = new FormatKey<Integer>("monitorId", Integer.class);
-    /** Anim Op5 . */
+    
     public static final String ENCODING_ANIM_OP5 = "op5";
 
     enum ColorMode {
@@ -55,7 +40,7 @@ public class AmigaVideoFormatKeys extends VideoFormatKeys {
     public static int toCAMG(Format fmt) {
         int camg = 0;
 
-        // determine monitor id
+
         int monitorId = 0;
         if (fmt.containsKey(MonitorIdKey)) {
             monitorId = fmt.get(MonitorIdKey);

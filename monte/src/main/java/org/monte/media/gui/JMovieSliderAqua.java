@@ -1,13 +1,4 @@
-/*
- * @(#)MovieSliderAqua.java  3.0.1  2010-11-06
- *
- * Copyright (c) 2003-2009 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms. 
- */
+
 package org.monte.media.gui;
 
 import java.awt.Image;
@@ -21,16 +12,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import org.monte.media.image.Images;
 
-/**
- * MovieSliderAqua.
- *
- * @author  Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version 3.0.1 2010-11-06 Removes synchronization of method setModel.
- * <br>3.0 2009-07-25 Added images for disabled state.
- * <br>2.0 2007-11-15 Upgraded to Java 1.4.
- * <br>1.1 2003-04-25 Thumb position was not computed correctly.
- * <br>1.0 April 22, 2003 Created.
- */
+
 public class JMovieSliderAqua extends JComponent
         implements ChangeListener, MouseListener, MouseMotionListener {
 
@@ -114,32 +96,7 @@ public class JMovieSliderAqua extends JComponent
     public Dimension getMinimumSize() {
         return new Dimension(16, 16);
     }
-    /*
-    public boolean mouseDown(Event e, int x, int y) {
-    isPressed = true;
-    moveThumb(x);
-    repaint();
-    return true;
-    }
-    public boolean mouseDrag(Event e, int x, int y) {
-    moveThumb(x);
-    return true;
-    }
-    public boolean mouseUp(Event e, int x, int y) {
-    isPressed = false;
-    moveThumb(x);
-    return true;
-    }
-    public boolean mouseEnter(Event e, int x, int y) {
-    isArmed = true;
-    if (isPressed) repaint();
-    return true;
-    }
-    public boolean mouseExit(Event e, int x, int y) {
-    isArmed = false;
-    if (isPressed) repaint();
-    return true;
-    }*/
+
 
     protected void moveThumb(int mousePosition) {
         int width = getSize().width;
@@ -153,7 +110,7 @@ public class JMovieSliderAqua extends JComponent
             return 0;
         }
         int width = getSize().width - THUMB_WIDTH;
-        //int width = computeProgressPos() - THUMB_WIDTH;
+
         float thumbPos = Math.max(0f, m.getValue() / (float) ((m.getMaximum() - m.getMinimum())));
         return (int) (width * thumbPos);
     }
@@ -190,7 +147,7 @@ public class JMovieSliderAqua extends JComponent
         int width = s.width;
         boolean enabled = isEnabled();
 
-        // Draw west
+
         Image image;
         if (progressModel_.getValue() == progressModel_.getMinimum()) {
             image = (enabled) ? trackWestUnloadedImage : trackWestUnloadedDisabledImage;
@@ -199,7 +156,7 @@ public class JMovieSliderAqua extends JComponent
         }
         g.drawImage(image, 0, 0, this);
 
-        // Draw center
+
         int trackWidth = width - trackEastImage.getWidth(this) - trackWestImage.getWidth(this);
         int imageWidth = Math.min(
                 trackWidth,
@@ -220,7 +177,7 @@ public class JMovieSliderAqua extends JComponent
                     this);
         }
 
-        // Draw east
+
         if (progressModel_.getValue() < progressModel_.getMaximum() - progressModel_.getExtent()) {
             image = (enabled) ? trackEastUnloadedImage : trackEastUnloadedDisabledImage;
         } else {
@@ -243,7 +200,7 @@ public class JMovieSliderAqua extends JComponent
             image = thumbImage;
         }
 
-        // thumb
+
         g.drawImage(image, thumbPos, 0, this);
     }
 
@@ -261,12 +218,12 @@ public class JMovieSliderAqua extends JComponent
     public void stateChanged(ChangeEvent event) {
         BoundedRangeModel progress = progressModel_;
         if (progress != null && event.getSource() == progress) {
-            //System.out.println("MovieSliderAqua progress:"+progress.getValue());
+
             if (computeProgressPos() != progressPos_) {
                 repaint();
             }
         } else {
-            //System.out.println("MovieSliderAqua time:"+model_.getValue());
+
             if (computeThumbPos() != thumbPos_) {
                 repaint();
             }

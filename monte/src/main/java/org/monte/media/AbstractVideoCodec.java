@@ -1,13 +1,4 @@
-/*
- * @(#)AbstractVideoCodec.java
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media;
 
 import java.awt.Graphics2D;
@@ -23,12 +14,7 @@ import java.io.IOException;
 import javax.imageio.stream.ImageOutputStream;
 import static org.monte.media.VideoFormatKeys.*;
 
-/**
- * {@code AbstractVideoCodec}.
- *
- * @author Werner Randelshofer
- * @version $Id: AbstractVideoCodec.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public abstract class AbstractVideoCodec extends AbstractCodec {
 
     private BufferedImage imgConverter;
@@ -37,7 +23,7 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
         super(supportedInputFormats, supportedOutputFormats);
     }
 
-    /** Gets 8-bit indexed pixels from a buffer. Returns null if conversion failed. */
+    
     protected byte[] getIndexed8(Buffer buf) {
         if (buf.data instanceof byte[]) {
             return (byte[]) buf.data;
@@ -51,7 +37,7 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
         return null;
     }
 
-    /** Gets 15-bit RGB pixels from a buffer. Returns null if conversion failed. */
+    
     protected short[] getRGB15(Buffer buf) {
         if (buf.data instanceof int[]) {
             return (short[]) buf.data;
@@ -61,10 +47,10 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
             if (image.getColorModel() instanceof DirectColorModel) {
                 DirectColorModel dcm = (DirectColorModel) image.getColorModel();
                 if (image.getRaster().getDataBuffer() instanceof DataBufferShort) {
-                    // FIXME - Implement additional checks
+
                     return ((DataBufferShort) image.getRaster().getDataBuffer()).getData();
                 } else if (image.getRaster().getDataBuffer() instanceof DataBufferUShort) {
-                    // FIXME - Implement additional checks
+
                     return ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
                 }
             }
@@ -80,7 +66,7 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
         }
         return null;
     }
-    /** Gets 16-bit RGB-5-6-5 pixels from a buffer. Returns null if conversion failed. */
+    
     protected short[] getRGB16(Buffer buf) {
         if (buf.data instanceof int[]) {
             return (short[]) buf.data;
@@ -90,10 +76,10 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
             if (image.getColorModel() instanceof DirectColorModel) {
                 DirectColorModel dcm = (DirectColorModel) image.getColorModel();
                 if (image.getRaster().getDataBuffer() instanceof DataBufferShort) {
-                    // FIXME - Implement additional checks
+
                     return ((DataBufferShort) image.getRaster().getDataBuffer()).getData();
                 } else if (image.getRaster().getDataBuffer() instanceof DataBufferUShort) {
-                    // FIXME - Implement additional checks
+
                     return ((DataBufferUShort) image.getRaster().getDataBuffer()).getData();
                 }
             }
@@ -111,7 +97,7 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
     }
 
 
-    /** Gets 24-bit RGB pixels from a buffer. Returns null if conversion failed. */
+    
     protected int[] getRGB24(Buffer buf) {
         if (buf.data instanceof int[]) {
             return (int[]) buf.data;
@@ -126,14 +112,14 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
                     }
                 }
             }
-            return image.getRGB(0, 0, //
-                    outputFormat.get(WidthKey), outputFormat.get(HeightKey), //
+            return image.getRGB(0, 0,
+                    outputFormat.get(WidthKey), outputFormat.get(HeightKey),
                     null, 0, outputFormat.get(WidthKey));
         }
         return null;
     }
 
-    /** Gets 32-bit ARGB pixels from a buffer. Returns null if conversion failed. */
+    
     protected int[] getARGB32(Buffer buf) {
         if (buf.data instanceof int[]) {
             return (int[]) buf.data;
@@ -148,14 +134,14 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
                     }
                 }
             }
-            return image.getRGB(0, 0, //
-                    outputFormat.get(WidthKey), outputFormat.get(HeightKey), //
+            return image.getRGB(0, 0,
+                    outputFormat.get(WidthKey), outputFormat.get(HeightKey),
                     null, 0, outputFormat.get(WidthKey));
         }
         return null;
     }
 
-    /** Gets a buffered image from a buffer. Returns null if conversion failed. */
+    
     protected BufferedImage getBufferedImage(Buffer buf) {
         if (buf.data instanceof BufferedImage) {
             return (BufferedImage) buf.data;
@@ -179,7 +165,7 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
     }
 
     protected void writeInts24(ImageOutputStream out, int[] i, int off, int len) throws IOException {
-        // Fix 4430357 - if off + len < 0, overflow occurred
+
         if (off < 0 || len < 0 || off + len > i.length || off + len < 0) {
             throw new IndexOutOfBoundsException("off < 0 || len < 0 || off + len > i.length!");
         }
@@ -188,7 +174,7 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
         int boff = 0;
         for (int j = 0; j < len; j++) {
             int v = i[off + j];
-            //b[boff++] = (byte)(v >>> 24);
+
             b[boff++] = (byte) (v >>> 16);
             b[boff++] = (byte) (v >>> 8);
             b[boff++] = (byte) (v >>> 0);
@@ -198,7 +184,7 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
     }
 
     protected void writeInts24LE(ImageOutputStream out, int[] i, int off, int len) throws IOException {
-        // Fix 4430357 - if off + len < 0, overflow occurred
+
         if (off < 0 || len < 0 || off + len > i.length || off + len < 0) {
             throw new IndexOutOfBoundsException("off < 0 || len < 0 || off + len > i.length!");
         }
@@ -210,13 +196,13 @@ public abstract class AbstractVideoCodec extends AbstractCodec {
             b[boff++] = (byte) (v >>> 0);
             b[boff++] = (byte) (v >>> 8);
             b[boff++] = (byte) (v >>> 16);
-            //b[boff++] = (byte)(v >>> 24);
+
         }
 
         out.write(b, 0, len * 3);
     }
 
-    /** Copies a buffered image. */
+    
     protected static BufferedImage copyImage(BufferedImage img) {
         ColorModel cm = img.getColorModel();
         boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();

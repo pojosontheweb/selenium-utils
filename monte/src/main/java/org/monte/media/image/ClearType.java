@@ -1,17 +1,5 @@
-/*
- * @(#)ClearType.java  1.2.1  2004-07-16
- *
- * Copyright (c) 1999 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
-/*
- * Source taken from
- * http://blog.monstuff.com/archives/000022.html
- */
+
+
 package org.monte.media.image;
 
 import java.awt.*;
@@ -100,7 +88,7 @@ public class ClearType {
         });
     }
 
-    /** Adds one third of b to a */
+
     private static int fuzz(int a, int b) {
         int red = ((b >> 16) & 0xff) / 3 + ((a >> 16) & 0xff);
         int green = ((b >> 8) & 0xff) / 3 + ((a >> 8) & 0xff);
@@ -120,7 +108,7 @@ public class ClearType {
         return pixels;
     }
 
-    /** Renders an image with clear type. Note the width of the image must be divideable by 3. */
+
     public static void drawClearType(Graphics g, Image img, int x, int y, int superY, ImageObserver observer) {
         int width = img.getWidth(null);
         int height = img.getHeight(null);

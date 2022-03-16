@@ -1,13 +1,4 @@
-/*
- * @(#)FrameRateConverter.java  
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.converter;
 
 import org.monte.media.AbstractVideoCodec;
@@ -20,22 +11,7 @@ import static java.lang.Math.*;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * This codec converts frames from one frame rate into another.
- * <p>
- * Makes frames longer if the output time is behind the input time.
- * Drops frames if the output time runs away from the input time.
- * <p>
- * The output of the converter has a variable frame rate but it may still
- * contain identical frames.
- * Thus an additional conversion step with {@link org.monte.media.converter.FFRtoVFRConverter} is needed.
- * <p>
- * This codec is needed when the input source has a different frame rate than
- * the output sink.
- * 
- * @author Werner Randelshofer
- * @version $Id: FrameRateConverter.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class FrameRateConverter extends AbstractVideoCodec {
 
     private Rational inputTime;
@@ -43,15 +19,15 @@ public class FrameRateConverter extends AbstractVideoCodec {
 
     public FrameRateConverter() {
         super(new Format[]{
-                    new Format(MediaTypeKey, MediaType.VIDEO,//
+                    new Format(MediaTypeKey, MediaType.VIDEO,
                             EncodingKey,ENCODING_BUFFERED_IMAGE,
-                             DataClassKey, BufferedImage.class), //
+                             DataClassKey, BufferedImage.class),
                 },
                 new Format[]{
-                    new Format(MediaTypeKey, MediaType.VIDEO,//
+                    new Format(MediaTypeKey, MediaType.VIDEO,
                             EncodingKey,ENCODING_BUFFERED_IMAGE,
                             DataClassKey, BufferedImage.class,
-                            FixedFrameRateKey,false), //
+                            FixedFrameRateKey,false),
                 });
         name = "Frame Rate Converter";
     }
@@ -95,19 +71,19 @@ public class FrameRateConverter extends AbstractVideoCodec {
 
     @Override
     public int process(Buffer in, Buffer out) {
-        // Pass discarded buffers.
+
         out.setMetaTo(in);
         if (in.isFlag(DISCARD)) {
             return CODEC_OK;
         }
 
-        // Initialize codec.
+
         if (inputTime == null) {
             inputTime = new Rational(0, 1);
             outputTime = new Rational(0, 1);
         }
 
-        // Convert from input frame rate to output frame rate.
+
         Format vf = (Format) outputFormat;
         inputTime = inputTime.add(in.sampleDuration);
         Rational outputDuration = inputTime.subtract(outputTime);
@@ -116,23 +92,23 @@ public class FrameRateConverter extends AbstractVideoCodec {
         long outputMediaDuration = (int) (outputDuration.getNumerator() * jiffies / outputDuration.getDenominator());
         long remainder = outputMediaDuration % vf.get(FrameRateKey).getDenominator();
         outputDuration = new Rational(outputMediaDuration, jiffies);
-        
-        // Drop frame if outputTime is too far ahead of inputTime.
+
+
         if (outputDuration.isLessOrEqualZero()) {
             out.setFlag(DISCARD, true);
         out.sampleDuration = outputDuration;
-        //System.out.println("FrameRateConverter inTS=" + in.timeStamp + " outTS=" + out.timeStamp + " inDur=" + in.sampleDuration + " outDur=" + out.sampleDuration.toDescriptiveString()+"  DISCARD");
+
             return CODEC_OK;
         }
 
-        // Produce time converted frame.
+
         out.format = outputFormat;
         out.setDataTo(in);
         out.timeStamp = outputTime;
         out.sampleDuration = outputDuration;
         outputTime = outputTime.add(outputDuration);
-        
-       // System.out.println("FrameRateConverter inTS=" + in.timeStamp + " outTS=" + out.timeStamp + " inDur=" + in.sampleDuration + " outDur=" + out.sampleDuration.toDescriptiveString());
+
+
 
 
         return CODEC_OK;

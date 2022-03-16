@@ -1,24 +1,10 @@
-/*
- * @(#)AmigaCAMGMainx.java  1.0  2011-08-30
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.anim;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * {@code AmigaCAMGMainx}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-08-30 Created.
- */
+
 public class AmigaCAMGMainx {
 
     private final static int[] mask = {};
@@ -29,7 +15,7 @@ public class AmigaCAMGMainx {
         TreeMap<Integer, String> moni = createMonitorMap();
 
         for (Map.Entry<Integer, String> e : v.entrySet()) {
-            //      System.out.println("0x"+Integer.toHexString(e.getKey())+"="+e.getValue());
+
             
             String mode="";
             for (Map.Entry<Integer, String> em : m.entrySet()) {
@@ -84,7 +70,7 @@ public class AmigaCAMGMainx {
         m.put(0x00071000, "EURO36, 73fps");
         m.put(0x00081000, "SUPER72, 71fps");
         m.put(0x00091000, "DBLNTSC, 58fps");
-        m.put(0x000a1000, "DBLPAL, 48fps"); // 320x256, 70ns
+        m.put(0x000a1000, "DBLPAL, 48fps");
         return m;
     }
 
