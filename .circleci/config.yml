@@ -39,7 +39,7 @@ jobs:
           name: Check install
       - run: export DISPLAY=:99 && mvn clean install
       - store_artifacts:
-          path: ~/repo/core/webtests/target/surefire-reports
+          path: ~/repo/core/target/surefire-reports
       - store_artifacts:
           path: ~/repo/core/target/webtests-videos
 
