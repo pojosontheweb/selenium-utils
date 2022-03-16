@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
-        <module>monte</module>
+<!--        <module>monte</module>-->
         <module>core</module>
         <module>groovy</module>
         <!--<module>gridvideo</module>-->
