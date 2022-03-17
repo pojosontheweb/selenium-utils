@@ -16,7 +16,7 @@
         <webtests.locales>en</webtests.locales>
         <webtests.findr.verbose>true</webtests.findr.verbose>
         <webtests.video.enabled>true</webtests.video.enabled>
-        <webtests.video.failures.only>false</webtests.video.failures.only>
+        <webtests.video.failures.only>true</webtests.video.failures.only>
     </properties>
     <dependencies>
         <dependency>
