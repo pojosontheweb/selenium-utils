@@ -16,8 +16,6 @@
     <modules>
 <!--        <module>monte</module>-->
         <module>core</module>
-        <module>groovy</module>
-        <!--<module>gridvideo</module>-->
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
     <description>Utilities for selenium testing</description>
@@ -43,9 +41,6 @@
         </developer>
     </developers>
     <properties>
-        <gmavenVersion>1.5</gmavenVersion>
-        <gmavenProviderSelection>2.0</gmavenProviderSelection>
-        <groovyVersion>2.3.9</groovyVersion>
         <seleniumVersion>3.141.59</seleniumVersion>
     </properties>
     <build>
@@ -60,11 +55,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.16</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.2.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -132,13 +122,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>taste</id>
-            <modules>
-                <module>taste</module>
-                <module>taste-cloud</module>
-            </modules>
         </profile>
     </profiles>
 </project>
