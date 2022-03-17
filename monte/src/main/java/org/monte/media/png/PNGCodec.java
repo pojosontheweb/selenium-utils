@@ -1,13 +1,4 @@
-/*
- * @(#)PNGCodec.java  
- *
- * Copyright (c) 2011-2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.png;
 
 import org.monte.media.Format;
@@ -23,38 +14,22 @@ import javax.imageio.ImageWriter;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * {@code PNGCodec} encodes a BufferedImage as a byte[] array..
- * <p>
- * Supported input formats:
- * <ul>
- * {@code VideoFormat} with {@code BufferedImage.class}, any width, any height,
- * any depth.
- * </ul>
- * Supported output formats:
- * <ul>
- * {@code VideoFormat} with {@code byte[].class}, same width and height as input
- * format, depth=24.
- * </ul>
- *
- * @author Werner Randelshofer
- * @version $Id: PNGCodec.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class PNGCodec extends AbstractVideoCodec {
 
     public PNGCodec() {
         super(new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA,
-                    EncodingKey, ENCODING_BUFFERED_IMAGE), //
+                    EncodingKey, ENCODING_BUFFERED_IMAGE),
                 },
                 new Format[]{
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_QUICKTIME,
                     DepthKey, 24,
-                    EncodingKey, ENCODING_QUICKTIME_PNG, DataClassKey, byte[].class), //
-                    //
+                    EncodingKey, ENCODING_QUICKTIME_PNG, DataClassKey, byte[].class),
+
                     new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_AVI,
                     DepthKey, 24,
-                    EncodingKey, ENCODING_AVI_PNG, DataClassKey, byte[].class), //
+                    EncodingKey, ENCODING_AVI_PNG, DataClassKey, byte[].class),
                 });
     }
 

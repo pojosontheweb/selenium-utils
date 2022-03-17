@@ -1,13 +1,4 @@
-/*
- * @(#)FFRtoVFRConverter.java  
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.converter;
 
 import org.monte.media.AbstractVideoCodec;
@@ -26,16 +17,7 @@ import java.util.Arrays;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * This codec converts frames from a fixed frame rate into a variable frame rate
- * by coalescing identical frames.
- * <p>
- * This codec can be used when the input source has a fixed frame rate and
- * the output sink supports a variable frame rate.
- *
- * @author Werner Randelshofer
- * @version $Id: FFRtoVFRConverter.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class FFRtoVFRConverter extends AbstractVideoCodec {
 
     private Rational timeStamp;
@@ -46,10 +28,10 @@ public class FFRtoVFRConverter extends AbstractVideoCodec {
 
     public FFRtoVFRConverter() {
         super(new Format[]{
-                    new Format(DataClassKey,BufferedImage.class), //
+                    new Format(DataClassKey,BufferedImage.class),
                 },
                 new Format[]{
-                    new Format(DataClassKey,BufferedImage.class,FixedFrameRateKey, false), //
+                    new Format(DataClassKey,BufferedImage.class,FixedFrameRateKey, false),
                 });
         name = "FFR to VFR";
     }
@@ -93,12 +75,12 @@ public class FFRtoVFRConverter extends AbstractVideoCodec {
         Format vf = (Format) inputFormat;
 
         if (!in.isFlag(KEYFRAME)) {
-            // This codec can only process keyframes.
+
             return CODEC_FAILED;
         }
 
         if (in.isFlag(END_OF_MEDIA) && in.isFlag(DISCARD)) {
-            // => End of media reached. Flush buffer.
+
             out.setFlag(END_OF_MEDIA, true);
             if (duration.isZero()) {
                 out.setFlag(DISCARD, true);
@@ -120,7 +102,7 @@ public class FFRtoVFRConverter extends AbstractVideoCodec {
             return CODEC_OK;
         }
         if (in.isFlag(DISCARD)) {
-            // => Discard discarded buffer.
+
             out.setFlag(DISCARD, true);
             return CODEC_OK;
         }
@@ -134,14 +116,14 @@ public class FFRtoVFRConverter extends AbstractVideoCodec {
         inputColorModel.getRGBs(inputColors);
 
         if (previousPixels == null) {
-            // => First image. Copy data and discard output buffer.
+
             previousPixels = inputPixels.clone();
             previousColors = inputColors.clone();
             duration = in.sampleDuration;
             timeStamp = in.timeStamp;
             out.setFlag(DISCARD, true);
         } else {
-            // => Not the first image. Convert fixed rate to variable rate if images are the same.
+
             if (Arrays.equals((byte[]) previousPixels, inputPixels)
                     && Arrays.equals(previousColors, inputColors)) {
                 duration = duration.add(in.sampleDuration);

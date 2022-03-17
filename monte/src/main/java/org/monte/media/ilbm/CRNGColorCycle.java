@@ -1,74 +1,16 @@
-/*
- * @(#)ColorCycle.java  1.1  2010-08-03
- * 
- * Copyright (c) 2009-2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.ilbm;
 
-/**
- * Implements CRNG and CCRT color cycling for an IFF ILBM image.
- * <p>
- * This class supports CRNG and CCRT color cycling as published in
- *   AMIGA ROM Kernel Reference Manual: Devices,
- *   Third Edition,
- *   Addison-Wesley, Reading
- *   ISBN 0-201-56775-X
- *
- * <pre>
- * //ILBM CRNG Color range cycling
- * //--------------------------------------------
- *
- * #define RNG_NORATE  36   // Dpaint uses this rate to mean non-active
- *  set {
- *  active = 1, reverse = 2
- *  } crngActive;
- *
- *  // A CRange is store in a CRNG chunk.
- *  typedef struct {
- *  WORD  pad1;              // reserved for future use; store 0 here *
- *  WORD  rate;              // 60/sec=16384, 30/sec=8192, 1/sec=16384/60=273
- *  WORD set crngActive flags;     // bit0 set = active, bit 1 set = reverse
- *  UBYTE low; UBYTE high;         // lower and upper color registers selected
- *  } ilbmColorRegisterRangeChunk;
- * </pre>
- *
- * <pre>
- * ILBM CCRT Color cycling range and timing
- * --------------------------------------------
- * /
- * enum {
- * dontCycle = 0, forward = 1, backwards = -1
- * } ccrtDirection;
- * typedef struct {
- * WORD enum ccrtDirection direction;  /* 0=don't cycle, 1=forward, -1=backwards * /
- * UBYTE start;      /* range lower * /
- * UBYTE end;        /* range upper * /
- * LONG  seconds;    /* seconds between cycling * /
- * LONG  microseconds; /* msecs between cycling * /
- * WORD  pad;        /* future exp - store 0 here * /
- * } ilbmColorCyclingAndTimingChunk;
- *
- * </pre>
- *
- * @author Werner Randelshofer
- * @version 1.1 2010-08-03 Added support for blended color cycles.
- * <br>1.0.1 2010-11-08 Fixed color cycling rate.
- * <br>1.0 2009-12-23 Created.
- */
+
 public class CRNGColorCycle extends ColorCycle {
 
-    /** Lowest color register of the range. */
+
     private int low;
-    /** Highest color register of the range. */
+
     private int high;
-    /** Whether the color cycle is reverse. */
+
     private boolean isReverse;
-    /** Whether the image is in EHB mode. */
+
     private boolean isEHB;
 
     public CRNGColorCycle(int rate, int timeScale, int low, int high, boolean isActive, boolean isReverse, boolean isEHB) {
@@ -120,7 +62,7 @@ public class CRNGColorCycle extends ColorCycle {
                                 |((((rgbs[low]&0xff0000)*blend+(tmp&0xff0000)*(255-blend))>>8)&0xff0000);;
                 }
                 if (isEHB) {
-                // TO DO
+
                 }
             } else {
                 {
@@ -135,7 +77,7 @@ public class CRNGColorCycle extends ColorCycle {
                                 |((((rgbs[low]&0xff0000)*blend+(tmp&0xff0000)*(255-blend))>>8)&0xff0000);;
                 }
                 if (isEHB) {
-                    // TO DO
+
                 }
             }
         }

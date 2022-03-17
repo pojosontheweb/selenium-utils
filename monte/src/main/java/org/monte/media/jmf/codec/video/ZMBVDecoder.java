@@ -1,13 +1,4 @@
-/*
- * @(#)ZMBVDecoder.java  1.0  2011-08-27
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.jmf.codec.video;
 
 import org.monte.media.avi.ZMBVCodecCore;
@@ -18,15 +9,10 @@ import javax.media.ResourceUnavailableException;
 import javax.media.format.RGBFormat;
 import javax.media.format.VideoFormat;
 
-/**
- * {@code ZMBVDecoder}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-08-27 Created.
- */
+
 public class ZMBVDecoder extends AbstractVideoDecoder {
 
-    /** RGB bit masks */
+    
     protected static final int bMask = 0x000000ff;
     protected static final int gMask = 0x0000ff00;
     protected static final int rMask = 0x00ff0000;
@@ -40,12 +26,12 @@ public class ZMBVDecoder extends AbstractVideoDecoder {
         defaultOutputFormats = new VideoFormat[]{new RGBFormat(
             null, Format.NOT_SPECIFIED,
             Format.intArray,
-            Format.NOT_SPECIFIED, // frame rate
+            Format.NOT_SPECIFIED,
             32,
             rMask, gMask, bMask,
             1, Format.NOT_SPECIFIED,
-            Format.FALSE, // flipped
-            Format.NOT_SPECIFIED // endian
+            Format.FALSE,
+            Format.NOT_SPECIFIED
             )};
         pluginName = "DosBox Screen Capture \"ZMBV\"";
     }
@@ -69,7 +55,7 @@ public class ZMBVDecoder extends AbstractVideoDecoder {
 
     @Override
     public int process(Buffer input, Buffer output) {
-        //System.err.println("ZMBVDecoder " + input.getTimeStamp());
+
         if (input.isDiscard()) {
             output.setDiscard(true);
             return BUFFER_PROCESSED_OK;
@@ -85,14 +71,14 @@ public class ZMBVDecoder extends AbstractVideoDecoder {
         output.setData(pixels);
         output.setOffset(0);
         output.setLength(pixels.length);
-        //if (input.)
+
 
         byte[] inDat = (byte[]) input.getData();
         int[] swap = prevPixels;
         prevPixels = pixels;
         pixels = swap;
 
-        // Detect if frames were skipped
+
         long sequenceNumber = input.getSequenceNumber();
         boolean framesWereSkipped = (sequenceNumber != previousSequenceNumber + 1);
         boolean isKeyframe = state.decode(inDat, input.getOffset(), input.getLength(), pixels, prevPixels, outputFormat.getSize().width, outputFormat.getSize().height,

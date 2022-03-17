@@ -1,13 +1,4 @@
-/*
- * @(#)AnimMerger.java  1.0  2004-09-07
- *
- * Copyright (c) 2004 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 
 package org.monte.media.iff;
 
@@ -19,24 +10,21 @@ import javax.swing.tree.*;
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
-/**
- *
- * @author  werni
- */
+
 public class AnimMerger extends JFrame {
     private File file1, file2;
     private JFileChooser chooser;
     private static NumberFormat numFormat = NumberFormat.getInstance();
-    
-    /** Creates new form AnimMerger */
+
+
     public AnimMerger() {
         initComponents();
     }
-    
+
     public final static int CMAP_ID = IFFParser.stringToID("CMAP");
     public final static int ILBM_ID = IFFParser.stringToID("ILBM");
     public final static int ANHD_ID = IFFParser.stringToID("ANHD");
-    
+
     private final static int[] sequence = {
         IFFParser.stringToID("ANIM"),
         IFFParser.stringToID("8SVX"),
@@ -54,28 +42,25 @@ public class AnimMerger extends JFrame {
         IFFParser.stringToID("DLTA"),
         IFFParser.stringToID("BODY"),
     };
-    
+
     private static Comparator<IFFChunkNode> nodeComparator = new Comparator<IFFChunkNode>() {
-        /*
-        public int compare(Object o1, Object o2) {
-            return compare((IFFChunkNode) o1, (IFFChunkNode) o2);
-        }*/
+
         public int compare(IFFChunkNode o1, IFFChunkNode o2) {
             return o1.getSeqIndex() - o2.getSeqIndex();
         }
     };
-    
+
     protected static class IFFChunkNode extends DefaultMutableTreeNode {
         private int type;
         private int id;
         private int size;
         private int offset;
         private byte[] data;
-        
+
         public int getPaddedChunkSize() {
             return size + (size % 2) + 8;
         }
-        
+
         public void write(DataOutputStream out) throws IOException {
             System.out.println("write "+IFFParser.idToString(id)+" size="+size);
             if (data != null) {
@@ -95,17 +80,17 @@ public class AnimMerger extends JFrame {
                 }
             }
         }
-        
+
         public void mergeFrom(IFFChunkNode that) {
             if (data != null) {
                 if (id == ANHD_ID) mergeANHD(that);
             } else {
-                
+
                 if (this.isSameAs(that)) {
                     final ArrayList mergedChildren = new ArrayList(Math.max(this.getChildCount(), that.getChildCount()));
                     Collections.sort(this.children, nodeComparator);
                     Collections.sort(that.children, nodeComparator);
-                    
+
                     int thatCount = that.getChildCount();
                     int thisCount = this.getChildCount();
                     int thisIndex = 0, thatIndex = 0;
@@ -118,7 +103,7 @@ public class AnimMerger extends JFrame {
                         } else {
                             comparison = ((IFFChunkNode) this.getChildAt(thisIndex)).compareTo((IFFChunkNode) that.getChildAt(thatIndex));
                         }
-                        
+
                         if (comparison < 0) {
                             System.out.println("Inserting from File1:"+this.getChildAt(thisIndex)+" into "+this);
                             mergedChildren.add(this.getChildAt(thisIndex));
@@ -138,7 +123,7 @@ public class AnimMerger extends JFrame {
                             thatIndex++;
                         }
                     }
-                    
+
                     this.removeAllChildren();
                     this.size = 4;
                     for (Iterator i = mergedChildren.iterator(); i.hasNext(); ) {
@@ -151,7 +136,7 @@ public class AnimMerger extends JFrame {
                 }
             }
         }
-        
+
         public void mergeANHD(IFFChunkNode that) {
             System.out.print(IFFParser.idToString(id)+" "+IFFParser.idToString(that.id)+" reltime=");
             for (int i=0; i < 4; i++) {
@@ -163,19 +148,19 @@ public class AnimMerger extends JFrame {
             }
             System.out.println();
         }
-        
+
         public int compareTo(IFFChunkNode that) {
             return this.getSeqIndex() - that.getSeqIndex();
         }
-        
+
         public int getSeqIndex() {
             for (int i=0; i < sequence.length; i++) {
                 if (id == sequence[i]) return i;
             }
             throw new ArrayIndexOutOfBoundsException("no index for "+IFFParser.idToString(id));
-            //return -1;
+
         }
-        
+
         public IFFChunkNode(int type, int id, int size, int offset, byte[] data) {
             this.type = type;
             this.id = id;
@@ -198,16 +183,16 @@ public class AnimMerger extends JFrame {
         public byte[] getRawData() {
             return data;
         }
-        
+
         public boolean isSameAs(IFFChunkNode that) {
             return this.type == that.type && this.id == that.id;
         }
-        
+
         public String toString() {
             return IFFParser.idToString(type) + " "+IFFParser.idToString(id);
         }
-        
-        
+
+
         public void dump(int depth) {
             StringBuffer buf = new StringBuffer(depth);
             for (int i=0; i < depth; i++) {
@@ -215,26 +200,26 @@ public class AnimMerger extends JFrame {
             }
             buf.append(IFFParser.idToString(type) + " "+IFFParser.idToString(id)+" "+numFormat.format(size));
             System.out.println(buf.toString());
-            
+
             for (Enumeration i=children(); i.hasMoreElements(); ) {
                 IFFChunkNode child = (IFFChunkNode) i.nextElement();
                 child.dump(depth + 1);
             }
         }
     }
-    
-    
+
+
     protected static class Loader implements IFFVisitor {
         private IFFChunkNode root;
         private IFFChunkNode current;
-        
+
         public Loader() {
         }
-        
+
         public IFFChunkNode getRoot() {
             return root;
         }
-        
+
         public void enterGroup(IFFChunk group) throws ParseException, AbortException {
             IFFChunkNode groupNode = new IFFChunkNode(
             group.getID(),
@@ -243,7 +228,7 @@ public class AnimMerger extends JFrame {
             (int) group.getScan(),
             null
             );
-            
+
             if (current == null) {
                 root = current = groupNode;
             } else {
@@ -251,11 +236,11 @@ public class AnimMerger extends JFrame {
                 current = groupNode;
             }
         }
-        
+
         public void leaveGroup(IFFChunk group) throws ParseException, AbortException {
             current = (IFFChunkNode) current.getParent();
         }
-        
+
         public void visitChunk(IFFChunk group, IFFChunk chunk) throws ParseException, AbortException {
             IFFChunkNode chunkNode = new IFFChunkNode(
             group.getType(),
@@ -267,58 +252,10 @@ public class AnimMerger extends JFrame {
             current.add(chunkNode);
         }
     }
-/*
-    protected static class Merger implements IFFVisitor {
-        private IFFChunkNode root;
-        private IFFChunkNode current;
- 
-        public Merger(IFFChunkNode root) {
-            this.root = root;
-            this.current = null;
-        }
- 
-        public IFFChunkNode getRoot() {
-            return root;
-        }
- 
-        public void enterGroup(IFFChunk group) throws ParseException, AbortException {
-            IFFChunkNode groupNode = new IFFChunkNode(
-            group.getID(),
-            group.getType(),
-            (int) group.getSize(),
-            (int) group.getScan(),
-            null
-            );
-            if (current == null) {
-                if (! group.isSameAs(root)) {
-                    throw new ParseException("Root nodes don't match "+groupNode);
-                }
-                current = root;
-            } else {
-                current.add(groupNode);
-                current = groupNode;
-            }
-        }
- 
-        public void leaveGroup(IFFChunk group) throws ParseException, AbortException {
-            current = (IFFChunkNode) current.getParent();
-        }
- 
-        public void visitChunk(IFFChunk group, IFFChunk chunk) throws ParseException, AbortException {
-            IFFChunkNode chunkNode = new IFFChunkNode(
-            group.getType(),
-            chunk.getID(),
-            (int) chunk.getSize(),
-            (int) chunk.getScan(),
-            chunk.getData()
-            );
-            current.add(chunkNode);
-        }
-    }
- */
+
     private void merge(File f1, File f2) throws IOException {
         IFFChunkNode root1, root2;
-        
+
         Loader loader = new Loader();
         InputStream in = new FileInputStream(f1);
         try {
@@ -329,11 +266,11 @@ public class AnimMerger extends JFrame {
         } catch (AbortException e) {
             throw new IOException(e.getMessage());
         } finally {
-            in.close(); 
+            in.close();
         }
-        
+
         root1 = loader.getRoot();
-        
+
         loader = new Loader();
         in = new FileInputStream(f2);
         try {
@@ -346,14 +283,14 @@ public class AnimMerger extends JFrame {
         } finally {
             in.close();
         }
-        
+
         root2 = loader.getRoot();
-        
+
         root1.mergeFrom(root2);
-        
-        
+
+
         File file3 = new File(file1.getParentFile(), "merged"+file1.getName());
-        
+
         DataOutputStream out = new DataOutputStream(new FileOutputStream(file3));
         try {
             root1.write(out);
@@ -361,16 +298,12 @@ public class AnimMerger extends JFrame {
         } finally {
            out.close();
         }
-//        root1.dump(0);
-        
+
+
     }
-    
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
-     */
-    private void initComponents() {//GEN-BEGIN:initComponents
+
+
+    private void initComponents() {
         menuBar = new JMenuBar();
         fileMenu = new JMenu();
         mergeMenuItem = new JMenuItem();
@@ -401,10 +334,10 @@ public class AnimMerger extends JFrame {
         setJMenuBar(menuBar);
 
         pack();
-    }//GEN-END:initComponents
-    
-    private void merge(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_merge
-        // TODO add your handling code here:
+    }
+
+    private void merge(java.awt.event.ActionEvent evt) {
+
         if (chooser == null) chooser = new JFileChooser();
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
         if (file1 != null) chooser.setSelectedFile(file1);
@@ -436,29 +369,27 @@ public class AnimMerger extends JFrame {
                 }.start();
             }
         }
-        
-    }//GEN-LAST:event_merge
-    
-    
-    
-    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
+
+    }
+
+
+
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         System.exit(0);
-    }//GEN-LAST:event_exitMenuItemActionPerformed
-    
-    /**
-     * @param args the command line arguments
-     */
+    }
+
+
     public static void main(String args[]) {
         JFrame f = new AnimMerger();
         f.setSize(400, 300);
         f.setVisible(true);
     }
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+
+
     private JMenuItem exitMenuItem;
     private JMenu fileMenu;
     private JMenuBar menuBar;
     private JMenuItem mergeMenuItem;
-    // End of variables declaration//GEN-END:variables
-    
+
+
 }

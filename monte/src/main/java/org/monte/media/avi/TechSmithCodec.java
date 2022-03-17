@@ -1,13 +1,4 @@
-/*
- * @(#)TechSmithCodec.java 
- *
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.avi;
 
 import java.awt.image.DataBufferInt;
@@ -32,61 +23,6 @@ import org.monte.media.BufferFlag;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * {@code TechSmithCodec} (tscc) encodes a BufferedImage as a byte[] array. <p>
- * The TechSmith codec works with AVI and QuickTime. <p> This codec supports
- * encoding from a {@code BufferedImage} into the file format, and decoding from
- * the file format to a {@code BufferedImage}. <p> <p> This codec does not
- * encode the color palette of an image. This must be done separately. <p>
- * Supported input formats: <ul> {@code Format} with
- * {@code BufferedImage.class}, any width, any height, depth=8,16 or 24. </ul>
- * Supported output formats: <ul> {@code Format} with {@code byte[].class}, same
- * width and height as input format, depth=8,16 or 24. </ul> The codec supports
- * lossless delta- and key-frame encoding of images with 8, 16 or 24 bits per
- * pixel. <p> Compression of a frame is performed in two steps: In the first,
- * step a frame is compressed line by line from bottom to top. In the second
- * step the resulting data is compressed again using zlib compression. <p> Apart
- * from the second compression step and the support for 16- and 24-bit data,
- * this encoder is identical to the {@link org.monte.media.avi.RunLengthCodec}. <p> Each line of a
- * frame is compressed individually. A line consists of two-byte op-codes
- * optionally followed by data. The end of the line is marked with the EOL
- * op-code. <p> The following op-codes are supported: <ul> <li>{@code 0x00 0x00}
- * <br>Marks the end of a line.</li>
- *
- * <li>{@code  0x00 0x01} <br>Marks the end of the bitmap.</li>
- *
- * <li>{@code 0x00 0x02 x y} <br> Marks a delta (skip). {@code x} and {@code y}
- * indicate the horizontal and vertical offset from the current position.
- * {@code x} and {@code y} are unsigned 8-bit values.</li>
- *
- * <li>{@code 0x00 n pixel{n} 0x00?} <br> Marks a literal run. {@code n} gives
- * the number of 8-, 16- or 24-bit pixels that follow. {@code n} must be between
- * 3 and 255. If n is odd and 8-bit pixels are used, a pad byte with the value
- * 0x00 must be added. </li> <li>{@code n pixel} <br> Marks a repetition.
- * {@code n} gives the number of times the given pixel is repeated. {@code n}
- * must be between 1 and 255. </li> </ul> Example:
- * <pre>
- * Compressed data         Expanded data
- *
- * 03 04                   04 04 04
- * 05 06                   06 06 06 06 06
- * 00 03 45 56 67 00       45 56 67
- * 02 78                   78 78
- * 00 02 05 01             Move 5 right and 1 down
- * 02 78                   78 78
- * 00 00                   End of line
- * 09 1E                   1E 1E 1E 1E 1E 1E 1E 1E 1E
- * 00 01                   End of RLE bitmap
- * </pre>
- *
- * References:<br/> <a
- * href="http://wiki.multimedia.cx/index.php?title=TechSmith_Screen_Capture_Codec"
- * >http://wiki.multimedia.cx/index.php?title=TechSmith_Screen_Capture_Codec</a><br>
- *
- *
- * @author Werner Randelshofer
- * @version $Id: TechSmithCodec.java 299 2013-01-03 07:40:18Z werner $
- */
 public class TechSmithCodec extends AbstractVideoCodec {
 
     private TechSmithCodecCore state;
@@ -182,7 +118,7 @@ public class TechSmithCodec extends AbstractVideoCodec {
             out.setMetaTo(in);
             return CODEC_OK;
         }
-        
+
         if (outputFormat.get(EncodingKey).equals(ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE)) {
             return encode(in, out);
         } else {

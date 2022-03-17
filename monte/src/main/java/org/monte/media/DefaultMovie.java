@@ -1,24 +1,10 @@
-/*
- * @(#)DefaultMovie.java  1.0  2011-09-01
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media;
 
 import java.io.IOException;
 import org.monte.media.math.Rational;
 
-/**
- * {@code DefaultMovie}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-09-01 Created.
- */
+
 public class DefaultMovie extends AbstractMovie {
     private MovieReader reader;
     private Rational playhead;
@@ -43,8 +29,8 @@ public class DefaultMovie extends AbstractMovie {
         this.in=new Rational(0,1);
     }
 
-    
-    
+
+
     @Override
     public Rational getDuration() {
         try {
@@ -56,7 +42,7 @@ public class DefaultMovie extends AbstractMovie {
         }
     }
 
-    
+
     @Override
     public Rational getInsertionPoint() {
         return playhead;

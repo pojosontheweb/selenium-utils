@@ -37,37 +37,24 @@ public class DriverBuildr {
             if (browsr == null) {
                 throw new RuntimeException("Could not find browser ! " + PROP_WEBTESTS_BROWSER + "=" + browserName);
             }
-            String hubUrl = System.getProperty(PROP_WEBTESTS_HUB_URL);
             String locale = System.getProperty(PROP_WEBTESTS_LOCALES);
-            if (hubUrl!=null) {
-                // remote !
-                RemoteBuildr b = remote();
-                b.setBrowsr(browsr);
-                b.setHubUrl(hubUrl);
-                if (locale!=null) {
+            if (browsr.equals(Browsr.Chrome)) {
+                ChromeBuildr b = chrome();
+                if (locale != null) {
                     b.setLocales(locale);
                 }
                 return b.build();
+            } else if (browsr.equals(Browsr.Safari)) {
+                SafariBuildr b = safari();
+                return b.build();
             } else {
-                if (browsr.equals(Browsr.Chrome)) {
-                    ChromeBuildr b = chrome();
-                    if (locale != null) {
-                        b.setLocales(locale);
-                    }
-                    return b.build();
-                } else if (browsr.equals(Browsr.Safari)) {
-                    SafariBuildr b = safari();
-                    return b.build();
-                } else {
-                    FirefoxBuildr b = firefox();
-                    if (locale != null) {
-                        b.setLocales(locale);
-                    }
-                    return b.build();
+                FirefoxBuildr b = firefox();
+                if (locale != null) {
+                    b.setLocales(locale);
                 }
+                return b.build();
             }
         }
-
     }
 
     /**
@@ -90,13 +77,5 @@ public class DriverBuildr {
     public static SafariBuildr safari() {
         return new SafariBuildr();
     }
-
-    /**
-     * Create and return a RemoteBuildr instance.
-     */
-    public static RemoteBuildr remote() {
-        return new RemoteBuildr();
-    }
-
 
 }

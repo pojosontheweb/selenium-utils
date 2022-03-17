@@ -1,13 +1,4 @@
-/*
- * @(#)SEQReader.java  1.0  2011-02-19
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.anim;
 
 import org.monte.media.seq.SEQMovieTrack;
@@ -19,24 +10,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * {@code SEQReader}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-02-19 Created.
- */
+
 public class ANIMReader {
 
     private ANIMMovieTrack track;
-    // ---- BEGIN Decoder variables ----
-    /**
-     * Index of the frame which has been delta
-     * decoded in its even or odd bitmap buffer.
-     */
+
+
     private int fetchedEven = -1, fetchedOdd = -1;
-    /** Two bitmaps are needed for double buffering. */
+
     private BitmapImage bitmapEven, bitmapOdd;
-    // ---- END Decoder variables ----
+
 
     public ANIMReader(File file) throws IOException {
         InputStream in = null;
@@ -53,7 +36,7 @@ public class ANIMReader {
     }
 
     public void close() throws IOException {
-        // nothing to do
+
     }
 
     public int getFrameCount() {
@@ -72,7 +55,7 @@ public class ANIMReader {
                 track.getFrame(0).getColorModel());
     }
 
-    /** Reads a frame into the supplied image. */
+
     public void readFrame(int index,BitmapImage image) {
         BitmapImage fetched = fetchFrame(index);
 
@@ -80,7 +63,7 @@ public class ANIMReader {
         image.setPlanarColorModel(track.getFrame(index).getColorModel());
     }
 
-    /** Reads the duration of the specified frame. */
+
     public int getDuration(int index) {
         return (int) track.getFrame(index).getRelTime();
     }
@@ -96,7 +79,7 @@ public class ANIMReader {
         int interleave = track.getInterleave();
         BitmapImage bitmap;
         if (interleave == 1 || (index & 1) == 0) {
-            // even?
+
             if (fetchedEven == index) {
                 return bitmapEven;
             }
@@ -115,7 +98,7 @@ public class ANIMReader {
                 }
             }
         } else {
-            // odd?
+
             if (fetchedOdd == index) {
                 return bitmapOdd;
             }

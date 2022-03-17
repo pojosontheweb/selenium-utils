@@ -1,13 +1,4 @@
-/*
- * @(#)JLabelHyperlinkHandler.java 
- * 
- * Copyright (c) 2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.gui;
 
 import java.awt.Cursor;
@@ -24,36 +15,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTML;
 
-/**
- * {@code JLabelHyperlinkHandler} makes HTML hyperlinks in a {@code JLabel}
- * clickable.
- * <p>
- * You can add an action listener to this handler to perform the desired action.
- * The {@code command} contains the content of the href attribute in the hyperlink.
- * <p>
- * Example:
- * <pre>
- * File f=new File(System.getProperty("user.home"));
- * JLabel l=new JLabel("&lt;html&gt;Click this &lt;a href="\""+
- *                      f.toURI();+
- *                      "\""&gt;link&lt;/a> to open your home folder.");
- * new JLabelHyperlinkHandler(l, new ActionListener() {
- *      public void ActionPerformed(ActionEvent evt) {
- *              try {
- *                  File f = new File(new URI(e.getActionCommand()));
- *                  Desktop.getDesktop().open(f);
- *              } catch (URISyntaxException ex) {
- *                  ex.printStackTrace();
- *              } catch (IOException ex) {
- *                  ex.printStackTrace();
- *              }
- *      }
- * });
- * </pre>
- * 
- * @author Werner Randelshofer
- * @version $Id: JLabelHyperlinkHandler.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class JLabelHyperlinkHandler {
 
     private class Handler implements MouseListener, MouseMotionListener {

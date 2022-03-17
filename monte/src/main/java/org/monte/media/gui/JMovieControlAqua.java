@@ -1,13 +1,4 @@
-/*
- * @(#)JMovieControlAqua.java  
- *
- * Copyright (c) 2003-2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms. 
- */
+
 package org.monte.media.gui;
 
 import org.monte.media.ColorCyclePlayer;
@@ -25,13 +16,7 @@ import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.plaf.ButtonUI;
 
-/**
- * The MovieControlAqua contains an audio on/off button, a start/stop button,
- * a slider, a forward and a rewind button, and a color cycling on/off button.
- *
- * @author  Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version $Id: JMovieControlAqua.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class JMovieControlAqua extends JComponent
         implements MovieControl, ActionListener, ChangeListener, PropertyChangeListener {
 
@@ -45,10 +30,10 @@ public class JMovieControlAqua extends JComponent
     private JPanel spacer;
 
     public JMovieControlAqua() {
-        // Set the background color to the border color of the buttons.
-        // This way the toolbar won't look too ugly when the buttons
-        // are displayed before they have been loaded completely.
-        //setBackground(new Color(118, 118, 118));
+
+
+
+
         setBackground(Color.WHITE);
 
         Dimension buttonSize = new Dimension(16, 16);
@@ -66,8 +51,8 @@ public class JMovieControlAqua extends JComponent
         colorCyclingButton.setVisible(false);
         colorCyclingButton.setMargin(margin);
         c = new GridBagConstraints();
-        //c.gridx = 0;
-        //c.gridy = 0;
+
+
         gridbag.setConstraints(colorCyclingButton, c);
         add(colorCyclingButton);
 
@@ -79,8 +64,8 @@ public class JMovieControlAqua extends JComponent
         audioButton.setVisible(false);
         audioButton.setMargin(margin);
         c = new GridBagConstraints();
-        //c.gridx = 0;
-        //c.gridy = 0;
+
+
         gridbag.setConstraints(audioButton, c);
         add(audioButton);
 
@@ -92,15 +77,15 @@ public class JMovieControlAqua extends JComponent
         startButton.setMinimumSize(buttonSize);
         startButton.setMargin(margin);
         c = new GridBagConstraints();
-        //c.gridx = 1;
-        //c.gridy = 0;
+
+
         gridbag.setConstraints(startButton, c);
         add(startButton);
 
         slider = new JMovieSliderAqua();
         c = new GridBagConstraints();
-        //c.gridx = 2;
-        //c.gridy = 0;
+
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1.0;
         gridbag.setConstraints(slider, c);
@@ -112,8 +97,8 @@ public class JMovieControlAqua extends JComponent
         rewindButton.setMinimumSize(buttonSize);
         rewindButton.setMargin(margin);
         c = new GridBagConstraints();
-        //c.gridx = 3;
-        //c.gridy = 0;
+
+
 
         gridbag.setConstraints(rewindButton, c);
         add(rewindButton);
@@ -126,13 +111,13 @@ public class JMovieControlAqua extends JComponent
         forwardButton.setMinimumSize(buttonSize);
         forwardButton.setMargin(margin);
         c = new GridBagConstraints();
-        //c.gridx = 4;
-        //c.gridy = 0;
+
+
         gridbag.setConstraints(forwardButton, c);
         add(forwardButton);
         forwardButton.addActionListener(this);
 
-        // The spacer is used when the play controls are hidden
+
         spacer = new JPanel(new BorderLayout());
         spacer.setVisible(false);
         spacer.setPreferredSize(new Dimension(16, 16));
@@ -187,10 +172,10 @@ public class JMovieControlAqua extends JComponent
         forwardButton.setIcon(new ImageIcon(Images.createImage(getClass(), "images/PlayerNext.png")));
         forwardButton.setDisabledIcon(new ImageIcon(Images.createImage(getClass(), "images/PlayerNext.disabled.png")));
 
-        // Automatic scrolling
+
         scrollHandler = new ScrollHandler();
         scrollTimer = new Timer(60, scrollHandler);
-        scrollTimer.setInitialDelay(300);  // default InitialDelay?
+        scrollTimer.setInitialDelay(300);
         forwardButton.addMouseListener(scrollHandler);
         rewindButton.addMouseListener(scrollHandler);
     }
@@ -202,7 +187,7 @@ public class JMovieControlAqua extends JComponent
             player.removePropertyChangeListener(this);
         }
         this.player = player;
-        //        boundedRangeModel = player == null ? null : player.getBoundedRangeModel();
+
         boundedRangeModel = player == null ? null : player.getTimeModel();
         slider.setModel(boundedRangeModel);
         if (player != null) {
@@ -307,13 +292,10 @@ public class JMovieControlAqua extends JComponent
         return this;
     }
 
-    /**
-     * Listener for scrolling events initiated in the
-     * forward and backward buttons.
-     */
+    
     protected class ScrollHandler extends MouseAdapter implements ActionListener {
 
-        /** The scroll direction. 1 for forward scrolling, -1 for backward scrolling. */
+        
         private JButton button;
 
         public ScrollHandler() {

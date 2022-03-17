@@ -1,13 +1,4 @@
-/*
- * @(#)DefaultRegistry.java  
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance onlyWith the
- * license agreement you entered into onlyWith Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media;
 
 import java.io.File;
@@ -19,14 +10,7 @@ import java.util.Map;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.AudioFormatKeys.*;
 
-/**
- * {@code DefaultRegistry}. 
- * <p>
- * FIXME - The registry should be read from a file. 
- *
- * @author Werner Randelshofer
- * @version $Id: DefaultRegistry.java 299 2013-01-03 07:40:18Z werner $
- */
+
 public class DefaultRegistry extends Registry {
 
     private HashMap<String, LinkedList<RegistryEntry>> codecMap;
@@ -72,15 +56,15 @@ public class DefaultRegistry extends Registry {
         writerMap = new HashMap<String, LinkedList<RegistryEntry>>();
         fileFormatMap = new HashMap<String, Format>();
 
-        // IFF ANIM
-        // --------
+
+
         putCodec(
                 new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA, EncodingKey, ENCODING_BUFFERED_IMAGE),
                 new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_ANIM, EncodingKey, ENCODING_BITMAP_IMAGE),
                 "org.monte.media.anim.BitmapCodec");
 
-        // AVI
-        // --------
+
+
         putBidiCodec(
                 new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA, EncodingKey, ENCODING_BUFFERED_IMAGE),
                 new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_AVI, EncodingKey, ENCODING_AVI_DIB),
@@ -120,8 +104,8 @@ public class DefaultRegistry extends Registry {
                 new Format(MediaTypeKey, MediaType.AUDIO, MimeTypeKey, MIME_AVI, EncodingKey, ENCODING_AVI_PCM),
                 "org.monte.media.avi.AVIPCMAudioCodec");
 
-        // QuickTime
-        // --------
+
+
         putCodec(
                 new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA, EncodingKey, ENCODING_BUFFERED_IMAGE),
                 new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_QUICKTIME, EncodingKey, ENCODING_QUICKTIME_RAW),
@@ -147,7 +131,7 @@ public class DefaultRegistry extends Registry {
                 "org.monte.media.png.PNGCodec");
 
         putBidiCodec(
-                new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_QUICKTIME, 
+                new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_QUICKTIME,
                 EncodingKey, ENCODING_AVI_TECHSMITH_SCREEN_CAPTURE, CompressorNameKey, COMPRESSOR_NAME_AVI_TECHSMITH_SCREEN_CAPTURE),
                 new Format(MediaTypeKey, MediaType.VIDEO, MimeTypeKey, MIME_JAVA, EncodingKey, ENCODING_BUFFERED_IMAGE),
                 "org.monte.media.avi.TechSmithCodec");
@@ -210,23 +194,13 @@ public class DefaultRegistry extends Registry {
         putFileFormat("anim", new Format(MediaTypeKey, MediaType.FILE, MimeTypeKey, MIME_ANIM));
     }
 
-    /**
-     * 
-     * @param inputFormat Must have {@code MediaTypeKey}, {@code EncodingKey}, {@code MimeTypeKey}.
-     * @param outputFormat Must have {@code MediaTypeKey}, {@code EncodingKey}, {@code MimeTypeKey}.
-     * @param codecClass 
-     */
+
     public void putBidiCodec(Format inputFormat, Format outputFormat, String codecClass) {
         putCodec(inputFormat, outputFormat, codecClass);
         putCodec(outputFormat, inputFormat, codecClass);
     }
 
-    /**
-     * 
-     * @param inputFormat Must have {@code MediaTypeKey}, {@code EncodingKey}, {@code MimeTypeKey}.
-     * @param outputFormat  Must have {@code MediaTypeKey}, {@code EncodingKey}, {@code MimeTypeKey}.
-     * @param codecClass 
-     */
+
     @Override
     public void putCodec(Format inputFormat, Format outputFormat, String codecClass) {
         RegistryEntry entry = new RegistryEntry(inputFormat, outputFormat, codecClass);
@@ -243,11 +217,7 @@ public class DefaultRegistry extends Registry {
         list.add(entry);
     }
 
-    /**
-     * 
-     * @param fileFormat Must have {@code MediaTypeKey}, {@code MimeTypeKey}.
-     * @param readerClass 
-     */
+
     @Override
     public void putReader(Format fileFormat, String readerClass) {
         RegistryEntry entry = new RegistryEntry(null, fileFormat, readerClass);
@@ -260,11 +230,7 @@ public class DefaultRegistry extends Registry {
         list.add(entry);
     }
 
-    /**
-     * 
-     * @param fileFormat Must have {@code MediaTypeKey}, {@code MimeTypeKey}.
-     * @param writerClass 
-     */
+
     @Override
     public void putWriter(Format fileFormat, String writerClass) {
         RegistryEntry entry = new RegistryEntry(fileFormat, null, writerClass);
@@ -390,6 +356,6 @@ public class DefaultRegistry extends Registry {
             }
         }
     }
-    
-    
+
+
 }

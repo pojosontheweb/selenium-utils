@@ -1,13 +1,4 @@
-/*
- * @(#)ANIMMultiplexer.java  1.0  2011-02-20
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.anim;
 
 import org.monte.media.Buffer;
@@ -19,12 +10,7 @@ import java.io.IOException;
 import static java.lang.Math.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * {@code ANIMMultiplexer}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-02-20 Created.
- */
+
 public class ANIMMultiplexer extends ANIMOutputStream implements Multiplexer {
 
     protected Rational inputTime;
@@ -36,10 +22,10 @@ public class ANIMMultiplexer extends ANIMOutputStream implements Multiplexer {
     @Override
     public void write(int trackIndex, Buffer buf) throws IOException {
         if (!buf.isFlag(DISCARD)) {
-            // FIXME - For each track, fix accumulating rounding errors!!!
-            //         Or maybe, just let them accumulate. In case the
-            //         frames are compressed, we can't do anything at this
-            //         stage anyway.
+
+
+
+
             long jiffies = getJiffies();
 
             if (inputTime == null) {
@@ -56,7 +42,7 @@ public class ANIMMultiplexer extends ANIMOutputStream implements Multiplexer {
 
             outputTime=
             outputTime.add(new Rational(outputMediaDuration,jiffies));
-           // System.out.println("ANIMMultiplexer #" + frameCount + " jiffies:"+jiffies+" movieT:" + outputTime + " inputT:" + inputTime+" diff:"+(outputTime.subtract(inputTime))+ " sampleDuration:" + outputMediaDuration + " == " + outputDuration+" ~= "+buf.sampleDuration);
+
 
             writeFrame((BitmapImage) buf.data, (int) outputMediaDuration);
         }

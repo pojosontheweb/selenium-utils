@@ -1,13 +1,4 @@
-/*
- * @(#)ImageSequenceWriter.java  1.0  2011-04-20
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.imgseq;
 
 import org.monte.media.math.Rational;
@@ -26,12 +17,7 @@ import java.util.ArrayList;
 import static org.monte.media.VideoFormatKeys.*;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * {@code ImageSequenceWriter}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-04-20 Created.
- */
+
 public class ImageSequenceWriter implements MovieWriter {
 
     private Format fileFormat = new Format(MediaTypeKey,MediaType.FILE);
@@ -79,24 +65,12 @@ public class ImageSequenceWriter implements MovieWriter {
     }
     private ArrayList<VideoTrack> tracks = new ArrayList<VideoTrack>();
 
-    /** Adds a video track.
-     * @param dir The output directory.
-     * @param filenameFormatter a format string for a filename with a number,
-     *                   for example "frame_%d0000$.png";
-     *
-     * @param width the image width
-     * @param height the image height
-     *
-     * @return Returns the track index.
-     *
-     * @throws IllegalArgumentException if the width or the height is smaller
-     * than 1.
-     */
+    
     public int addVideoTrack(File dir, String filenameFormatter, int width, int height) {
         VideoTrack t;
-        Format fmt = filenameFormatter.toLowerCase().endsWith(".png")//
-                ? new Format(MediaTypeKey,MediaType.VIDEO,EncodingKey,ENCODING_QUICKTIME_PNG, WidthKey, width, HeightKey, height, DepthKey, 24) //
-                : new Format(MediaTypeKey,MediaType.VIDEO,EncodingKey,ENCODING_QUICKTIME_JPEG, WidthKey, width, HeightKey, height, DepthKey, 24) //
+        Format fmt = filenameFormatter.toLowerCase().endsWith(".png")
+                ? new Format(MediaTypeKey,MediaType.VIDEO,EncodingKey,ENCODING_QUICKTIME_PNG, WidthKey, width, HeightKey, height, DepthKey, 24)
+                : new Format(MediaTypeKey,MediaType.VIDEO,EncodingKey,ENCODING_QUICKTIME_JPEG, WidthKey, width, HeightKey, height, DepthKey, 24)
 ;
         tracks.add(t = new VideoTrack(dir, filenameFormatter,
                 fmt,
@@ -108,19 +82,19 @@ public class ImageSequenceWriter implements MovieWriter {
     private void createCodec(VideoTrack vt) {
         Format fmt = vt.videoFormat;
         String enc = fmt.get(EncodingKey);
-        if (enc.equals(ENCODING_AVI_MJPG)//
-                || enc.equals(ENCODING_QUICKTIME_JPEG)//
+        if (enc.equals(ENCODING_AVI_MJPG)
+                || enc.equals(ENCODING_QUICKTIME_JPEG)
                 ) {
             vt.codec = new JPEGCodec();
-        } else if (enc.equals(ENCODING_AVI_PNG)//
-                || enc.equals(ENCODING_QUICKTIME_PNG)//
+        } else if (enc.equals(ENCODING_AVI_PNG)
+                || enc.equals(ENCODING_QUICKTIME_PNG)
                 ) {
             vt.codec = new PNGCodec();
         }
 
         vt.codec.setInputFormat(fmt.prepend(MediaTypeKey,MediaType.VIDEO,MimeTypeKey,MIME_JAVA,EncodingKey,ENCODING_BUFFERED_IMAGE,DataClassKey, BufferedImage.class));
         vt.codec.setOutputFormat(fmt.prepend(MediaTypeKey,MediaType.VIDEO,EncodingKey,enc, DataClassKey ,byte[].class));
-//    vt.codec.setQuality(vt.videoQuality);
+
     }
 
     public void write(int track, BufferedImage image, long duration) throws IOException {
@@ -204,7 +178,7 @@ public class ImageSequenceWriter implements MovieWriter {
 
     @Override
     public void close() throws IOException {
-        //nothing to do
+
     }
 
     public boolean isVFRSupported() {
@@ -215,7 +189,7 @@ public class ImageSequenceWriter implements MovieWriter {
     public boolean isDataLimitReached() {
         return false;
     }
-    /** Returns the sampleDuration of the track in seconds. */
+    
     @Override
     public Rational getDuration(int track) {
         VideoTrack tr=tracks.get(track);

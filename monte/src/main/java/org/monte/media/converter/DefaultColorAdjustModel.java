@@ -1,69 +1,41 @@
-/*
- * @(#)DefaultImageAdjustmentModel.java  1.0  2012-01-18
- * 
- * Copyright (c) 2012 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.converter;
 
 import org.monte.media.beans.AbstractBean;
 
-/**
- * {@code DefaultImageAdjustmentModel}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2012-01-18 Created.
- */
+
 public class DefaultColorAdjustModel
         extends AbstractBean implements ColorAdjustModel {
 
-    /** Level adjustment: white point in the range [0,1]. 
-     */
+
     protected float whitePoint = 1.0f;
-    /** Level adjustment: black point in the range [0,1]. 
-     */
+
     protected float blackPoint = 0.0f;
-    /** Level adjustment: mid point in the range [0,1]. 
-     */
+
     protected float midPoint = 0.5f;
-    /** Brightness adjustment in the range [-1,1].
-     */
+
     protected float brightness = 0f;
-    /** Exposure adjustment in the range [-1,1].
-     */
+
     protected float exposure = 0f;
-    /** Contrast adjustment in the range [-1,1].
-     */
+
     protected float contrast = 0f;
-    /** Saturation adjustment in the range [0,1].
-     */
+
     protected float saturation = 0.5f;
-    /** Definition adjustment in the range [0,1].
-     */
+
     protected float definition = 0f;
-    /** Higlights adjustment in the range [0,1].
-     */
+
     protected float highlights = 0f;
-    /** Shadows adjustment in the range [0,1].
-     */
+
     protected float shadows = 0f;
-    /** Sharpness adjustment in the range [0,1].
-     */
+
     protected float sharpness = 0f;
-    /** De-noise adjustment in the range [0,1].
-     */
+
     protected float denoise = 0f;
-    /** Temperature adjustment in the range [-1,1].
-     */
+
     protected float temperature = 0f;
-    /** Tint adjustment in the range [-1,1].
-     */
+
     protected float tint = 0f;
-    /** White balance terms {Rmu,Rnu, Bmu, Bnu}. */
+
     private float[] whiteBalanceQM = {0, 1, 0, 1};
     private boolean whiteBalanceTTEnabled = true;
     private boolean whiteBalanceQMEnabled = true;
@@ -93,21 +65,13 @@ public class DefaultColorAdjustModel
         setWhiteBalanceTTEnabled(true);
     }
 
-    /**
-     * Get the value of whitePoint
-     *
-     * @return the value of whitePoint
-     */
+
     @Override
     public float getWhitePoint() {
         return whitePoint;
     }
 
-    /**
-     * Set the value of whitePoint
-     *
-     * @param newValue new value of whitePoint
-     */
+
     @Override
     public void setWhitePoint(float newValue) {
         float oldValue = whitePoint;
@@ -333,26 +297,26 @@ public class DefaultColorAdjustModel
 
     @Override
     public boolean isIdentity() {
-        return whitePoint == 1//
-                && blackPoint == 0//
-                && midPoint == 0.5//
-                && brightness == 0//
-                && exposure == 0//
-                && contrast == 0//
-                && saturation == 0.5//
-                && definition == 0//
-                && highlights == 0//
-                && shadows == 0//
-                && sharpness == 0//
-                && denoise == 0//
+        return whitePoint == 1
+                && blackPoint == 0
+                && midPoint == 0.5
+                && brightness == 0
+                && exposure == 0
+                && contrast == 0
+                && saturation == 0.5
+                && definition == 0
+                && highlights == 0
+                && shadows == 0
+                && sharpness == 0
+                && denoise == 0
                 && (!whiteBalanceTTEnabled
-                || temperature == 0//
-                && tint == 0)//
+                || temperature == 0
+                && tint == 0)
                 && (!whiteBalanceQMEnabled
-                || whiteBalanceQM[0] == 0//
-                && whiteBalanceQM[1] == 1//
-                && whiteBalanceQM[2] == 0//
-                && whiteBalanceQM[3] == 1)//
+                || whiteBalanceQM[0] == 0
+                && whiteBalanceQM[1] == 1
+                && whiteBalanceQM[2] == 0
+                && whiteBalanceQM[3] == 1)
                 ;
     }
 }

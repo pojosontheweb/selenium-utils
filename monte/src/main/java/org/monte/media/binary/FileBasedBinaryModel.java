@@ -1,13 +1,4 @@
-/*
- * @(#)FileBasedBinaryModel.java  1.0.1  2010-05-24
- * 
- * Copyright (c) 2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.binary;
 
 import java.io.File;
@@ -16,15 +7,7 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.WeakHashMap;
 
-/**
- * FileBasedBinaryModel.
- * <p>
- * FIXME - The file based binary model may grow infinitely large.
- *
- * @author Werner Randelshofer
- * @version 1.0.1 2010-05-24 Method getBytes sometimes returned invalid length.
- * <br>1.0 2010-04-09 Created.
- */
+
 public class FileBasedBinaryModel implements BinaryModel {
 
     private int segsize = 1024;
@@ -71,7 +54,7 @@ public class FileBasedBinaryModel implements BinaryModel {
         }
 
         try {
-            //byte[] cdat = new byte[segsize];
+
 
             racf.seek(off + offset);
             racf.readFully(target, 0, len);

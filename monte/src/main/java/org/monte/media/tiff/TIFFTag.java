@@ -1,31 +1,9 @@
-/*
- * @(#)TIFFTag.java  1.0  2010-07-24
- * 
- * Copyright (c) 2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.tiff;
 
 import org.monte.media.math.Rational;
 
-/**
- * A class defining the notion of a TIFF tag. A TIFF tag is a key that may
- * appear in an Image File Directory (IFD). In the IFD each tag has some data
- * associated with it, which may consist of zero or more values of a given data
- * type. The combination of a tag and a value is known as an IFD Entry or TIFF
- * Field.
- * <p>
- * The actual tag values used in the root IFD of a standard ("baseline") tiff
- * stream are defined in the {@link BaselineTagSet} class.
- * <p>
- *
- * @author Werner Randelshofer
- * @version 1.0 2010-07-24 Created.
- */
+
 public class TIFFTag {
 
     public final static int ASCII_MASK = 1 << IFDDataType.ASCII.getTypeNumber();
@@ -48,23 +26,7 @@ public class TIFFTag {
     private TagSet tagSet;
     private ValueFormatter formatter;
 
-    /**
-     * Constructs a TIFFTag with a given name, tag number, set of legal data types,
-     * and TagSet to which it refers. The tagSet parameter will generally be
-     * non-null only if this TIFFTag corresponds to a pointer to a TIFF IFD. In this
-     * case tagSet will represent the set of TIFFTags which appear in the IFD
-     * pointed to. A TIFFTag represents an IFD pointer if and only if tagSet is
-     * non-null or the data type TIFF_IFD_POINTER is legal.
-     * <p>
-     * If there are mnemonic names to be associated with the legal data values for the
-     * tag, addValueName() should be called on the new instance for each name.
-     * <p>
-     * See the documentation for getDataTypes() for an explanation of how the set of data types is to be converted into a bit mask.
-     * @param name the name of the tag; may be null.
-     * @param number the number used to represent the tag.
-     * @param dataTypes a bit mask indicating the set of legal data types for this tag.
-     * @param formatter a ValueFormatter for formatting data values.
-     */
+
     public TIFFTag(String name,
             int number,
             int dataTypes,
@@ -75,41 +37,24 @@ public class TIFFTag {
         this.formatter = formatter;
     }
 
-    /**
-     * Constructs a TIFFTag with a given name, tag number, set of legal data types,
-     * and TagSet to which it refers. The tagSet parameter will generally be
-     * non-null only if this TIFFTag corresponds to a pointer to a TIFF IFD. In this
-     * case tagSet will represent the set of TIFFTags which appear in the IFD
-     * pointed to. A TIFFTag represents an IFD pointer if and only if tagSet is
-     * non-null or the data type TIFF_IFD_POINTER is legal.
-     * <p>
-     * If there are mnemonic names to be associated with the legal data values for the
-     * tag, addValueName() should be called on the new instance for each name.
-     * <p>
-     * See the documentation for getDataTypes() for an explanation of how the set of data types is to be converted into a bit mask.
-     * @param name the name of the tag; may be null.
-     * @param number the number used to represent the tag.
-     * @param dataTypes a bit mask indicating the set of legal data types for this tag.
-     */
+
     public TIFFTag(String name,
             int number,
             int dataTypes) {
         this(name, number, dataTypes, null);
     }
 
-    /**
-     * @param tagSet the TagSet to which this tag belongs; may be null.
-     */
-    /* package */ void setTagSet(TagSet tagSet) {
+
+     void setTagSet(TagSet tagSet) {
         this.tagSet = tagSet;
     }
 
-    /** Returns the integer used to represent the tag. */
+
     public int getNumber() {
         return number;
     }
 
-    /** Returns the name of the tag, or null if the name is not known. */
+
     public String getName() {
         return name;
     }

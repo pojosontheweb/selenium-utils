@@ -1,13 +1,4 @@
-/*
- * @(#)ColorTesterMain.java  1.0  2011-03-15
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.test;
 
 import org.monte.media.VideoFormatKeys;
@@ -21,17 +12,10 @@ import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * {@code ColorTesterMain}.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-03-15 Created.
- */
+
 public class ColorTesterMain {
 
-    /**
-     * @param args the command line arguments
-     */
+    
     public static void main(String[] args) throws IOException {
         BufferedImage img1 = new BufferedImage(16, 16, BufferedImage.TYPE_BYTE_INDEXED, Colors.createMacColors());
         byte[] data = ((DataBufferByte) img1.getRaster().getDataBuffer()).getData();

@@ -29,24 +29,24 @@ public class Google extends AbstractPageObject {
     }
 
     public Google dismissCookies() {
-        String dismissText = DISMISS_PER_LOCALE.get(locale);
-        if (dismissText == null) {
-            dismissText = DISMISS_EN;
-        }
-
-        Findr fDialog = $$("div")
-                .where(attrEquals("role", "dialog"))
-                .expectOne();
-        fDialog
-                .where(isDisplayed())
-                .$$("button div")
-                .where(textEquals(dismissText))
-                .expectOne()
-                .click();
-
-        fDialog
-                .where(not(isDisplayed()))
-                .eval();
+//        String dismissText = DISMISS_PER_LOCALE.get(locale);
+//        if (dismissText == null) {
+//            dismissText = DISMISS_EN;
+//        }
+//
+//        Findr fDialog = $$("div")
+//                .where(attrEquals("role", "dialog"))
+//                .expectOne();
+//        fDialog
+//                .where(isDisplayed())
+//                .$$("button div")
+//                .where(textEquals(dismissText))
+//                .expectOne()
+//                .click();
+//
+//        fDialog
+//                .where(not(isDisplayed()))
+//                .eval();
 
         return this;
     }

@@ -1,13 +1,4 @@
-/*
- * @(#)PBMDecoder.java  1.6  2010-08-02
- *
- * Copyright (c) 2005-2010 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- *
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.pbm;
 
 import org.monte.media.AbortException;
@@ -24,41 +15,11 @@ import java.util.*;
 import java.awt.image.*;
 import java.net.URL;
 
-/**
- * Creates Image objects by reading an IFF PBM stream.
- *
- * <p><b>PBM regular expression</b>
- * <pre>
- * PBM ::= "FORM" #{ "PBM" BMHD [CMAP] [GRAB] [DEST] [SPRT] [CAMG] CRNG* CCRT* [BODY] }
- *
- * BMHD ::= "BMHD" #{ BitMapHeader }
- * CMAP ::= "CMAP" #{ (red green blue)* } [0]
- * GRAB ::= "GRAB" #{ Point2D }
- * DEST ::= "DEST" #{ DestMerge }
- * SPRT ::= "SPRT" #{ SpritePrecedence }
- * CAMG ::= "CAMG" #{ LONG }
- *
- * CRNG ::= "CRNG" #{ CRange }
- * CCRT ::= "CCRT" #{ CycleInfo }
- * BODY ::= "BODY" #{ UBYTE* } [0]
- * </pre> The token "#" represents a
- * <code>ckSize</code> LONG count of the following braced data bytes. E.g., a
- * BMHD's "#" should equal
- * <code>sizeof(BitMapHeader)</code>. Literal strings are shown in "quotes",
- * [square bracket items] are optional, and "*" means 0 or more repetitions. A
- * sometimes-needed pad byte is shown as "[0]".
- *
- * @author Werner Randelshofer, Hausmatt 10, CH-6405 Goldau, Switzerland
- * @version 1.6 2010-08-02 Added support for CRNG and DRNG chunks. <br>1.5.1
- * 2010-07-03 Improved performance of byterun1 decoder. <br>1.0 2005-04-05
- * Created.
- */
-public class PBMDecoder implements IFFVisitor {
-    /* ---- constants ---- */
 
-    /**
-     * Chunk ID's.
-     */
+public class PBMDecoder implements IFFVisitor {
+
+
+
     protected final static int PBM_ID = IFFParser.stringToID("PBM ");
     protected final static int BMHD_ID = IFFParser.stringToID("BMHD");
     protected final static int CMAP_ID = IFFParser.stringToID("CMAP");
@@ -68,77 +29,44 @@ public class PBMDecoder implements IFFVisitor {
     private final static int AUTH_ID = IFFParser.stringToID("AUTH");
     private final static int ANNO_ID = IFFParser.stringToID("ANNO");
     private final static int COPYRIGHT_ID = IFFParser.stringToID("(c) ");
-    /**
-     * PBM BMHD chunk: masking technique.
-     */
+
     protected final static int MSK_NONE = 0,
             MSK_HAS_MASK = 1,
             MSK_HAS_TRANSPARENT_COLOR = 2,
             MSK_LASSO = 3;
-    /**
-     * PBM BMHD chunk: compression algorithm.
-     */
+
     protected final static int CMP_NONE = 0,
             CMP_BYTE_RUN_1 = 1;
-    /* ---- instance variables ---- */
-    /**
-     * Input stream to decode from.
-     */
+
+
     protected InputStream inputStream;
-    /**
-     * URL to get the input stream from.
-     */
+
     protected URL location;
-    /**
-     * Stores all the PBM pictures found during decoding as an instance of
-     * MemoryImageSource.
-     */
+
     protected ArrayList<ColorCyclingMemoryImageSource> sources;
-    /**
-     * Properties.
-     */
+
     protected Hashtable properties;
-    /**
-     * BMHD data.
-     */
-    /**
-     * Raster width_ and heigth in pixels
-     */
+
+
     protected int bmhdWidth, bmhdHeight;
-    /**
-     * pixel position for this image
-     */
+
     protected int bmhdXPosition, bmhdYPosition;
-    /**
-     * Number of source bitplanes.
-     */
+
     protected int bmhdNbPlanes;
     protected int bmhdMasking;
     protected int bmhdCompression;
-    /**
-     * Transparent "color number" (sort of).
-     */
+
     protected int bmhdTransparentColor;
-    /**
-     * Pixel aspect, a ratio width : height
-     */
+
     protected int bmhdXAspect, bmhdYAspect;
-    /**
-     * Source "page" size in pixels.
-     */
+
     protected int bmhdPageWidth, bmhdPageHeight;
-    /**
-     * CMAP data.
-     */
+
     protected ColorModel cmapColorModel;
-    /**
-     * BODY data
-     */
+
     protected ColorCyclingMemoryImageSource memoryImageSource;
 
-    /**
-     * Constructors
-     */
+
     public PBMDecoder(InputStream in) {
         inputStream = in;
     }
@@ -147,12 +75,7 @@ public class PBMDecoder implements IFFVisitor {
         this.location = location;
     }
 
-    /**
-     * Processes the input stream and creates a vector of MemoryImageSource
-     * instances.
-     *
-     * @return A vector of java.awt.img.MemoryImageSource.
-     */
+
     public ArrayList<ColorCyclingMemoryImageSource> produce()
             throws IOException {
         InputStream in = null;
@@ -171,9 +94,9 @@ public class PBMDecoder implements IFFVisitor {
             registerChunks(iff);
             iff.parse(in, this);
         } catch (ParseException e1) {
-            e1.printStackTrace();//System.out.println(e1);
+            e1.printStackTrace();
         } catch (AbortException e) {
-            e.printStackTrace();//System.out.println(e);
+            e.printStackTrace();
         } finally {
              if (mustCloseStream) {
                 in.close();
@@ -248,15 +171,15 @@ public class PBMDecoder implements IFFVisitor {
         if (comment.length() > 0) {
             props.put("comment", comment.toString());
         }
-        // Process CRNG and DRNG chunks in the sequence of their
-        // location in the file.
+
+
         IFFChunk[] crngChunks = group.getCollectionChunks(CRNG_ID);
         IFFChunk[] drngChunks = group.getCollectionChunks(DRNG_ID);
         int activeCycles = 0;
         int j = 0, k = 0;
         for (int i = 0, n = crngChunks.length + drngChunks.length; i < n; i++) {
             if (j < crngChunks.length && (k >= drngChunks.length || crngChunks[j].getScan() < drngChunks[k].getScan())) {
-//                System.out.println("ILBMDecoder decoding CRNG@"+crngChunks[j].getScan());
+
                 ColorCycle cc = decodeCRNG(crngChunks[j]);
                 memoryImageSource.addColorCycle(cc);
                 if (cc.isActive()) {
@@ -264,7 +187,7 @@ public class PBMDecoder implements IFFVisitor {
                 }
                 j++;
             } else {
-//                System.out.println("ILBMDecoder decoding DRNG@"+drngChunks[k].getScan());
+
                 ColorCycle cc = decodeDRNG(drngChunks[k]);
                 memoryImageSource.addColorCycle(cc);
                 if (cc.isActive()) {
@@ -277,41 +200,11 @@ public class PBMDecoder implements IFFVisitor {
             memoryImageSource.setAnimated(true);
             props.put("colorCycling", activeCycles);
         }
-//memoryImageSource.putProperties(props);
+
         sources.add(memoryImageSource);
     }
 
-    /**
-     * Decodes the bitmap header (PBM BMHD).
-     *
-     * <pre>
-     * typedef UBYTE Masking; // Choice of masking technique
-     *
-     * #define mskNone                 0
-     * #define mskHasMask              1
-     * #define mskHasTransparentColor  2
-     * #define mskLasso                3
-     *
-     * typedef UBYTE Compression; // Choice of compression algorithm
-     *     // applied to the rows of all source and mask planes.
-     *     // "cmpByteRun1" is the byte run encoding. Do not compress
-     *     // accross rows!
-     * #define cmpNone      0
-     * #define cmpByteRun1  1
-     *
-     * typedef struct {
-     *   UWORD       w, h; // raster width & height in pixels
-     *   WORD        x, y; // pixel position for this image
-     *   UBYTE       nbPlanes; // # source bitplanes
-     *   Masking     masking;
-     *   Compression compression;
-     *   UBYTE       pad1;     // unused; ignore on read, write as 0
-     *   UWORD       transparentColor; // transparent "color number" (sort of)
-     *   UBYTE       xAspect, yAspect; // pixel aspect, a ratio width : height
-     *   WORD        pageWidth, pageHeight; // source "page" size in pixels
-     *   } BitmapHeader;
-     * </pre>
-     */
+
     protected void decodeBMHD(IFFChunk chunk)
             throws ParseException {
         if (chunk == null) {
@@ -379,24 +272,7 @@ public class PBMDecoder implements IFFVisitor {
         }
     }
 
-    /**
-     * Decodes the color range cycling (ILBM CRNG).
-     *
-     * <pre>
-     * #define RNG_NORATE  36   // Dpaint uses this rate to mean non-active
-     *  set {
-     *  active = 1, reverse = 2
-     *  } crngActive;
-     *
-     *  // A CRange is store in a CRNG chunk.
-     *  typedef struct {
-     *  WORD  pad1;              // reserved for future use; store 0 here *
-     *  WORD  rate;              // 60/sec=16384, 30/sec=8192, 1/sec=16384/60=273
-     *  WORD set crngActive flags;     // bit0 set = active, bit 1 set = reverse
-     *  UBYTE low; UBYTE high;         // lower and upper color registers selected
-     *  } ilbmColorRegisterRangeChunk;
-     * </pre>
-     */
+
     protected ColorCycle decodeCRNG(IFFChunk chunk)
             throws ParseException {
         ColorCycle cc;
@@ -408,9 +284,9 @@ public class PBMDecoder implements IFFVisitor {
             int flags = in.readUWORD();
             int low = in.readUBYTE();
             int high = in.readUBYTE();
-//System.out.println("CRNG pad1:"+pad1+" rate:"+rate+" flags:"+flags+" low:"+low+" high:"+high);
-            cc = new CRNGColorCycle(rate, 273, low, high,//
-                    (flags & 1) != 0 && rate > 36 && high > low, //
+
+            cc = new CRNGColorCycle(rate, 273, low, high,
+                    (flags & 1) != 0 && rate > 36 && high > low,
                     (flags & 2) != 0, false);
 
             in.close();
@@ -420,47 +296,7 @@ public class PBMDecoder implements IFFVisitor {
         return cc;
     }
 
-    /**
-     * Decodes the DPaint IV enhanced color cycle chunk (ILBM DRNG) <p> The
-     * RNG_ACTIVE flag is set when the range is cyclable. A range should only
-     * have the RNG _ACTIVE if it: <ol> <li>contains at least one color
-     * register</li> <li>has a defined rate</li> <li>has more than one color
-     * and/or color register</li> </ol>
-     * <pre>
-     * ILBM DRNG DPaint IV enhanced color cycle chunk
-     * --------------------------------------------
-     *
-     * set {
-     *     RNG_ACTIVE=1,RNG_DP_RESERVED=4
-     * } drngFlags;
-     *
-     * /* True color cell * /
-     * typedef struct {
-     *     UBYTE cell;
-     *     UBYTE r;
-     *     UBYTE g;
-     *     UBYTE b;
-     * } ilbmDRNGDColor;
-     *
-     * /* Color register cell * /
-     * typedef struct {
-     *     UBYTE cell;
-     *     UBYTE index;
-     * } ilbmDRNGDIndex;
-     *
-     * /* DRNG chunk. * /
-     * typedef struct {
-     *     UBYTE min; /* min cell value * /
-     *     UBYTE max; /* max cell value * /
-     *     UWORD rate; /* color cycling rate, 16384 = 60 steps/second * /
-     *     UWORD set drngFlags flags; /* 1=RNG_ACTIVE, 4=RNG_DP_RESERVED * /
-     *     UBYTE ntrue; /* number of DColorCell structs to follow * /
-     *     UBYTE ntregs; /* number of DIndexCell structs to follow * /
-     *     ilbmDRNGDColor[ntrue] trueColorCells;
-     *     ilbmDRNGDIndex[ntregs] colorRegisterCells;
-     * } ilbmDRangeChunk;
-     * </pre>
-     */
+
     protected ColorCycle decodeDRNG(IFFChunk chunk)
             throws ParseException {
         ColorCycle cc;
@@ -486,9 +322,9 @@ public class PBMDecoder implements IFFVisitor {
                 cells[i + ntrue] = new DRNGColorCycle.DIndexCell(cell, index);
             }
 
-//System.out.println("DRNG min:"+min+" max:"+max+" rate:"+rate+" flags:"+flags+" ntrue:"+ntrue+" nregs:"+nregs);
-            cc = new DRNGColorCycle(rate, 273, min, max, //
-                    (flags & 1) != 0 && rate > 36 && min <= max && ntrue + nregs > 1,//
+
+            cc = new DRNGColorCycle(rate, 273, min, max,
+                    (flags & 1) != 0 && rate > 36 && min <= max && ntrue + nregs > 1,
                     false, cells);
 
             in.close();
@@ -518,7 +354,7 @@ public class PBMDecoder implements IFFVisitor {
 
         Hashtable props = new Hashtable();
         if ((bmhdMasking & MSK_HAS_MASK) != 0) {
-            // XXX - Handle image creation with mask
+
             System.out.println("PBMDecoder Images with Mask not supported");
             memoryImageSource = new ColorCyclingMemoryImageSource(bmhdWidth, bmhdHeight, cmapColorModel, pixels, 0, pixmapWidth, props);
         } else {
@@ -526,26 +362,7 @@ public class PBMDecoder implements IFFVisitor {
         }
     }
 
-    /**
-     * ByteRun1 run decoder. <p> The run encoding scheme by <em>byteRun1</em> is
-     * best described by pseudo code for the decoder <em>Unpacker</em> (called
-     * <em>UnPackBits</em> in the Macintosh toolbox.
-     * <pre>
-     * UnPacker:
-     *  LOOP until produced the desired number of bytes
-     *      Read the next source byte into n
-     *      SELECT n FROM
-     *          [0..127] =&gt; copy the next n+1 bytes literally
-     *          [-1..-127] =&gt; replicate the next byte -n+1 times
-     *          -128    =&gt; no operation
-     *      ENDCASE;
-     *   ENDLOOP;
-     * </pre>
-     *
-     * @param in
-     * @param out
-     * @throws ParseException
-     */
+
     public static int unpackByteRun1(byte[] in, byte[] out)
             throws ParseException {
         try {

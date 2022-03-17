@@ -1,13 +1,4 @@
-/*
- * @(#)AVIReader.java  1.0  2011-08-24
- * 
- * Copyright (c) 2011 Werner Randelshofer, Goldau, Switzerland.
- * All rights reserved.
- * 
- * You may not use, copy or modify this file, except in compliance with the
- * license agreement you entered into with Werner Randelshofer.
- * For details see accompanying license terms.
- */
+
 package org.monte.media.avi;
 
 import org.monte.media.Codec;
@@ -29,13 +20,7 @@ import org.monte.media.BufferFlag;
 import org.monte.media.Registry;
 import static org.monte.media.BufferFlag.*;
 
-/**
- * Provides high-level support for decoding and reading audio and video samples
- * from an AVI 1.0 file.
- *
- * @author Werner Randelshofer
- * @version 1.0 2011-08-24 Created.
- */
+
 public class AVIReader extends AVIInputStream implements MovieReader {
 
     public final static Format AVI = new Format(MediaTypeKey, MediaType.FILE, MimeTypeKey, MIME_AVI);
@@ -60,16 +45,7 @@ public class AVIReader extends AVIInputStream implements MovieReader {
         return tracks.get(track).format;
     }
 
-    /**
-     * Reads a chunk of media data from the specified track.
-     * <p>
-     * If the track is a video track with palette change "..PC" chunks,
-     * then the body of the palette change chunk can be found in the buffer.header.
-     * 
-     * @param track The track number.
-     * @param buffer The buffer for the media data.
-     * @throws java.io.IOException
-     */
+
     @Override
     public void read(int track, Buffer buffer) throws IOException {
         ensureRealized();
@@ -143,11 +119,9 @@ public class AVIReader extends AVIInputStream implements MovieReader {
 
     }
 
-    /**
-     * Decodes the PC palette change chunk.
-     */
+
     private void decodePC(byte[] pc, int offset, int length, byte[] r, byte[] g, byte[] b) {
-        offset += 4; // FIXME - Parse firstEntry, numEntries and flags from PC
+        offset += 4;
         for (int i = 0; i < 256; i++) {
             r[i] = pc[offset + i * 4];
             g[i] = pc[offset + i * 4 + 1];
@@ -156,15 +130,7 @@ public class AVIReader extends AVIInputStream implements MovieReader {
 
     }
 
-    /**
-     * Reads an image.
-     *
-     * @param track The track number
-     * @param img An image that can be reused if it fits the media format of the
-     * track. Pass null to create a new image on each read.
-     * @return An image or null if the end of the media has been reached.
-     * @throws java.io.IOException
-     */
+
     public BufferedImage read(int track, BufferedImage img) throws IOException {
         Track tr = tracks.get(track);
         if (tr.inputBuffer == null) {
@@ -177,7 +143,7 @@ public class AVIReader extends AVIInputStream implements MovieReader {
         buf.data = img;
         do {
             read(track, tr.inputBuffer);
-            // FIXME - We assume a one-step codec here!
+
             tr.codec.process(tr.inputBuffer, buf);
         } while (buf.isFlag(DISCARD) && !buf.isFlag(END_OF_MEDIA));
 
@@ -199,7 +165,7 @@ public class AVIReader extends AVIInputStream implements MovieReader {
                 if (null == codec.setInputFormat(fmt)) {
                     throw new UnsupportedOperationException("Track " + tr + " codec does not support input format " + fmt + ". codec=" + codec);
                 }
-                Format outFormat = fmt.prepend(MediaTypeKey, MediaType.VIDEO,//
+                Format outFormat = fmt.prepend(MediaTypeKey, MediaType.VIDEO,
                         MimeTypeKey, MIME_JAVA,
                         EncodingKey, ENCODING_BUFFERED_IMAGE, DataClassKey, BufferedImage.class);
                 if (null == codec.setOutputFormat(outFormat)) {
@@ -290,17 +256,17 @@ public class AVIReader extends AVIInputStream implements MovieReader {
     @Override
     public long timeToSample(int track, Rational time) {
         Track tr = tracks.get(track);
-        // This only works, if all samples contain only one sample!
-        // FIXME - We foolishly assume that only audio tracks have more than one
-        // sample in a frame.
-        // FIXME - We foolishly assume that all samples have a sampleDuration != 0.
+
+
+
+
         long index = time.getNumerator() * tr.rate / time.getDenominator() / tr.scale - tr.startTime;
         if (tr.mediaType == AVIMediaType.AUDIO) {
             int count = 0;
-            // FIXME This is very inefficient, perform binary search with sample.timestamp
-            // this will work for all media types!
+
+
             for (int i = 0, n = tr.samples.size(); i < n; i++) {
-                long d = tr.samples.get(i).duration * tr.scale; // foolishly assume that sampleDuration = sample count
+                long d = tr.samples.get(i).duration * tr.scale;
                 if (count + d > index) {
                     index = i;
                     break;
@@ -318,7 +284,7 @@ public class AVIReader extends AVIInputStream implements MovieReader {
         ensureRealized();
         Track tr = tracks.get(track);
         Sample sample = tr.samples.get((int) max(0, min(tr.samples.size() - 1, sampleIndex)));
-        long time = (tr.startTime + sample.timeStamp) * tr.scale;//
+        long time = (tr.startTime + sample.timeStamp) * tr.scale;
         if (sampleIndex >= tr.samples.size()) {
             time += sample.duration * tr.scale;
         }
