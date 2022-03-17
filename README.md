@@ -1,8 +1,6 @@
 Takes the misery out of selenium !
 
-[![Build Status](https://travis-ci.org/pojosontheweb/selenium-utils.svg?branch=master)](https://travis-ci.org/pojosontheweb/selenium-utils)
-
-# Findr !
+[![CircleCI](https://circleci.com/gh/pojosontheweb/selenium-utils/tree/develop.svg?style=svg)](https://circleci.com/gh/pojosontheweb/selenium-utils/tree/develop)
 
 `Findr` is a simple yet very powerful utility class that helps to write tests in a "wait-style", without accessing WebDriverWait directly.
 
