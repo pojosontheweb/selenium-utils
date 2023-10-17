@@ -41,7 +41,7 @@
         </developer>
     </developers>
     <properties>
-        <seleniumVersion>3.141.59</seleniumVersion>
+        <seleniumVersion>4.14.1</seleniumVersion>
     </properties>
     <build>
         <pluginManagement>
