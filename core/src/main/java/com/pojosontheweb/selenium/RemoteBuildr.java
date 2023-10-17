@@ -2,7 +2,9 @@ package com.pojosontheweb.selenium;
 
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.AbstractDriverOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -34,18 +36,17 @@ public class RemoteBuildr {
     }
 
     public RemoteWebDriver build() {
-        DesiredCapabilities capabilities;
-
-        if (browsr==null || Browsr.Firefox.equals(browsr)) {
-            capabilities = DesiredCapabilities.firefox();
-            FirefoxProfile profile = FirefoxBuildr.createFirefoxProfile(locales);
-            capabilities.setCapability(FirefoxDriver.PROFILE, profile);
-        } else {
-            capabilities = DesiredCapabilities.chrome();
-            capabilities.setCapability(ChromeOptions.CAPABILITY, ChromeBuildr.createChromeOptions(locales));
-        }
         try {
-            return new RemoteWebDriver(new URL(hubUrl), capabilities);
+            if (browsr==null || Browsr.Firefox.equals(browsr)) {
+                FirefoxOptions browserOptions = new FirefoxOptions();
+                FirefoxProfile profile = FirefoxBuildr.createFirefoxProfile(locales);
+                browserOptions.setProfile(profile);
+                return new RemoteWebDriver(new URL(hubUrl), browserOptions);
+            } else {
+                ChromeOptions browserOptions = new ChromeOptions();
+                browserOptions.setCapability(ChromeOptions.CAPABILITY, ChromeBuildr.createChromeOptions(locales));
+                return new RemoteWebDriver(new URL(hubUrl), browserOptions);
+            }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

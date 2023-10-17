@@ -60,14 +60,12 @@ public class TestUtil {
     }
 
     public void log(String... args) {
-        if (Findr.isDebugEnabled()) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[TestUtil] ");
-            for (String s : args) {
-                sb.append(s);
-            }
-            System.out.println(sb.toString());
+        StringBuilder sb = new StringBuilder();
+        sb.append("[TestUtil] ");
+        for (String s : args) {
+            sb.append(s);
         }
+        Findr.logDebug(sb.toString());
     }
 
     private ScreenRecordr recordr = null;

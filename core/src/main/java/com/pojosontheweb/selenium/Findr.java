@@ -1,5 +1,6 @@
 package com.pojosontheweb.selenium;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -318,7 +319,7 @@ public final class Findr {
 
     private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
         try {
-            return new WebDriverWait(driver, waitTimeout, sleepInMillis).until(callback);
+            return new WebDriverWait(driver, Duration.ofSeconds(waitTimeout), Duration.ofMillis(sleepInMillis)).until(callback);
         } catch(TimeoutException e) {
             // failed to find element(s), build exception message
             // and re-throw exception
@@ -511,7 +512,7 @@ public final class Findr {
 
         private <T> T wrapWebDriverWaitList(final Function<WebDriver,T> callback) throws TimeoutException {
             try {
-                return new WebDriverWait(driver, waitTimeout, sleepInMillis).until(callback);
+                return new WebDriverWait(driver, Duration.ofSeconds(waitTimeout), Duration.ofMillis(sleepInMillis)).until(callback);
             } catch(TimeoutException e) {
                 // failed to find element(s), build exception message
                 // and re-throw exception
