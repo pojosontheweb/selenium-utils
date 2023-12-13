@@ -26,6 +26,7 @@ jobs:
       DISPLAY: :99
 
     steps:
+      - run: sudo Xvfb :99 -screen 0 1920x1200x24 > /dev/null 2>&1 &
       - attach_workspace:
           at: ~/repo
       - browser-tools/install-browser-tools
@@ -35,7 +36,7 @@ jobs:
             chromedriver --version
             ps -efa | grep Xvfb
           name: Check install
-      - run: xvfb mvn clean install
+      - run: export DISPLAY=:99 && mvn clean install
       - store_artifacts:
           path: ~/repo/core/target/surefire-reports
       - store_artifacts:
