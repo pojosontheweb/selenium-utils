@@ -29,7 +29,8 @@ jobs:
       - run: sudo Xvfb :99 -screen 0 1920x1200x24 > /dev/null 2>&1 &
       - attach_workspace:
           at: ~/repo
-      - browser-tools/install-browser-tools
+      - browser-tools/install-browser-tools:
+          chrome-version: 116.0.5845.96
       - run:
           command: |
             google-chrome --version
