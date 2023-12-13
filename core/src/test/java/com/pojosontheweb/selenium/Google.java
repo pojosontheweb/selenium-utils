@@ -29,15 +29,17 @@ public class Google extends AbstractPageObject {
     }
 
     public Google dismissCookies() {
-        String dismissText = DISMISS_PER_LOCALE.get(locale);
-        if (dismissText == null) {
-            dismissText = DISMISS_EN;
-        }
+        if (Boolean.getBoolean("dismiss.cookies")) {
+            String dismissText = DISMISS_PER_LOCALE.get(locale);
+            if (dismissText == null) {
+                dismissText = DISMISS_EN;
+            }
 
-        $$("button div")
-                .where(textEquals(dismissText))
-                .expectOne()
-                .click();
+            $$("button div")
+                    .where(textEquals(dismissText))
+                    .expectOne()
+                    .click();
+        }
         return this;
     }
 
