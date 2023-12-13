@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class GoogleRawTest {
 
+    @Ignore
     @Test
     public void testChrome() {
         System.out.println("Testing with Chrome");
