@@ -39,6 +39,7 @@ jobs:
             chromedriver --version
             ps -efa | grep Xvfb
           name: Check install
+      - run: cd testapp && ./http-server.sh
       - run: mvn clean install
       - store_artifacts:
           path: ~/repo/core/target/surefire-reports
