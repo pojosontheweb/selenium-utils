@@ -90,10 +90,6 @@ public class TestUtil {
     }
 
     public void setUp() {
-
-        // init web driver before each test
-        webDriver = createWebDriver();
-
         // init recorder if needed
         recordr = videoEnabled ? new ScreenRecordr() : null;
 
@@ -102,6 +98,10 @@ public class TestUtil {
             log("video is enabled, starting recorder");
             recordr.start();
         }
+
+        // init web driver before each test
+        webDriver = createWebDriver();
+
     }
 
     protected WebDriver createWebDriver() {
