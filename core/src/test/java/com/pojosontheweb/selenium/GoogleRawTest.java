@@ -59,7 +59,7 @@ public class GoogleRawTest {
         g
                 .dismissCookies()
                 .typeQuery("pojosontheweb")
-                .assertHasResult("POJOs on the Web - GitHub");
+                .assertHasResult("POJOs on the Web");
 
         // assert we have clicked
         assertTrue("no clicks ???", myActions.clickCount > 0);

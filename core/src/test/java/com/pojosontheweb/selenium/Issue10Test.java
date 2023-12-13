@@ -15,7 +15,7 @@ public class Issue10Test extends ManagedDriverJunit4TestBase {
         getWebDriver().get("https://en.wikipedia.org");
 
         findr().
-            $$(".mw-list-item.collapsible span")
+            $$("#ca-viewsource span")
                     .where(textEquals("View source"))
                     .whereElemCount(1)
                     .eval();
@@ -25,7 +25,7 @@ public class Issue10Test extends ManagedDriverJunit4TestBase {
         boolean failed = false;
         try {
             findr().
-                $$(".mw-list-item.collapsible span")
+                $$("#ca-viewsource span")
                     .where(textEquals("View source"))
                     .whereElemCount(1)
                     .where(textEquals("Download"));

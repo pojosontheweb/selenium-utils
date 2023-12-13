@@ -16,9 +16,9 @@ public class Google extends AbstractPageObject {
         this.locale = locale;
     }
 
-    public static final String DISMISS_SL = "Strinjam se";
-    public static final String DISMISS_DE = "Ich stimme zu";
-    public static final String DISMISS_EN = "I agree";
+    public static final String DISMISS_SL = "Sprejmi vse";
+    public static final String DISMISS_DE = "Alle akzeptieren";
+    public static final String DISMISS_EN = "Accept all";
 
     public final static Map<String, String> DISMISS_PER_LOCALE = new HashMap<>();
 
@@ -29,31 +29,23 @@ public class Google extends AbstractPageObject {
     }
 
     public Google dismissCookies() {
-//        String dismissText = DISMISS_PER_LOCALE.get(locale);
-//        if (dismissText == null) {
-//            dismissText = DISMISS_EN;
-//        }
-//
-//        Findr fDialog = $$("div")
-//                .where(attrEquals("role", "dialog"))
-//                .expectOne();
-//        fDialog
-//                .where(isDisplayed())
-//                .$$("button div")
-//                .where(textEquals(dismissText))
-//                .expectOne()
-//                .click();
-//
-//        fDialog
-//                .where(not(isDisplayed()))
-//                .eval();
+        String dismissText = DISMISS_PER_LOCALE.get(locale);
+        if (dismissText == null) {
+            dismissText = DISMISS_EN;
+        }
 
+        $$("button div")
+                .where(textEquals(dismissText))
+                .expectOne()
+                .click();
         return this;
     }
 
     public Google typeQuery(String query) {
-        Findr input = $$("input")
-                .where(attrEquals("name", "q"))
+        Findr input = $$("form")
+                .where(attrEquals("role", "search"))
+                .expectOne()
+                .$$("textarea")
                 .expectOne();
         input.click();
         input.sendKeys(query, Keys.ENTER);
@@ -61,7 +53,7 @@ public class Google extends AbstractPageObject {
     }
 
     public Google assertHasResult(String title) {
-        $$("div.g h3")
+        $$("#rso h3")
                 .where(textEquals(title))
                 .expectOne()
                 .eval();
