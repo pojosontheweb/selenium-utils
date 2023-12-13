@@ -7,6 +7,8 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.openqa.selenium.WebDriver;
 
+import java.time.Duration;
+
 /**
  * Base JUnit4 test class.
  */
@@ -80,21 +82,13 @@ public class ManagedDriverJunit4TestBase {
         Findr f = new Findr(getWebDriver());
         String timeoutStr = System.getProperty(PROP_WEBTESTS_FINDR_TIMEOUT);
         if (timeoutStr!=null) {
-            f = f.setTimeout(Integer.parseInt(timeoutStr));
+            f = f.setTimeout(Duration.ofSeconds(Integer.parseInt(timeoutStr)));
         }
         String sleepInMillisStr = System.getProperty(PROP_WEBTESTS_FINDR_SLEEP);
         if (sleepInMillisStr!=null) {
-            f = f.setSleepInMillis(Long.parseLong(sleepInMillisStr));
+            f = f.setSleep(Duration.ofMillis(Long.parseLong(sleepInMillisStr)));
         }
         return f;
-    }
-
-    /**
-     * @deprecated use <code>findr().setTimeout(t)</code> instead.
-     */
-    @Deprecated
-    protected Findr findr(int timeoutInSeconds) {
-        return new Findr(getWebDriver(), timeoutInSeconds);
     }
 
     public Findr $(String selector) {

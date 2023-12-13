@@ -41,7 +41,7 @@
         </developer>
     </developers>
     <properties>
-        <seleniumVersion>3.141.59</seleniumVersion>
+        <seleniumVersion>4.16.1</seleniumVersion>
     </properties>
     <build>
         <pluginManagement>
@@ -63,8 +63,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>
