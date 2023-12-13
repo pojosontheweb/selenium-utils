@@ -1,5 +1,6 @@
 package com.pojosontheweb.selenium;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -10,16 +11,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Utility for accessing Selenium DOM safely, wait-style.
- *
  * Allows to create chains of conditions and execute those conditions
  * inside a WebDriverWait, in a transparent fashion.
- *
  * Instances are immutable and can be reused safely.
  */
 public final class Findr {
 
     /** the default wait timeout */
-    public static final int WAIT_TIMEOUT_SECONDS = 10; // secs
+    public static final Duration WAIT_TIMEOUT = Duration.ofSeconds(10);
 
     /** the sys prop name for enabling logs in findr eval(s) */
     public static final String SYSPROP_VERBOSE = "webtests.findr.verbose";
@@ -30,7 +29,7 @@ public final class Findr {
     private final WebDriver driver;
 
     /** the composed function */
-    private final Function<SearchContext,WebElement> f;
+    private final Function<SearchContext,SearchContext> f;
 
     /**
      * A list of strings that represent the "path" for this findr,
@@ -38,20 +37,17 @@ public final class Findr {
      */
     private final List<String> path;
 
-    /**
-     * The wait timeout (in seconds)
-     */
-    private final int waitTimeout;
+    private final Duration waitTimeout;
 
     /**
      * The sleep interval (between polls)
      */
-    private final long sleepInMillis;
+    private final Duration sleep;
 
     private final FindrActions findrActions;
 
     public static boolean isDebugEnabled() {
-        return Boolean.valueOf(System.getProperty(SYSPROP_VERBOSE, "false"));
+        return Boolean.getBoolean(SYSPROP_VERBOSE);
     }
 
     private static Function<String,?> debugHandler = new Function<String, Object>() {
@@ -82,7 +78,7 @@ public final class Findr {
      * @param driver the WebDriver
      */
     public Findr(WebDriver driver) {
-        this(driver, WAIT_TIMEOUT_SECONDS);
+        this(driver, WAIT_TIMEOUT);
     }
 
     /**
@@ -90,11 +86,11 @@ public final class Findr {
      * @param driver the WebDriver
      * @param waitTimeout the wait timeout in seconds
      */
-    public Findr(WebDriver driver, int waitTimeout) {
+    public Findr(WebDriver driver, Duration waitTimeout) {
         this(
                 driver,
                 waitTimeout,
-                500,
+                Duration.ofMillis(500),
                 null,
                 Collections.emptyList(),
                 DEFAULT_ACTIONS
@@ -113,7 +109,7 @@ public final class Findr {
      * Return the timeout for this findr in seconds
      * @return the timeout in seconds
      */
-    public int getTimeout() {
+    public Duration getTimeout() {
         return waitTimeout;
     }
 
@@ -125,7 +121,7 @@ public final class Findr {
      * @return a new Findr that has the specified WebElement as its root
      */
     public static Findr fromWebElement(WebDriver driver, final WebElement webElement) {
-        return fromWebElement(driver, webElement, WAIT_TIMEOUT_SECONDS);
+        return fromWebElement(driver, webElement, WAIT_TIMEOUT);
     }
 
     /**
@@ -136,108 +132,102 @@ public final class Findr {
      * @param waitTimeout the wait timeout in seconds
      * @return a new Findr that has the specified WebElement as its root
      */
-    public static Findr fromWebElement(WebDriver driver, final WebElement webElement, int waitTimeout) {
+    public static Findr fromWebElement(WebDriver driver, final WebElement webElement, Duration waitTimeout) {
         Findr f = new Findr(driver, waitTimeout);
-        return f.compose(new Function<SearchContext, WebElement>() {
-            @Override
-            public WebElement apply(SearchContext input) {
-                return webElement;
-            }
-        }, "fromWebElement(" + webElement + ")");
+        return f.compose(input -> webElement, "fromWebElement(" + webElement + ")");
     }
 
     private Findr(WebDriver driver,
-                  int waitTimeout,
-                  long sleepInMillis,
-                  Function<SearchContext, WebElement> f,
+                  Duration waitTimeout,
+                  Duration sleep,
+                  Function<SearchContext, SearchContext> f,
                   List<String> path,
                   FindrActions actions) {
         this.driver = driver;
         this.waitTimeout = waitTimeout;
-        this.sleepInMillis = sleepInMillis;
+        this.sleep = sleep;
         this.f = f;
         this.path = path;
         this.findrActions = actions;
     }
 
     private <F,T> Function<F,T> withoutWebDriverException(final Function<F, T> function) {
-        return new Function<F,T>() {
-            @Override
-            public T apply(F input) {
-                try {
-                    return function.apply(input);
-                } catch(WebDriverException e) {
-                    // retry in case of exception
-                    return null;
-                }
+        return input -> {
+            try {
+                return function.apply(input);
+            } catch(WebDriverException e) {
+                // retry in case of exception
+                return null;
             }
         };
     }
 
-    private Findr compose(final Function<SearchContext,WebElement> function, final String pathElem) {
-        final Function<SearchContext,WebElement> newFunction = withoutWebDriverException(function);
+    private Findr compose(final Function<SearchContext,SearchContext> function, final String pathElem) {
+        final Function<SearchContext,SearchContext> newFunction = withoutWebDriverException(function);
         ArrayList<String> newPath = new ArrayList<String>(path);
         if (pathElem!=null) {
             newPath.add(pathElem);
         }
-        Function<SearchContext,WebElement> composed;
+        Function<SearchContext,SearchContext> composed;
         if (f==null) {
-            composed = new Function<SearchContext, WebElement>() {
-                @Override
-                public WebElement apply(SearchContext input) {
-                    WebElement res = newFunction.apply(input);
-                    if (res==null) {
-                        logDebug("[Findr]  ! " + pathElem + " (null)");
-                    } else {
-                        logDebug("[Findr]  > " + pathElem + " : " + res);
-                    }
-                    return res;
+            composed = input -> {
+                SearchContext res = newFunction.apply(input);
+                if (res==null) {
+                    logDebug("[Findr]  ! " + pathElem + " (null)");
+                } else {
+                    logDebug("[Findr]  > " + pathElem + " : " + res);
                 }
+                return res;
             };
         } else {
-            composed = new Function<SearchContext, WebElement>() {
-                @Override
-                public WebElement apply(SearchContext input) {
-                    WebElement res1 = f.apply(input);
-                    if (res1==null) {
-                        logDebug("[Findr]  - " + pathElem);
-                        return null;
+            composed = input -> {
+                SearchContext res1 = f.apply(input);
+                if (res1==null) {
+                    logDebug("[Findr]  - " + pathElem);
+                    return null;
+                } else {
+                    SearchContext res2 = newFunction.apply(res1);
+                    if (res2==null) {
+                        logDebug("[Findr]  ! " + pathElem);
                     } else {
-                        WebElement res2 = newFunction.apply(res1);
-                        if (res2==null) {
-                            logDebug("[Findr]  ! " + pathElem);
-                        } else {
-                            logDebug("[Findr]  > " + pathElem + " : " + res2);
-                        }
-                        return res2;
+                        logDebug("[Findr]  > " + pathElem + " : " + res2);
                     }
+                    return res2;
                 }
             };
         }
-        return new Findr(driver, waitTimeout, sleepInMillis, composed, newPath, findrActions);
+        return new Findr(driver, waitTimeout, sleep, composed, newPath, findrActions);
 
     }
 
     /**
      * Set the timeout (in seconds) and return an updated Findr
-     * @param timeoutInSeconds the timeout in seconds
+     * @param timeoutInSeconds the timeout Duration
      * @return an updated Findr instance
      */
-    public Findr setTimeout(int timeoutInSeconds) {
-        return new Findr(driver, timeoutInSeconds, sleepInMillis, f, path, findrActions);
+    public Findr setTimeout(Duration timeoutInSeconds) {
+        return new Findr(driver, timeoutInSeconds, sleep, f, path, findrActions);
+    }
+
+    public Findr setTimeout(int seconds) {
+        return this.setTimeout(Duration.ofSeconds(seconds));
     }
 
     /**
-     * Set the WebDriverWait sleep interval (in ms). Use to control polling frequency.
-     * @param sleepInMillis the sleep interval in milliseconds
+     * Set the WebDriverWait sleep interval. Use to control polling frequency.
+     * @param sleep the sleep interval
      * @return an updated Findr instance
      */
-    public Findr setSleepInMillis(long sleepInMillis) {
-        return new Findr(driver, waitTimeout, sleepInMillis, f, path, findrActions);
+    public Findr setSleep(Duration sleep) {
+        return new Findr(driver, waitTimeout, sleep, f, path, findrActions);
+    }
+
+    public Findr setSleep(long ms) {
+        return this.setSleep(Duration.ofMillis(ms));
     }
 
     public Findr setActions(FindrActions actions) {
-        return new Findr(driver, waitTimeout, sleepInMillis, f, path, actions);
+        return new Findr(driver, waitTimeout, sleep, f, path, actions);
     }
 
     /**
@@ -246,7 +236,7 @@ public final class Findr {
      * @return a new empty Findr with other props untouched
      */
     public Findr empty() {
-        return new Findr(driver, waitTimeout, sleepInMillis, null, path, findrActions);
+        return new Findr(driver, waitTimeout, sleep, null, path, findrActions);
     }
 
     /**
@@ -255,21 +245,17 @@ public final class Findr {
      * @return a new Findr with updated condition chain
      */
     public Findr elem(final By by) {
-        return compose(
-                new Function<SearchContext, WebElement>() {
-                    @Override
-                    public WebElement apply(SearchContext input) {
-                        if (input==null) {
-                            return null;
-                        }
-                        try {
-                            return input.findElement(by);
-                        } catch(Exception e) {
-                            return null;
-                        }
-                    }
-                },
-                by.toString()
+        return compose(input -> {
+                if (input == null) {
+                    return null;
+                }
+                try {
+                    return input.findElement(by);
+                } catch (Exception e) {
+                    return null;
+                }
+            },
+            by.toString()
         );
     }
 
@@ -305,11 +291,9 @@ public final class Findr {
     }
 
     public Findr append(Findr f) {
-        List<String> newPath = new ArrayList<String>(path!=null?path:new ArrayList<String>());
         String sp;
         if (f.path!=null) {
-            newPath.addAll(f.path);
-            sp = f.path.stream().collect(Collectors.joining(", "));
+            sp = String.join(", ", f.path);
         } else {
             sp = "";
         }
@@ -318,7 +302,7 @@ public final class Findr {
 
     private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
         try {
-            return new WebDriverWait(driver, waitTimeout, sleepInMillis).until(callback);
+            return new WebDriverWait(driver, waitTimeout, sleep).until(callback);
         } catch(TimeoutException e) {
             // failed to find element(s), build exception message
             // and re-throw exception
@@ -342,35 +326,27 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public <T> T eval(final Function<WebElement,T> callback) throws TimeoutException {
-        return wrapWebDriverWait(withoutWebDriverException(new Function<WebDriver, T>() {
-            @Override
-            public T apply(WebDriver input) {
-                if (f==null) {
-                    throw new EmptyFindrException();
-                }
-                logDebug("[Findr] eval");
-                WebElement e = f.apply(input);
-                if (e == null) {
-                    logDebug("[Findr]  => Chain STOPPED before callback");
-                    return null;
-                }
-                T res = callback.apply(e);
-                if (res==null || (res instanceof Boolean && !((Boolean)res))) {
-                    logDebug("[Findr]  => " + callback + " result : " + res + ", will try again");
-                } else {
-                    logDebug("[Findr]  => " + callback + " result : " + res + ", OK");
-                }
-                return res;
+        return wrapWebDriverWait(withoutWebDriverException(input -> {
+            if (f==null) {
+                throw new EmptyFindrException();
             }
+            logDebug("[Findr] eval");
+            SearchContext e = f.apply(input);
+            if (e == null) {
+                logDebug("[Findr]  => Chain STOPPED before callback");
+                return null;
+            }
+            T res = callback.apply((WebElement)e);
+            if (res==null || (res instanceof Boolean && !((Boolean)res))) {
+                logDebug("[Findr]  => " + callback + " result : " + res + ", will try again");
+            } else {
+                logDebug("[Findr]  => " + callback + " result : " + res + ", OK");
+            }
+            return res;
         }));
     }
 
-    public static final Function<WebElement,?> IDENTITY_FOR_EVAL = new Function<WebElement, Object>() {
-        @Override
-        public Object apply(WebElement webElement) {
-            return true;
-        }
-    };
+    public static final Function<WebElement,?> IDENTITY_FOR_EVAL = (e) -> true;
 
     /**
      * Evaluates this Findr, and blocks until all conditions are satisfied. Throws
@@ -417,14 +393,11 @@ public final class Findr {
      * @return a Findr with updated conditions chain
      */
     public Findr where(final Predicate<? super WebElement> predicate) {
-        return compose(new Function<SearchContext, WebElement>() {
-            @Override
-            public WebElement apply(SearchContext input) {
+        return compose(input -> {
                 if (input==null) {
                     return null;
                 }
-                if (input instanceof WebElement) {
-                    WebElement webElement = (WebElement)input;
+                if (input instanceof WebElement webElement) {
                     if (predicate.test(webElement)) {
                         return webElement;
                     }
@@ -432,9 +405,8 @@ public final class Findr {
                 } else {
                     throw new RuntimeException("input is not a WebElement : " + input);
                 }
-            }
-        },
-                predicate.toString()
+            },
+            predicate.toString()
         );
     }
 
@@ -476,6 +448,15 @@ public final class Findr {
         }
     };
 
+    public Findr shadowRoot() {
+        return this.compose(sc -> {
+            if (sc instanceof WebElement webElement) {
+                return webElement.getShadowRoot();
+            }
+            return null;
+        }, "shadow-root");
+    }
+
     /**
      * Findr counterpart for element lists. Instances of this class are created and
      * returned by <code>Findr.elemList()</code>. Allows for index-based and filtering.
@@ -511,7 +492,7 @@ public final class Findr {
 
         private <T> T wrapWebDriverWaitList(final Function<WebDriver,T> callback) throws TimeoutException {
             try {
-                return new WebDriverWait(driver, waitTimeout, sleepInMillis).until(callback);
+                return new WebDriverWait(driver, waitTimeout, sleep).until(callback);
             } catch(TimeoutException e) {
                 // failed to find element(s), build exception message
                 // and re-throw exception
@@ -584,18 +565,13 @@ public final class Findr {
          * @return a new Findr with updated chain
          */
         public Findr at(final int index) {
-            return compose(new Function<SearchContext, WebElement>(){
-                @Override
-                public WebElement apply(SearchContext input) {
+            return compose(input -> {
                     List<WebElement> elements;
                     List<WebElement> filtered;
                     try {
                         elements = input.findElements(by);
                         filtered = filterElements(elements);
                     } catch(Exception e) {
-                        return null;
-                    }
-                    if (elements==null) {
                         return null;
                     }
                     if (checkers != null && !checkers.test(filtered)) {
@@ -611,9 +587,8 @@ public final class Findr {
                         return null;
                     }
                     return filtered.get(index);
-                }
-            },
-                    by.toString() + "[" + index + "]"
+                },
+                by.toString() + "[" + index + "]"
             );
         }
 
