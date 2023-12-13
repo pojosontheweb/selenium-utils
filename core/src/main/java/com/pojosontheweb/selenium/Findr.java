@@ -397,9 +397,9 @@ public final class Findr {
                 if (input==null) {
                     return null;
                 }
-                if (input instanceof WebElement webElement) {
-                    if (predicate.test(webElement)) {
-                        return webElement;
+                if (input instanceof WebElement) {
+                    if (predicate.test((WebElement)input)) {
+                        return input;
                     }
                     return null;
                 } else {
@@ -450,8 +450,8 @@ public final class Findr {
 
     public Findr shadowRoot() {
         return this.compose(sc -> {
-            if (sc instanceof WebElement webElement) {
-                return webElement.getShadowRoot();
+            if (sc instanceof WebElement) {
+                return ((WebElement)sc).getShadowRoot();
             }
             return null;
         }, "shadow-root");
