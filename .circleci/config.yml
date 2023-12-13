@@ -21,7 +21,7 @@ jobs:
   webtests:
     working_directory: ~/repo
     docker:
-      - image: cimg/openjdk:1.14-browsers
+      - image: cimg/openjdk:17.0-browsers
     environment:
       DISPLAY: :99
 
