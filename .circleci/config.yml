@@ -21,7 +21,7 @@ jobs:
   webtests:
     working_directory: ~/repo
     docker:
-      - image: cimg/openjdk:21.0.0
+      - image: cimg/openjdk:17.0.0
     environment:
       DISPLAY: :99
 
