@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 public class GoogleRawTest {
 
-    @Ignore
     @Test
     public void testChrome() {
         System.out.println("Testing with Chrome");
@@ -60,7 +59,7 @@ public class GoogleRawTest {
         g
                 .dismissCookies()
                 .typeQuery("pojosontheweb")
-                .assertHasResult("POJOs on the Web");
+                .assertHasResult("pojosontheweb/selenium-utils");
 
         // assert we have clicked
         assertTrue("no clicks ???", myActions.clickCount > 0);
