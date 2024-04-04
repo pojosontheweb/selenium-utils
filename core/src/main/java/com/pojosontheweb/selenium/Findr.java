@@ -231,10 +231,24 @@ public final class Findr {
      * Set the WebDriverWait sleep interval (in ms). Use to control polling frequency.
      * @param sleepInMillis the sleep interval in milliseconds
      * @return an updated Findr instance
+     * @deprecated use {@link #setSleep(long)}
      */
+    @Deprecated
     public Findr setSleepInMillis(long sleepInMillis) {
         return new Findr(driver, waitTimeout, sleepInMillis, f, path, findrActions);
     }
+
+    /**
+     * Set the WebDriverWait sleep interval (in ms). Use to control polling
+     * frequency.
+     * 
+     * @param sleepInMillis the sleep interval in milliseconds
+     * @return an updated Findr instance
+     */
+    public Findr setSleep(long sleepInMillis) {
+        return new Findr(driver, waitTimeout, sleepInMillis, f, path, findrActions);
+    }
+
 
     public Findr setActions(FindrActions actions) {
         return new Findr(driver, waitTimeout, sleepInMillis, f, path, actions);
