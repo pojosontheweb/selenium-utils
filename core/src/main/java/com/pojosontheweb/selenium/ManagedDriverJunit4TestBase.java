@@ -84,7 +84,7 @@ public class ManagedDriverJunit4TestBase {
         }
         String sleepInMillisStr = System.getProperty(PROP_WEBTESTS_FINDR_SLEEP);
         if (sleepInMillisStr!=null) {
-            f = f.setSleepInMillis(Long.parseLong(sleepInMillisStr));
+            f = f.setSleep(Long.parseLong(sleepInMillisStr));
         }
         return f;
     }
