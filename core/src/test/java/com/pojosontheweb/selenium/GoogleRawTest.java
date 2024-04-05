@@ -58,7 +58,7 @@ public class GoogleRawTest {
 
         g
                 .dismissCookies()
-                .typeQuery("pojosontheweb")
+                .typeQuery("selenium-utils github pojosontheweb")
                 .assertHasResult("pojosontheweb/selenium-utils");
 
         // assert we have clicked
