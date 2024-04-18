@@ -82,12 +82,30 @@ public final class Findr {
     /**
      * Create a Findr with passed arguments
      * @param driver the WebDriver
-     * @param waitTimeout the wait timeout in seconds
+     * @param waitTimeout the wait timeout
      */
     public Findr(WebDriver driver, Duration waitTimeout) {
         this(
                 driver,
                 waitTimeout,
+                Duration.ofMillis(500),
+                null,
+                Collections.emptyList(),
+                DEFAULT_ACTIONS
+        );
+    }
+
+    /**
+     * Create a Findr with passed arguments
+     * @param driver the WebDriver
+     * @param waitTimeout the wait timeout in seconds
+     * @deprecated use {@link #Findr(WebDriver, Duration)}
+     */
+    @Deprecated
+    public Findr(WebDriver driver, int waitTimeoutInSeconds) {
+        this(
+                driver,
+                Duration.ofSeconds(waitTimeoutInSeconds),
                 Duration.ofMillis(500),
                 null,
                 Collections.emptyList(),
@@ -132,6 +150,20 @@ public final class Findr {
      */
     public static Findr fromWebElement(WebDriver driver, final WebElement webElement, Duration waitTimeout) {
         Findr f = new Findr(driver, waitTimeout);
+        return f.compose(input -> webElement, "fromWebElement(" + webElement + ")");
+    }
+
+    /**
+     * Helper for "nested" Findrs. Allows to use a <code>WebElement</code> as the
+     * root of a new Findr.
+     * @param driver The WebDriver
+     * @param webElement the WebElement to use as root
+     * @param waitTimeout the wait timeout in seconds
+     * @return a new Findr that has the specified WebElement as its root
+     * @deprecated use {@link #fromWebElement(WebDriver, WebElement, Duration)}
+     */
+    public static Findr fromWebElement(WebDriver driver, final WebElement webElement, int waitTimeoutMs) {
+        Findr f = new Findr(driver, Duration.ofMillis(waitTimeoutMs));
         return f.compose(input -> webElement, "fromWebElement(" + webElement + ")");
     }
 
@@ -200,13 +232,21 @@ public final class Findr {
 
     /**
      * Set the timeout (in seconds) and return an updated Findr
-     * @param timeoutInSeconds the timeout Duration
+     * @param timeout the timeout Duration
      * @return an updated Findr instance
      */
-    public Findr setTimeout(Duration timeoutInSeconds) {
-        return new Findr(driver, timeoutInSeconds, sleep, f, path, findrActions);
+    public Findr setTimeout(Duration timeout) {
+        return new Findr(driver, timeout, sleep, f, path, findrActions);
     }
 
+
+    /**
+     * Set the timeout (in seconds) and return an updated Findr
+     * @param seconds the timeout in seconds
+     * @return an updated Findr instance
+     * @deprecated use {@link #setTimeout(Duration)}
+     */
+    @Deprecated
     public Findr setTimeout(int seconds) {
         return this.setTimeout(Duration.ofSeconds(seconds));
     }
@@ -221,6 +261,17 @@ public final class Findr {
     }
 
     public Findr setSleep(long ms) {
+        return this.setSleep(Duration.ofMillis(ms));
+    }
+
+    /**
+     * Set the WebDriverWait sleep interval (in ms). Use to control polling frequency.
+     * @param sleepInMillis the sleep interval in milliseconds
+     * @return an updated Findr instance
+     * @deprecated use {@link #setSleep(long)}
+     */
+    @Deprecated
+    public Findr setSleepInMillis(long ms) {
         return this.setSleep(Duration.ofMillis(ms));
     }
 
