@@ -4,7 +4,6 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.StringDescription;
 import org.openqa.selenium.WebElement;
 
@@ -42,7 +41,7 @@ public class Findrs {
     };
   }
 
-  static <T> Matcher<WebElement> mapped(String describe, Function<WebElement, T> fun, Matcher<T> matcher) {
+  public static <T> Matcher<WebElement> mapped(String describe, Function<WebElement, T> fun, Matcher<T> matcher) {
     return new BaseMatcher<>() {
 
       @Override
@@ -56,7 +55,6 @@ public class Findrs {
       @Override
       public void describeTo(Description description) {
         description.appendText(String.format("mapped(%s,", describe)).appendDescriptionOf(matcher).appendText(")");
-        ;
       }
 
       @Override
@@ -66,6 +64,24 @@ public class Findrs {
         } else {
           description.appendText("[was null]");
         }
+      }
+    };
+  }
+
+  public static Matcher<String> matchesPattern(String regex) {
+    return new BaseMatcher<>() {
+
+      @Override
+      public boolean matches(Object item) {
+        if (item instanceof String s) {
+          return s.matches(regex);
+        }
+        return false;
+      }
+
+      @Override
+      public void describeTo(Description description) {
+        description.appendText(String.format("/%s/", regex));
       }
     };
   }
@@ -191,7 +207,7 @@ public class Findrs {
    * @return a new Predicate
    */
   public static Predicate<WebElement> textMatches(final String regexp) {
-    return matchText(Matchers.matchesPattern(regexp));
+    return matchText(matchesPattern(regexp));
   }
 
   /**
