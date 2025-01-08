@@ -23,6 +23,7 @@ public class Findrs {
       @Override
       public boolean test(T w) {
         if (matcher.matches(w)) {
+          description = null;
           return true;
         }
         description = new StringDescription();
