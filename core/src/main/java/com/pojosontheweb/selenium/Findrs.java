@@ -29,8 +29,8 @@ public class Findrs {
 
             @Override
             public boolean matches(Object item) {
-                if (item != null) {
-                    return matcher.matches(fun.apply((WebElement) item));
+                if (item instanceof WebElement w) {
+                    return matcher.matches(fun.apply(w));
                 }
                 return false;
             }
@@ -42,8 +42,8 @@ public class Findrs {
 
             @Override
             public void describeMismatch(Object item, Description description) {
-                if (item != null) {
-                    description.appendText("was ").appendValue(fun.apply((WebElement) item));
+                if (item instanceof WebElement w) {
+                    description.appendText("was ").appendValue(fun.apply(w));
                 } else {
                     description.appendText("was null");
                 }
