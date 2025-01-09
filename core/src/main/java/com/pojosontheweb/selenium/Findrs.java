@@ -16,32 +16,14 @@ import java.util.function.Predicate;
  */
 public class Findrs {
 
-  public static <T> Predicate<T> matcher(Matcher<T> matcher) {
-    return new Predicate<>() {
-      private Description description = null;
-
-      @Override
-      public boolean test(T w) {
-        if (matcher.matches(w)) {
-          description = null;
-          return true;
-        }
-        description = new StringDescription();
-        matcher.describeTo(description);
-        matcher.describeMismatch(w, description.appendText(" "));
-        return false;
-      }
-
-      @Override
-      public String toString() {
-        if (description != null) {
-          return description.toString();
-        }
-        return StringDescription.toString(matcher);
-      }
-    };
-  }
-
+  /**
+   * Map a web element before composing it with the given matcher.
+   *
+   * @param describe Describe the mapping
+   * @param fun Map web element for matcher
+   * @param matcher Compose with this matcher
+   * @return New composed matcher
+   */
   public static <T> Matcher<WebElement> mapped(String describe, Function<WebElement, T> fun, Matcher<T> matcher) {
     return new BaseMatcher<>() {
 
@@ -61,14 +43,20 @@ public class Findrs {
       @Override
       public void describeMismatch(Object item, Description description) {
         if (item != null) {
-          description.appendText("[was ").appendValue(fun.apply((WebElement) item)).appendText("]");
+          description.appendText("was ").appendValue(fun.apply((WebElement) item));
         } else {
-          description.appendText("[was null]");
+          description.appendText("was null");
         }
       }
     };
   }
 
+  /**
+   * A regex matcher.
+   *
+   * @param regex The pattern to match
+   * @return New regex matcher
+   */
   public static Matcher<String> matchesPattern(String regex) {
     return new BaseMatcher<>() {
 
@@ -87,12 +75,12 @@ public class Findrs {
     };
   }
 
-  public static Predicate<WebElement> matchAttribute(String attrName, Matcher<String> matcher) {
-    return matcher(mapped(String.format("getAttribute(%s)", attrName), w -> w.getAttribute(attrName), matcher));
+  private static Predicate<WebElement> matchAttribute(String attrName, Matcher<String> matcher) {
+    return matcherPredicate(mapped(String.format("getAttribute(%s)", attrName), w -> w.getAttribute(attrName), matcher));
   }
 
-  public static Predicate<WebElement> matchText(Matcher<String> matcher) {
-    return matcher(mapped("getText", WebElement::getText, matcher));
+  private static Predicate<WebElement> matchText(Matcher<String> matcher) {
+    return matcherPredicate(mapped("getText", WebElement::getText, matcher));
   }
 
   /**
@@ -136,7 +124,7 @@ public class Findrs {
    * @return a new Predicate
    */
   public static Predicate<WebElement> hasClass(final String className) {
-    return matcher(mapped("class", w -> Arrays.asList(w.getAttribute("class").split("\\s")),
+    return matcherPredicate(mapped("class", w -> Arrays.asList(w.getAttribute("class").split("\\s")),
         CoreMatchers.hasItem(className)));
   }
 
@@ -190,7 +178,7 @@ public class Findrs {
    * @return a new Predicate
    */
   public static Predicate<WebElement> isEnabled() {
-    return matcher(mapped("isEnabled", WebElement::isEnabled, CoreMatchers.equalTo(true)));
+    return matcherPredicate(mapped("isEnabled", WebElement::isEnabled, CoreMatchers.equalTo(true)));
   }
 
   /**
@@ -199,7 +187,7 @@ public class Findrs {
    * @return a new Predicate
    */
   public static Predicate<WebElement> isDisplayed() {
-    return matcher(mapped("isDisplayed", WebElement::isDisplayed, CoreMatchers.equalTo(true)));
+    return matcherPredicate(mapped("isDisplayed", WebElement::isDisplayed, CoreMatchers.equalTo(true)));
   }
 
   /**
@@ -219,7 +207,7 @@ public class Findrs {
    * @return a new Predicate
    */
   public static Predicate<WebElement> cssValue(final String propName, final String expectedValue) {
-    return matcher(mapped(String.format("getCssValue(%s)", propName), w -> w.getCssValue(propName), CoreMatchers.equalTo(expectedValue)));
+    return matcherPredicate(mapped(String.format("getCssValue(%s)", propName), w -> w.getCssValue(propName), CoreMatchers.equalTo(expectedValue)));
   }
 
   /**
@@ -301,4 +289,20 @@ public class Findrs {
     };
   }
 
+  // for testing
+  static <T> Predicate<T> matcherPredicate(Matcher<T> matcher) {
+    return new MatcherPredicate<>(matcher);
+  }
+
+  record MatcherPredicate<T>(Matcher<T> matcher) implements Predicate<T> {
+
+    public boolean test(T w) {
+      return matcher.matches(w);
+    }
+
+    @Override
+    public String toString() {
+      return StringDescription.toString(matcher);
+    }
+  }
 }

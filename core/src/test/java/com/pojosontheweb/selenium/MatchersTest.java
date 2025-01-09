@@ -26,11 +26,11 @@ public class MatchersTest {
 
   @Test
   public void matcherPredicate() {
-    var predicate = Findrs.matcher(CoreMatchers.nullValue());
+    var predicate = Findrs.matcherPredicate(CoreMatchers.nullValue());
     assertEquals("null", predicate.toString());
     assertTrue(predicate.test(null));
     assertFalse(predicate.test(13));
-    assertEquals("null was <13>", predicate.toString());
+    assertEquals("null", predicate.toString());
   }
 
   @Test
@@ -45,12 +45,12 @@ public class MatchersTest {
     {
       var d = new StringDescription();
       matcher.describeMismatch(null, d);
-      assertEquals("[was null]", d.toString());
+      assertEquals("was null", d.toString());
     }
     {
       var d = new StringDescription();
       matcher.describeMismatch(new FakeWebElement(), d);
-      assertEquals("[was \"\"]", d.toString());
+      assertEquals("was \"\"", d.toString());
     }
   }
 
@@ -71,14 +71,14 @@ public class MatchersTest {
         return "boom";
       }
     }));
-    assertEquals("mapped(getAttribute(foo),\"bar\") [was \"boom\"]", predicate.toString());
+    assertEquals("mapped(getAttribute(foo),\"bar\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), new FakeWebElement() {
       @Override
       public String getAttribute(String name) {
         return "boom";
       }
     });
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getAttribute(foo),\"bar\") [was \"boom\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getAttribute(foo),\"bar\"), was \"boom\""));
   }
 
   @Test
@@ -98,14 +98,14 @@ public class MatchersTest {
         return "boom";
       }
     }));
-    assertEquals("mapped(getAttribute(foo),a string starting with \"bar\") [was \"boom\"]", predicate.toString());
+    assertEquals("mapped(getAttribute(foo),a string starting with \"bar\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), new FakeWebElement() {
       @Override
       public String getAttribute(String name) {
         return "boom";
       }
     });
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getAttribute(foo),a string starting with \"bar\") [was \"boom\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getAttribute(foo),a string starting with \"bar\"), was \"boom\""));
   }
 
   @Test
@@ -126,9 +126,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(getAttribute(foo),a string ending with \"bar\") [was \"boom\"]", predicate.toString());
+    assertEquals("mapped(getAttribute(foo),a string ending with \"bar\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getAttribute(foo),a string ending with \"bar\") [was \"boom\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getAttribute(foo),a string ending with \"bar\"), was \"boom\""));
   }
 
   @Test
@@ -149,9 +149,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(class,a collection containing \"foo\") [was <[tra, la, la]>]", predicate.toString());
+    assertEquals("mapped(class,a collection containing \"foo\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(class,a collection containing \"foo\") [was <[tra, la, la]>]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(class,a collection containing \"foo\"), was <[tra, la, la]>"));
   }
 
   @Test
@@ -172,9 +172,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(getText,\"foo\") [was \"bar\"]", predicate.toString());
+    assertEquals("mapped(getText,\"foo\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getText,\"foo\") [was \"bar\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getText,\"foo\"), was \"bar\""));
   }
 
   @Test
@@ -195,9 +195,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(getText,a string starting with \"foo\") [was \"bar\"]", predicate.toString());
+    assertEquals("mapped(getText,a string starting with \"foo\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getText,a string starting with \"foo\") [was \"bar\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getText,a string starting with \"foo\"), was \"bar\""));
   }
 
   @Test
@@ -218,9 +218,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(getText,a string containing \"oof\") [was \"bar\"]", predicate.toString());
+    assertEquals("mapped(getText,a string containing \"oof\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getText,a string containing \"oof\") [was \"bar\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getText,a string containing \"oof\"), was \"bar\""));
   }
 
   @Test
@@ -241,9 +241,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(getText,a string ending with \"foo\") [was \"bar\"]", predicate.toString());
+    assertEquals("mapped(getText,a string ending with \"foo\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getText,a string ending with \"foo\") [was \"bar\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getText,a string ending with \"foo\"), was \"bar\""));
   }
 
   @Test
@@ -258,9 +258,9 @@ public class MatchersTest {
       }
     }));
     assertFalse(predicate.test(new FakeWebElement()));
-    assertEquals("mapped(isEnabled,<true>) [was <false>]", predicate.toString());
+    assertEquals("mapped(isEnabled,<true>)", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), new FakeWebElement());
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(isEnabled,<true>) [was <false>]\""));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(isEnabled,<true>), was <false>"));
   }
 
   @Test
@@ -275,9 +275,9 @@ public class MatchersTest {
       }
     }));
     assertFalse(predicate.test(new FakeWebElement()));
-    assertEquals("mapped(isDisplayed,<true>) [was <false>]", predicate.toString());
+    assertEquals("mapped(isDisplayed,<true>)", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), new FakeWebElement());
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(isDisplayed,<true>) [was <false>]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(isDisplayed,<true>), was <false>"));
   }
 
   @Test
@@ -298,9 +298,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(getText,/\\d+/) [was \"toto42\"]", predicate.toString());
+    assertEquals("mapped(getText,/\\d+/)", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getText,/\\d+/) [was \"toto42\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getText,/\\d+/), was \"toto42\""));
   }
 
   @Test
@@ -321,9 +321,9 @@ public class MatchersTest {
       }
     };
     assertFalse(predicate.test(nomatch));
-    assertEquals("mapped(getCssValue(mycss),\"foo\") [was \"bar\"]", predicate.toString());
+    assertEquals("mapped(getCssValue(mycss),\"foo\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - mapped(getCssValue(mycss),\"foo\") [was \"bar\"]"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getCssValue(mycss),\"foo\"), was \"bar\""));
   }
 
   @Test
@@ -346,29 +346,20 @@ public class MatchersTest {
     assertFalse(predicate.test(nomatch));
     assertEquals("not mapped(getCssValue(mycss),\"foo\")", predicate.toString());
     var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-    assertThat(lines, CoreMatchers.hasItem("[Findr]  - not mapped(getCssValue(mycss),\"foo\")"));
+    assertThat(lines, CoreMatchers.hasItem("[Findr]  ! not mapped(getCssValue(mycss),\"foo\")"));
   }
 
   static List<String> findrDebugCapture(Function<Findr, Findr> fixture, WebElement element) {
-    var findr = Findr.fromWebElement(null, null);
+    var findr = Findr.fromWebElement(null, element);
     var saved = Findr.getDebugHandler();
     final List<String> lines = new ArrayList<>();
     Findr.setDebugHandler(l -> {
+      //System.out.println("findrDebugCapture|" + l);
       lines.add(l);
       return null;
     });
     try {
-      fixture.apply(findr).eval_(w -> true).apply(new SearchContext() {
-        @Override
-        public List<WebElement> findElements(By by) {
-          return List.of();
-        }
-
-        @Override
-        public WebElement findElement(By by) {
-          return element;
-        }
-      });
+      fixture.apply(findr).eval_(w -> true).apply(element);
       return lines;
     } finally {
       Findr.setDebugHandler(saved);
