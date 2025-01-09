@@ -65,6 +65,10 @@ public final class Findr {
         debugHandler = h;
     }
 
+    static Function<String,?> getDebugHandler() {
+        return debugHandler;
+    }
+
     public static void logDebug(String message) {
         if (isDebugEnabled()) {
             debugHandler.apply(message);
@@ -353,7 +357,7 @@ public final class Findr {
         return String.join("->", path);
     }
 
-    private <T> T wrapWebDriverWait(final Function<WebDriver,T> callback) throws TimeoutException {
+    private <T> T wrapWebDriverWait(final Function<SearchContext,T> callback) throws TimeoutException {
         try {
             return new WebDriverWait(driver, waitTimeout, sleep).until(callback);
         } catch(TimeoutException e) {
@@ -372,7 +376,12 @@ public final class Findr {
      * @throws TimeoutException if at least one condition in the chain failed
      */
     public <T> T eval(final Function<WebElement,T> callback) throws TimeoutException {
-        return wrapWebDriverWait(withoutWebDriverException(input -> {
+        return wrapWebDriverWait(withoutWebDriverException(eval_(callback)));
+    }
+
+    // for testing
+    <T> Function<SearchContext,T> eval_(final Function<WebElement,T> callback) throws TimeoutException {
+        return input -> {
             if (f==null) {
                 throw new EmptyFindrException();
             }
@@ -389,7 +398,7 @@ public final class Findr {
                 logDebug("[Findr]  => " + callback + " result : " + res + ", OK");
             }
             return res;
-        }));
+        };
     }
 
     public static final Function<WebElement,?> IDENTITY_FOR_EVAL = (e) -> true;
