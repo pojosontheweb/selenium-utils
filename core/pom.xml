@@ -18,6 +18,13 @@
         <webtests.video.enabled>true</webtests.video.enabled>
         <webtests.video.failures.only>true</webtests.video.failures.only>
     </properties>
+    <repositories>
+        <repository>
+            <id>screen-recorder</id>
+            <name>Java screen recorder library by agomezmoron</name>
+            <url>https://raw.github.com/agomezmoron/screen-recorder/mvn-repo</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -35,13 +42,10 @@
             <artifactId>junit</artifactId>
             <version>4.13.1</version>
         </dependency>
-
-        <!-- video -->
         <dependency>
-            <groupId>com.pojosontheweb</groupId>
-            <artifactId>monte-repack</artifactId>
-            <optional>true</optional>
-            <version>1.1</version>
+            <groupId>com.github.agomezmoron</groupId>
+            <artifactId>screen-recorder</artifactId>
+            <version>0.0.3</version>
         </dependency>
     </dependencies>
     <build>

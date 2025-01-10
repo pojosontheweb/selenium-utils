@@ -14,7 +14,6 @@
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
-        <!--        <module>monte</module>-->
         <module>core</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
