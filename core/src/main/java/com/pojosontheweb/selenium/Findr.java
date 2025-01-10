@@ -662,7 +662,7 @@ public final class Findr {
                         "It's forbidden to call ListFindr.where() after a whereXXX() method has been called.");
             }
             if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
-                return new ListFindr(by, composeMatchers(filters, mp.matcher()), checkers);
+                return where(mp.matcher());
             }
             return new ListFindr(by, composeMatchers(filters, wrap(predicate)), checkers);
         }
@@ -781,9 +781,13 @@ public final class Findr {
          */
         public ListFindr whereAny(final Predicate<? super WebElement> predicate) {
             if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
-                return new ListFindr(by, filters, composeMatchers(checkers, checkAny(mp.matcher())));
+                return where(mp.matcher());
             }
             return new ListFindr(by, filters, composeMatchers(checkers, checkAny(wrap(predicate))));
+        }
+
+        public ListFindr whereAny(final Matcher<? super WebElement> predicate) {
+            return new ListFindr(by, filters, composeMatchers(checkers, checkAny(predicate)));
         }
 
         /**
@@ -795,9 +799,13 @@ public final class Findr {
          */
         public ListFindr whereAll(final Predicate<? super WebElement> predicate) {
             if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
-                return new ListFindr(by, filters, composeMatchers(checkers, checkAll(mp.matcher())));
+                return whereAll(mp.matcher());
             }
             return new ListFindr(by, filters, composeMatchers(checkers, checkAll(wrap(predicate))));
+        }
+
+        public ListFindr whereAll(final Matcher<? super WebElement> predicate) {
+            return new ListFindr(by, filters, composeMatchers(checkers, checkAll(predicate)));
         }
 
         private Matcher<WebElement> wrap(final Predicate<? super WebElement> predicate) {
