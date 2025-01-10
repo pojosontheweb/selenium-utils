@@ -98,7 +98,7 @@ public final class Findr {
     /**
      * Create a Findr with passed arguments
      * @param driver the WebDriver
-     * @param waitTimeout the wait timeout in seconds
+     * @param waitTimeoutInSeconds the wait timeout in seconds
      * @deprecated use {@link #Findr(WebDriver, Duration)}
      */
     @Deprecated
@@ -158,7 +158,7 @@ public final class Findr {
      * root of a new Findr.
      * @param driver The WebDriver
      * @param webElement the WebElement to use as root
-     * @param waitTimeout the wait timeout in seconds
+     * @param waitTimeoutMs the wait timeout in seconds
      * @return a new Findr that has the specified WebElement as its root
      * @deprecated use {@link #fromWebElement(WebDriver, WebElement, Duration)}
      */
@@ -266,7 +266,7 @@ public final class Findr {
 
     /**
      * Set the WebDriverWait sleep interval (in ms). Use to control polling frequency.
-     * @param sleepInMillis the sleep interval in milliseconds
+     * @param ms the sleep interval in milliseconds
      * @return an updated Findr instance
      * @deprecated use {@link #setSleep(long)}
      */
