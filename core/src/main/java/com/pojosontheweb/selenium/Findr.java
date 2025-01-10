@@ -175,10 +175,10 @@ public final class Findr {
     /**
      * Helper for "nested" Findrs. Allows to use a <code>WebElement</code> as the
      * root of a new Findr.
-     *
-     * @param driver        The WebDriver
-     * @param webElement    the WebElement to use as root
-     * @param waitTimeoutMs the wait timeout in seconds
+     * 
+     * @param driver      The WebDriver
+     * @param webElement  the WebElement to use as root
+     * @param waitTimeout the wait timeout in seconds
      * @return a new Findr that has the specified WebElement as its root
      * @deprecated use {@link #fromWebElement(WebDriver, WebElement, Duration)}
      */
@@ -295,8 +295,8 @@ public final class Findr {
     /**
      * Set the WebDriverWait sleep interval (in ms). Use to control polling
      * frequency.
-     *
-     * @param ms the sleep interval in milliseconds
+     * 
+     * @param sleepInMillis the sleep interval in milliseconds
      * @return an updated Findr instance
      * @deprecated use {@link #setSleep(long)}
      */
