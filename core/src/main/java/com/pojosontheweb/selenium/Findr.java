@@ -1,7 +1,6 @@
 package com.pojosontheweb.selenium;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
+import org.hamcrest.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -108,8 +107,7 @@ public final class Findr {
                 Duration.ofMillis(500),
                 null,
                 Collections.emptyList(),
-                DEFAULT_ACTIONS
-        );
+                DEFAULT_ACTIONS);
     }
 
     /**
@@ -127,8 +125,7 @@ public final class Findr {
                 Duration.ofMillis(500),
                 null,
                 Collections.emptyList(),
-                DEFAULT_ACTIONS
-        );
+                DEFAULT_ACTIONS);
     }
 
     /**
@@ -191,11 +188,11 @@ public final class Findr {
     }
 
     private Findr(WebDriver driver,
-                  Duration waitTimeout,
-                  Duration sleep,
-                  Function<SearchContext, SearchContext> f,
-                  List<String> path,
-                  FindrActions actions) {
+            Duration waitTimeout,
+            Duration sleep,
+            Function<SearchContext, SearchContext> f,
+            List<String> path,
+            FindrActions actions) {
         this.driver = driver;
         this.waitTimeout = waitTimeout;
         this.sleep = sleep;
@@ -215,7 +212,8 @@ public final class Findr {
         };
     }
 
-    private Findr compose(final Function<SearchContext, SearchContext> function, final String pathElem, Function<SearchContext, String> describeFailure) {
+    private Findr compose(final Function<SearchContext, SearchContext> function, final String pathElem,
+            Function<SearchContext, String> describeFailure) {
         final Function<SearchContext, SearchContext> newFunction = withoutWebDriverException(function);
         ArrayList<String> newPath = new ArrayList<String>(path);
         if (pathElem != null) {
@@ -268,7 +266,6 @@ public final class Findr {
         return new Findr(driver, timeout, sleep, f, path, findrActions);
     }
 
-
     /**
      * Set the timeout (in seconds) and return an updated Findr
      *
@@ -296,7 +293,8 @@ public final class Findr {
     }
 
     /**
-     * Set the WebDriverWait sleep interval (in ms). Use to control polling frequency.
+     * Set the WebDriverWait sleep interval (in ms). Use to control polling
+     * frequency.
      *
      * @param ms the sleep interval in milliseconds
      * @return an updated Findr instance
@@ -329,18 +327,17 @@ public final class Findr {
      */
     public Findr elem(final By by) {
         return compose(input -> {
-                    if (input == null) {
-                        return null;
-                    }
-                    try {
-                        return input.findElement(by);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                },
+            if (input == null) {
+                return null;
+            }
+            try {
+                return input.findElement(by);
+            } catch (Exception e) {
+                return null;
+            }
+        },
                 by.toString(),
-                null
-        );
+                null);
     }
 
     /**
@@ -354,7 +351,8 @@ public final class Findr {
     }
 
     /**
-     * Adds specified multiple element selector to the chain, and return a new ListFindr.
+     * Adds specified multiple element selector to the chain, and return a new
+     * ListFindr.
      *
      * @param by the selector
      * @return a new ListFindr with updated condition chain
@@ -397,15 +395,18 @@ public final class Findr {
         } catch (TimeoutException e) {
             // failed to find element(s), build exception message
             // and re-throw exception
-            throw new TimeoutException("Timed out trying to find path=" + createPathMsg(path) + ", callback=" + callback, e);
+            throw new TimeoutException(
+                    "Timed out trying to find path=" + createPathMsg(path) + ", callback=" + callback, e);
         }
     }
 
     /**
-     * Evaluates this Findr, and invokes passed callback if the whole chain succeeds. Throws
+     * Evaluates this Findr, and invokes passed callback if the whole chain
+     * succeeds. Throws
      * a TimeoutException otherwise.
      *
-     * @param callback the callback to invoke (called if the whole chain of conditions succeeded)
+     * @param callback the callback to invoke (called if the whole chain of
+     *                 conditions succeeded)
      * @param <T>      the return type of the callback
      * @return the result of the callback
      * @throws TimeoutException if at least one condition in the chain failed
@@ -461,10 +462,12 @@ public final class Findr {
     }
 
     /**
-     * Evaluates this Findr, and invokes passed callback if the whole chain succeeds. Throws
+     * Evaluates this Findr, and invokes passed callback if the whole chain
+     * succeeds. Throws
      * a TimeoutException with passed failure message otherwise.
      *
-     * @param callback       the callback to invoke (called if the whole chain of conditions succeeded)
+     * @param callback       the callback to invoke (called if the whole chain of
+     *                       conditions succeeded)
      * @param <T>            the return type of the callback
      * @param failureMessage A message to be included to the timeout exception
      * @return the result of the callback
@@ -490,21 +493,20 @@ public final class Findr {
             return where(mp.matcher());
         }
         return compose(input -> {
-                    if (input == null) {
-                        return null;
-                    }
-                    if (input instanceof WebElement) {
-                        if (predicate.test((WebElement) input)) {
-                            return input;
-                        }
-                        return null;
-                    } else {
-                        throw new RuntimeException("input is not a WebElement : " + input);
-                    }
-                },
+            if (input == null) {
+                return null;
+            }
+            if (input instanceof WebElement) {
+                if (predicate.test((WebElement) input)) {
+                    return input;
+                }
+                return null;
+            } else {
+                throw new RuntimeException("input is not a WebElement : " + input);
+            }
+        },
                 predicate.toString(),
-                null
-        );
+                null);
     }
 
     /**
@@ -516,30 +518,31 @@ public final class Findr {
      */
     public Findr where(final Matcher<? super WebElement> matcher) {
         return compose(input -> {
-                    if (input == null) {
-                        return null;
-                    }
-                    if (input instanceof WebElement) {
-                        if (matcher.matches(input)) {
-                            return input;
-                        }
-                        return null;
-                    } else {
-                        throw new RuntimeException("input is not a WebElement : " + input);
-                    }
-                },
+            if (input == null) {
+                return null;
+            }
+            if (input instanceof WebElement) {
+                if (matcher.matches(input)) {
+                    return input;
+                }
+                return null;
+            } else {
+                throw new RuntimeException("input is not a WebElement : " + input);
+            }
+        },
                 matcher.toString(),
                 input -> {
                     var d = new StringDescription();
                     matcher.describeMismatch(input, d);
                     return d.toString();
-                }
-        );
+                });
     }
 
     /**
-     * Shortcut method : evaluates chain, and sends keys to target WebElement of this
-     * Findr. If sendKeys throws an exception, then the whole chain is evaluated again, until
+     * Shortcut method : evaluates chain, and sends keys to target WebElement of
+     * this
+     * Findr. If sendKeys throws an exception, then the whole chain is evaluated
+     * again, until
      * no exception is thrown, or timeout.
      *
      * @param keys the text to send
@@ -551,7 +554,8 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and clicks target WebElement of this
-     * Findr. If the click throws an exception, then the whole chain is evaluated again, until
+     * Findr. If the click throws an exception, then the whole chain is evaluated
+     * again, until
      * no exception is thrown, or timeout.
      *
      * @throws TimeoutException if at least one condition in the chain failed
@@ -562,7 +566,8 @@ public final class Findr {
 
     /**
      * Shortcut method : evaluates chain, and clears target WebElement of this
-     * Findr. If clear throws an exception, then the whole chain is evaluated again, until
+     * Findr. If clear throws an exception, then the whole chain is evaluated again,
+     * until
      * no exception is thrown, or timeout.
      *
      * @throws TimeoutException if at least one condition in the chain failed
@@ -584,33 +589,47 @@ public final class Findr {
 
     /**
      * Findr counterpart for element lists. Instances of this class are created and
-     * returned by <code>Findr.elemList()</code>. Allows for index-based and filtering.
+     * returned by <code>Findr.elemList()</code>. Allows for index-based and
+     * filtering.
      */
     public class ListFindr {
 
         private final By by;
-        private final Predicate<WebElement> filters;
-        private final Predicate<List<WebElement>> checkers;
+        private final Matcher<WebElement> filters;
+        private final Matcher<List<WebElement>> checkers;
 
         private ListFindr(By by) {
             this(by, null, null);
         }
 
-        private ListFindr(By by, Predicate<WebElement> filters, Predicate<List<WebElement>> checkers) {
+        private ListFindr(By by, Matcher<WebElement> filters, Matcher<List<WebElement>> checkers) {
             this.by = by;
             this.filters = filters;
             this.checkers = checkers;
         }
 
-        private <T> Predicate<T> wrapAndTrap(final Predicate<T> predicate) {
-            return (T input) -> {
-                if (input == null) {
-                    return false;
+        private static <T> Matcher<T> wrapAndTrap(final Matcher<T> predicate) {
+            return new BaseMatcher<>() {
+                @Override
+                public boolean matches(Object input) {
+                    if (input == null) {
+                        return false;
+                    }
+                    try {
+                        return predicate.matches(input);
+                    } catch (WebDriverException e) {
+                        return false;
+                    }
                 }
-                try {
-                    return predicate.test(input);
-                } catch (WebDriverException e) {
-                    return false;
+
+                @Override
+                public void describeTo(Description description) {
+                    predicate.describeTo(description);
+                }
+
+                @Override
+                public void describeMismatch(Object item, Description description) {
+                    predicate.describeMismatch(item, description);
                 }
             };
         }
@@ -623,56 +642,63 @@ public final class Findr {
                 // and re-throw exception
                 ArrayList<String> newPath = new ArrayList<String>(path);
                 newPath.add(by.toString());
-                throw new TimeoutException("Timed out trying to find path=" + createPathMsg(newPath) + ", callback=" + callback, e);
+                throw new TimeoutException(
+                        "Timed out trying to find path=" + createPathMsg(newPath) + ", callback=" + callback, e);
             }
         }
 
         /**
          * Adds a filtering predicate, and returns a new ListFindr with updated chain.
          *
-         * @param predicate the predicate used for filtering the list of elements (applied on each element)
+         * @param predicate the predicate used for filtering the list of elements
+         *                  (applied on each element)
          * @return a new ListFindr with updated chain
-         * @throws java.lang.IllegalArgumentException if called after <code>whereElemCount</code>.
+         * @throws java.lang.IllegalArgumentException if called after
+         *                                            <code>whereElemCount</code>.
          */
         public ListFindr where(final Predicate<? super WebElement> predicate) {
             if (checkers != null) {
-                throw new IllegalArgumentException("It's forbidden to call ListFindr.where() after a whereXXX() method has been called.");
+                throw new IllegalArgumentException(
+                        "It's forbidden to call ListFindr.where() after a whereXXX() method has been called.");
             }
-            return new ListFindr(by, composeFilters(predicate), checkers);
+            if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
+                return new ListFindr(by, composeMatchers(filters, mp.matcher()), checkers);
+            }
+            return new ListFindr(by, composeMatchers(filters, wrap(predicate)), checkers);
         }
 
-        private Predicate<WebElement> composeFilters(final Predicate<? super WebElement> predicate) {
-            return new Predicate<WebElement>() {
-                @Override
-                public boolean test(WebElement input) {
-                    return (filters == null || filters.test(input)) && wrapAndTrap(predicate).test(input);
-                }
-
-                @Override
-                public String toString() {
-                    if (filters != null) {
-                        return filters.toString() + " + " + predicate.toString();
-                    } else {
-                        return predicate.toString();
-                    }
-                }
-            };
+        public ListFindr where(final Matcher<? super WebElement> predicate) {
+            if (checkers != null) {
+                throw new IllegalArgumentException(
+                        "It's forbidden to call ListFindr.where() after a whereXXX() method has been called.");
+            }
+            return new ListFindr(by, composeMatchers(filters, predicate), checkers);
         }
 
-        private Predicate<List<WebElement>> composeCheckers(final Predicate<List<WebElement>> predicate) {
-            return new Predicate<List<WebElement>>() {
+        static private <T> Matcher<T> composeMatchers(final Matcher<T> first, final Matcher<? super T> predicate) {
+            return new BaseMatcher<>() {
+
                 @Override
-                public boolean test(List<WebElement> input) {
-                    return (checkers == null || checkers.test(input)) && wrapAndTrap(predicate).test(input);
+                public boolean matches(Object input) {
+                    return (first == null || first.matches(input)) && wrapAndTrap(predicate).matches(input);
                 }
 
                 @Override
-                public String toString() {
-                    if (filters != null) {
-                        return filters.toString() + " + " + predicate.toString();
-                    } else {
-                        return predicate.toString();
+                public void describeTo(Description description) {
+                    if (first != null) {
+                        first.describeTo(description);
+                        description.appendText(" + ");
                     }
+                    predicate.describeTo(description);
+                }
+
+                @Override
+                public void describeMismatch(Object item, Description description) {
+                    if (first != null) {
+                        first.describeMismatch(item, description);
+                        description.appendText(" + ");
+                    }
+                    predicate.describeMismatch(item, description);
                 }
             };
         }
@@ -686,37 +712,38 @@ public final class Findr {
          */
         public Findr at(final int index) {
             return compose(input -> {
-                        List<WebElement> elements;
-                        List<WebElement> filtered;
-                        try {
-                            elements = input.findElements(by);
-                            filtered = filterElements(elements);
-                        } catch (Exception e) {
-                            return null;
-                        }
-                        if (checkers != null && !checkers.test(filtered)) {
-                            logDebug("[Findr]  ! checkList KO: " + checkers);
-                            logDebug("[Findr]  => Chain STOPPED before callback");
-                            return null;
-                        } else {
-                            if (isDebugEnabled() && checkers != null) {
-                                logDebug("[Findr]  > checkList OK: " + checkers);
-                            }
-                        }
-                        if (index >= filtered.size()) {
-                            return null;
-                        }
-                        return filtered.get(index);
-                    },
+                List<WebElement> elements;
+                List<WebElement> filtered;
+                try {
+                    elements = input.findElements(by);
+                    filtered = filterElements(elements);
+                } catch (Exception e) {
+                    return null;
+                }
+                if (checkers != null && !checkers.matches(filtered)) {
+                    var d = new StringDescription();
+                    checkers.describeMismatch(filtered, d.appendText(" "));
+                    logDebug("[Findr]  ! checkList KO: " + checkers + d);
+                    logDebug("[Findr]  => Chain STOPPED before callback");
+                    return null;
+                } else {
+                    if (isDebugEnabled() && checkers != null) {
+                        logDebug("[Findr]  > checkList OK: " + checkers);
+                    }
+                }
+                if (index >= filtered.size()) {
+                    return null;
+                }
+                return filtered.get(index);
+            },
                     by.toString() + "[" + index + "]",
-                    null
-            );
+                    null);
         }
 
         private List<WebElement> filterElements(List<WebElement> source) {
             List<WebElement> filtered = new ArrayList<WebElement>();
             for (WebElement element : source) {
-                if (filters == null || filters.test(element)) {
+                if (filters == null || filters.matches(element)) {
                     filtered.add(element);
                 }
             }
@@ -742,80 +769,114 @@ public final class Findr {
          * @return a new ListFindr with updated chain
          */
         public ListFindr count(int elemCount) {
-            return new ListFindr(by, filters, composeCheckers(checkElemCount(elemCount)));
+            return new ListFindr(by, filters, composeMatchers(checkers, checkElemCount(elemCount)));
         }
 
         /**
-         * Wait for the list findr so that at least one of its element match the specified predicate. Check is OK if list is empty.
+         * Wait for the list findr so that at least one of its element match the
+         * specified predicate. Check is OK if list is empty.
          *
          * @param predicate the element predicate to match
          * @return a new ListFindr with updated chain
          */
         public ListFindr whereAny(final Predicate<? super WebElement> predicate) {
-            return new ListFindr(by, filters, composeCheckers(checkAny(predicate)));
+            if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
+                return new ListFindr(by, filters, composeMatchers(checkers, checkAny(mp.matcher())));
+            }
+            return new ListFindr(by, filters, composeMatchers(checkers, checkAny(wrap(predicate))));
         }
 
         /**
-         * Wait for the list findr so that all of its element match the specified predicate. Check is OK if list is empty.
+         * Wait for the list findr so that all of its element match the specified
+         * predicate. Check is OK if list is empty.
          *
          * @param predicate the element predicate to match
          * @return a new ListFindr with updated chain
          */
         public ListFindr whereAll(final Predicate<? super WebElement> predicate) {
-            return new ListFindr(by, filters, composeCheckers(checkAll(predicate)));
+            if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
+                return new ListFindr(by, filters, composeMatchers(checkers, checkAll(mp.matcher())));
+            }
+            return new ListFindr(by, filters, composeMatchers(checkers, checkAll(wrap(predicate))));
         }
 
-        private Predicate<List<WebElement>> checkAny(final Predicate<? super WebElement> predicate) {
-            return new Predicate<>() {
+        private Matcher<WebElement> wrap(final Predicate<? super WebElement> predicate) {
+            return new BaseMatcher<>() {
+
                 @Override
-                public boolean test(List<WebElement> elements) {
-                    if (elements.size() == 0) {
-                        return true;
-                    }
-                    for (WebElement element : elements) {
-                        if (predicate.test(element)) {
-                            return true;
-                        }
+                public boolean matches(Object item) {
+                    if (item instanceof WebElement e) {
+                        return predicate.test(e);
                     }
                     return false;
                 }
 
                 @Override
-                public String toString() {
-                    return "any(" + predicate + ")";
+                public void describeTo(Description description) {
+                    description.appendText(predicate.toString());
                 }
             };
         }
 
-        private Predicate<List<WebElement>> checkAll(final Predicate<? super WebElement> predicate) {
-            return new Predicate<>() {
+        private Matcher<List<WebElement>> checkAny(final Matcher<? super WebElement> predicate) {
+            return new BaseMatcher<List<WebElement>>() {
+
                 @Override
-                public boolean test(List<WebElement> elements) {
-                    for (WebElement element : elements) {
-                        if (!predicate.test(element)) {
-                            return false;
-                        }
+                public boolean matches(Object item) {
+                    if (item instanceof List<?> elements) {
+                        return elements.stream().anyMatch(predicate::matches);
                     }
-                    return true;
+                    return false;
                 }
 
                 @Override
-                public String toString() {
-                    return "all(" + predicate + ")";
+                public void describeTo(Description description) {
+                    description.appendText("any(").appendDescriptionOf(predicate).appendText(")");
                 }
             };
         }
 
-        private Predicate<List<WebElement>> checkElemCount(final int expectedCount) {
-            return new Predicate<>() {
+        private Matcher<List<WebElement>> checkAll(final Matcher<? super WebElement> predicate) {
+            return new BaseMatcher<List<WebElement>>() {
+
                 @Override
-                public boolean test(List<WebElement> elements) {
-                    return elements != null && elements.size() == expectedCount;
+                public boolean matches(Object item) {
+                    if (item instanceof List<?> elements) {
+                        return elements.stream().allMatch(predicate::matches);
+                    }
+                    return false;
                 }
 
                 @Override
-                public String toString() {
-                    return "elemCount(" + expectedCount + ")";
+                public void describeTo(Description description) {
+                    description.appendText("all(").appendDescriptionOf(predicate).appendText(")");
+                }
+            };
+        }
+
+        private Matcher<List<WebElement>> checkElemCount(final int expectedCount) {
+            return new BaseMatcher<List<WebElement>>() {
+
+                @Override
+                public boolean matches(Object item) {
+                    if (item instanceof List<?> elements) {
+                        return elements.size() == expectedCount;
+                    }
+                    return false;
+                }
+
+                @Override
+                public void describeTo(Description description) {
+                    description.appendText("elemCount(").appendValue(expectedCount).appendText(")");
+                }
+
+                @Override
+                public void describeMismatch(Object item, Description description) {
+                    if (item instanceof List<?> elements) {
+                        description.appendText("was ").appendValue(elements.size());
+                    } else {
+                        super.describeMismatch(item, description);
+                    }
                 }
             };
         }
@@ -831,7 +892,8 @@ public final class Findr {
         }
 
         /**
-         * Evaluates this ListFindr and invokes passed callback if the whole chain suceeded. Throws
+         * Evaluates this ListFindr and invokes passed callback if the whole chain
+         * suceeded. Throws
          * a TimeoutException if the condition chain didn't match.
          *
          * @param callback the callback to call if the chain succeeds
@@ -851,8 +913,10 @@ public final class Findr {
                     return null;
                 }
                 List<WebElement> filtered = filterElements(elements);
-                if (checkers != null && !checkers.test(filtered)) {
-                    logDebug("[Findr]  ! checkList KO: " + checkers);
+                if (checkers != null && !checkers.matches(filtered)) {
+                    var d = new StringDescription();
+                    checkers.describeMismatch(filtered, d.appendText(" "));
+                    logDebug("[Findr]  ! checkList KO: " + checkers + d);
                     logDebug("[Findr]  => Chain STOPPED before callback");
                     return null;
                 } else {
@@ -896,8 +960,10 @@ public final class Findr {
         }
 
         /**
-         * Evaluates this ListFindr and invokes passed callback if the whole chain suceeded. Throws
-         * a TimeoutException with passed failure message if the condition chain didn't match.
+         * Evaluates this ListFindr and invokes passed callback if the whole chain
+         * suceeded. Throws
+         * a TimeoutException with passed failure message if the condition chain didn't
+         * match.
          *
          * @param callback the callback to call if the chain succeeds
          * @param <T>      the rturn type of the callback
