@@ -29,7 +29,7 @@ public class Google extends AbstractPageObject {
     }
 
     public Google dismissCookies() {
-        //if (Boolean.getBoolean("dismiss.cookies")) {
+        if (Boolean.getBoolean("dismiss.cookies")) {
             String dismissText = DISMISS_PER_LOCALE.get(locale);
             if (dismissText == null) {
                 dismissText = DISMISS_EN;
@@ -39,7 +39,7 @@ public class Google extends AbstractPageObject {
                     .where(textEquals(dismissText))
                     .expectOne()
                     .click();
-        //}
+        }
         return this;
     }
 
