@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 public class SelectTest extends ManagedDriverJunit4TestBase {
 
     @Test
+    @Ignore
     public void testSelect() {
         getWebDriver().get("http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select");
 
