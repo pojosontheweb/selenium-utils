@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -14,11 +14,7 @@
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
-        <!--module>monte</module-->
-        <module>test-app</module>
         <module>core</module>
-        <module>groovy</module>
-        <!--<module>gridvideo</module>-->
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
     <description>Utilities for selenium testing</description>
@@ -30,10 +26,10 @@
         </license>
     </licenses>
     <scm>
-	    <url>https://github.com/pojosontheweb/selenium-utils</url>
+        <url>https://github.com/pojosontheweb/selenium-utils</url>
     </scm>
     <issueManagement>
-	    <url>https://github.com/pojosontheweb/selenium-utils/issues</url>
+        <url>https://github.com/pojosontheweb/selenium-utils/issues</url>
     </issueManagement>
     <developers>
         <developer>
@@ -44,9 +40,6 @@
         </developer>
     </developers>
     <properties>
-        <gmavenVersion>1.5</gmavenVersion>
-        <gmavenProviderSelection>2.0</gmavenProviderSelection>
-        <groovyVersion>2.3.9</groovyVersion>
         <seleniumVersion>3.141.59</seleniumVersion>
     </properties>
     <build>
@@ -61,19 +54,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.16</version>
-			<configuration>
-				<systemPropertyVariables>
-				    <webtests.verbose>${webtests.verbose}</webtests.verbose>
-				    <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
-				    <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
-				    <webtests.video.dir>${webtests.video.dir}</webtests.video.dir>
-				</systemPropertyVariables>
-			</configuration>
-                </plugin>
-                <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.2.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -96,7 +76,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.7</version>
+                        <version>3.11.2</version>
                         <executions>
                             <execution>
                                 <id>generate-javadoc</id>
@@ -108,6 +88,7 @@
                                     <author>true</author>
                                     <use>true</use>
                                     <version>true</version>
+                                    <doclint>none</doclint>
                                 </configuration>
                             </execution>
                         </executions>
@@ -141,13 +122,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>taste</id>
-            <modules>
-                <module>taste</module>
-                <module>taste-cloud</module>
-            </modules>
         </profile>
     </profiles>
 </project>

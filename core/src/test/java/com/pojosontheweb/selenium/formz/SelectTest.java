@@ -8,12 +8,17 @@ import org.openqa.selenium.By;
 
 public class SelectTest extends ManagedDriverJunit4TestBase {
 
-    @Ignore("shaky : the page uses iframes and it doesn't seem to be ok")
     @Test
     public void testSelect() {
         getWebDriver().get("http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select");
-        getWebDriver().switchTo().frame("view");
-        Findr fSelect = findr().elem(By.tagName("select"));
+
+        // dismiss cookies
+//        findr().elem(By.id("accept-choices")).click();
+
+        getWebDriver().switchTo().frame("iframeResult");
+
+        // select helper test
+        Findr fSelect = findr().elem(By.id("cars"));
         Select select = new Select(fSelect);
 
         // assert value

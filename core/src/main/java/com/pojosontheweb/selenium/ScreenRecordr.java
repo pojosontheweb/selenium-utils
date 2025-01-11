@@ -1,107 +1,67 @@
 package com.pojosontheweb.selenium;
 
+import com.github.agomezmoron.multimedia.recorder.VideoRecorder;
+import com.github.agomezmoron.multimedia.recorder.configuration.VideoRecorderConfiguration;
 import com.google.common.io.Files;
-import org.monte.media.Format;
-import org.monte.media.FormatKeys;
-import org.monte.media.math.Rational;
-import org.monte.screenrecorder.ScreenRecorder;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.monte.media.AudioFormatKeys.*;
-import static org.monte.media.VideoFormatKeys.*;
+import java.util.UUID;
 
 /**
  * Records the screen to a .mov file.
  */
 public class ScreenRecordr {
 
-    private ScreenRecorder screenRecorder = null;
+    private File tmpDir = null;
+    private String videoUuid = null;
+
+    public ScreenRecordr() {
+        String tmpFullPath = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID();
+        tmpDir = new File(tmpFullPath);
+        tmpDir.mkdirs();
+        Findr.logDebug("[ScreenRecordr] screen recorder created, tmpDir = " + tmpFullPath);
+    }
 
     public ScreenRecordr start() {
-
-        try {
-
-            if (screenRecorder == null) {
-
-                //Create a instance of GraphicsConfiguration to get the Graphics configuration
-                //of the Screen. This is needed for ScreenRecorder class.
-                GraphicsConfiguration gc = GraphicsEnvironment//
-                        .getLocalGraphicsEnvironment()//
-                        .getDefaultScreenDevice()//
-                        .getDefaultConfiguration();
-
-                //Create a instance of ScreenRecorder with the required configurations
-                screenRecorder = new ScreenRecorder(
-                        gc,
-                        new Format(
-                                MediaTypeKey,
-                                FormatKeys.MediaType.FILE,
-                                MimeTypeKey, MIME_QUICKTIME),
-                        new Format(MediaTypeKey,
-                                FormatKeys.MediaType.VIDEO,
-                                EncodingKey,
-                                ENCODING_QUICKTIME_JPEG,
-                                CompressorNameKey,
-                                ENCODING_QUICKTIME_JPEG,
-//                                COMPRESSOR_NAME_QUICKTIME_JPEG,
-                                DepthKey,
-                                24,
-                                FrameRateKey,
-                                Rational.valueOf(15),
-                                QualityKey,
-                                0.5f,
-                                KeyFrameIntervalKey,
-                                15 * 60),
-                        new Format(
-                                MediaTypeKey,
-                                FormatKeys.MediaType.VIDEO,
-                                EncodingKey,
-                                "black",
-                                FrameRateKey,
-                                Rational.valueOf(30)),
-                        null);
-            }
-
-            if (!screenRecorder.getState().equals(ScreenRecorder.State.RECORDING)) {
-                screenRecorder.start();
-            }
-
-            Findr.logDebug("[ScreenRecordr] started video recording");
-            return this;
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        VideoRecorderConfiguration.setCaptureInterval(50); // 20 frames/sec
+        VideoRecorderConfiguration.wantToUseFullScreen(true);
+        VideoRecorderConfiguration.setVideoDirectory(tmpDir); // home
+        VideoRecorderConfiguration.setKeepFrames(false);
+        // you can also change the x,y using VideoRecorderConfiguration.setCoordinates(10,20);
+        UUID uuid = UUID.randomUUID();
+        videoUuid = uuid.toString();
+        VideoRecorder.start(videoUuid);
+        return this;
     }
 
     public void stop() {
-        if (screenRecorder==null) {
+        if (videoUuid==null) {
             return;
         }
+        String videoPath;
         try {
-            if (screenRecorder.getState()!=null && screenRecorder.getState().equals(ScreenRecorder.State.RECORDING)) {
-                Findr.logDebug("[ScreenRecordr] stopping recorder");
-                screenRecorder.stop();
-            }
-            Findr.logDebug("[ScreenRecordr] stopped video recording. List of created files :");
-            for (File f : getVideoFiles()) {
-                Findr.logDebug("[ScreenRecordr]  * " + f.getAbsolutePath());
-            }
-        } catch (Exception e) {
+            videoPath = VideoRecorder.stop();
+        } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+        Findr.logDebug("[ScreenRecordr] stopped video recording. Video path = " + videoPath);
+        videoUuid = null;
     }
 
     public List<File> getVideoFiles() {
-        if (screenRecorder == null) {
+        if (tmpDir == null) {
             return Collections.emptyList();
         }
-        return screenRecorder.getCreatedMovieFiles();
+        File[] files = tmpDir.listFiles();
+        if (files == null) {
+            return null;
+        }
+        return Arrays.asList(files);
     }
 
     public ScreenRecordr moveVideoFilesTo(File destDir, String filePrefix) {
