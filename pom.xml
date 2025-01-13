@@ -9,11 +9,12 @@
         <version>6</version>
     </parent>
     <groupId>com.pojosontheweb</groupId>
-    <version>3.1.0</version>
+    <version>3.3.0</version>
     <artifactId>selenium-utils</artifactId>
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
     <modules>
+        <module>screenrecorder</module>
         <module>core</module>
     </modules>
     <url>https://github.com/pojosontheweb/selenium-utils</url>
@@ -73,10 +74,10 @@
             <id>release</id>
             <build>
                 <plugins>
-                    <!-- <plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.7</version>
+                        <version>3.11.2</version>
                         <executions>
                             <execution>
                                 <id>generate-javadoc</id>
@@ -88,10 +89,11 @@
                                     <author>true</author>
                                     <use>true</use>
                                     <version>true</version>
+                                    <doclint>none</doclint>
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin> -->
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
