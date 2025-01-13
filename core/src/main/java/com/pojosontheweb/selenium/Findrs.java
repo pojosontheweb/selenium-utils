@@ -8,6 +8,7 @@ import org.hamcrest.StringDescription;
 import org.openqa.selenium.WebElement;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -37,7 +38,8 @@ public class Findrs {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText(String.format("mapped(%s,", describe)).appendDescriptionOf(matcher).appendText(")");
+                description.appendText(String.format("mapped(%s,", describe)).appendDescriptionOf(matcher)
+                        .appendText(")");
             }
 
             @Override
@@ -46,6 +48,49 @@ public class Findrs {
                     description.appendText("was ").appendValue(fun.apply(w));
                 } else {
                     description.appendText("was null");
+                }
+            }
+        };
+    }
+
+    /**
+     * Map a list of web element before composing it with the given matcher.
+     *
+     * @param describe Describe the mapping
+     * @param fun      Map a web element list item for matcher
+     * @param matcher  Compose with this matcher
+     * @return New composed matcher for list findr
+     */
+    public static <T> Matcher<Iterable<? super WebElement>> mappedList(String describe, Function<WebElement, T> fun,
+            Matcher<Iterable<T>> matcher) {
+        return new BaseMatcher<>() {
+
+            @Override
+            public boolean matches(Object item) {
+                if (item instanceof List<?> ws) {
+                    return matcher.matches(mapped(ws));
+                }
+                return false;
+            }
+
+            private List<T> mapped(List<?> ws) {
+                return ws.stream().filter(WebElement.class::isInstance).map(WebElement.class::cast)
+                        .map(fun)
+                        .toList();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(String.format("mappedList(%s,", describe)).appendDescriptionOf(matcher)
+                        .appendText(")");
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                if (item instanceof List<?> ws) {
+                    description.appendText("was ").appendValueList("[", ",", "]", mapped(ws));
+                } else {
+                    description.appendText("was ?");
                 }
             }
         };
@@ -76,7 +121,8 @@ public class Findrs {
     }
 
     private static Predicate<WebElement> matchAttribute(String attrName, Matcher<String> matcher) {
-        return matcherPredicate(mapped(String.format("getAttribute(%s)", attrName), w -> w.getAttribute(attrName), matcher));
+        return matcherPredicate(
+                mapped(String.format("getAttribute(%s)", attrName), w -> w.getAttribute(attrName), matcher));
     }
 
     private static Predicate<WebElement> matchText(Matcher<String> matcher) {
@@ -191,7 +237,8 @@ public class Findrs {
     }
 
     /**
-     * Create and return a new Predicate that checks if the element's text matches passed regexp.
+     * Create and return a new Predicate that checks if the element's text matches
+     * passed regexp.
      *
      * @return a new Predicate
      */
@@ -207,7 +254,8 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> cssValue(final String propName, final String expectedValue) {
-        return matcherPredicate(mapped(String.format("getCssValue(%s)", propName), w -> w.getCssValue(propName), CoreMatchers.equalTo(expectedValue)));
+        return matcherPredicate(mapped(String.format("getCssValue(%s)", propName), w -> w.getCssValue(propName),
+                CoreMatchers.equalTo(expectedValue)));
     }
 
     /**

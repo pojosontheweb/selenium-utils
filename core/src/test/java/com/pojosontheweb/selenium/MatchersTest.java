@@ -105,7 +105,8 @@ public class MatchersTest {
                 return "boom";
             }
         });
-        assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getAttribute(foo),a string starting with \"bar\"), was \"boom\""));
+        assertThat(lines, CoreMatchers
+                .hasItem("[Findr]  ! mapped(getAttribute(foo),a string starting with \"bar\"), was \"boom\""));
     }
 
     @Test
@@ -128,7 +129,8 @@ public class MatchersTest {
         assertFalse(predicate.test(nomatch));
         assertEquals("mapped(getAttribute(foo),a string ending with \"bar\")", predicate.toString());
         var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-        assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getAttribute(foo),a string ending with \"bar\"), was \"boom\""));
+        assertThat(lines, CoreMatchers
+                .hasItem("[Findr]  ! mapped(getAttribute(foo),a string ending with \"bar\"), was \"boom\""));
     }
 
     @Test
@@ -151,7 +153,8 @@ public class MatchersTest {
         assertFalse(predicate.test(nomatch));
         assertEquals("mapped(class,a collection containing \"foo\")", predicate.toString());
         var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-        assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(class,a collection containing \"foo\"), was <[tra, la, la]>"));
+        assertThat(lines,
+                CoreMatchers.hasItem("[Findr]  ! mapped(class,a collection containing \"foo\"), was <[tra, la, la]>"));
     }
 
     @Test
@@ -197,7 +200,8 @@ public class MatchersTest {
         assertFalse(predicate.test(nomatch));
         assertEquals("mapped(getText,a string starting with \"foo\")", predicate.toString());
         var lines = findrDebugCapture(findr -> findr.where(predicate), nomatch);
-        assertThat(lines, CoreMatchers.hasItem("[Findr]  ! mapped(getText,a string starting with \"foo\"), was \"bar\""));
+        assertThat(lines,
+                CoreMatchers.hasItem("[Findr]  ! mapped(getText,a string starting with \"foo\"), was \"bar\""));
     }
 
     @Test
@@ -349,17 +353,124 @@ public class MatchersTest {
         assertThat(lines, CoreMatchers.hasItem("[Findr]  ! not mapped(getCssValue(mycss),\"foo\")"));
     }
 
+    @Test
+    public void mappedList() {
+        var matcher = Findrs.mappedList("tag", WebElement::getTagName, CoreMatchers.hasItems("foo", "bar"));
+        assertEquals("mappedList(tag,(a collection containing \"foo\" and a collection containing \"bar\"))",
+                matcher.toString());
+    }
+
+    @Test
+    public void listCount() {
+        FakeWebElement nomatch = new FakeWebElement() {
+            @Override
+            public List<WebElement> findElements(By by) {
+                return List.of(new FakeWebElement(), new FakeWebElement());
+            }
+        };
+        var lines = listFindrDebugCapture(findr -> findr.$$("").count(13), nomatch);
+        assertThat(lines, CoreMatchers.hasItem("[Findr]  ! checkList KO: elemCount(<13>) was <2>"));
+    }
+
+    @Test
+    public void listWhereAll() {
+        FakeWebElement nomatch = new FakeWebElement() {
+            @Override
+            public List<WebElement> findElements(By by) {
+                return List.of(new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "foo";
+                    }
+                }, new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "bar";
+                    }
+                });
+            }
+        };
+        var lines = listFindrDebugCapture(findr -> findr.$$("").whereAll(Findrs.textEquals("foo")), nomatch);
+        assertThat(lines,
+                CoreMatchers.hasItem("[Findr]  ! checkList KO: all(mapped(getText,\"foo\")) an item was \"bar\""));
+    }
+
+    @Test
+    public void listWhereAny() {
+        FakeWebElement nomatch = new FakeWebElement() {
+            @Override
+            public List<WebElement> findElements(By by) {
+                return List.of(new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "foo";
+                    }
+                }, new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "bar";
+                    }
+                });
+            }
+        };
+        var lines = listFindrDebugCapture(findr -> findr.$$("").whereAny(Findrs.textEquals("gnu")), nomatch);
+        assertThat(lines,
+                CoreMatchers.hasItem("[Findr]  ! checkList KO: any(mapped(getText,\"gnu\")) was \"foo\", was \"bar\""));
+    }
+
+    @Test
+    public void listWhereList() {
+        FakeWebElement nomatch = new FakeWebElement() {
+            @Override
+            public List<WebElement> findElements(By by) {
+                return List.of(new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "foo";
+                    }
+                }, new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "bar";
+                    }
+                });
+            }
+        };
+        var matcher = Findrs.mappedList("getText", WebElement::getText, CoreMatchers.hasItems("foo", "gnu"));
+        var lines = listFindrDebugCapture(findr -> findr.$$("").whereList(matcher), nomatch);
+        assertThat(lines,
+                CoreMatchers.hasItem(
+                        "[Findr]  ! checkList KO: mappedList(getText,(a collection containing \"foo\" and a collection containing \"gnu\")) was [\"foo\",\"bar\"]"));
+    }
+
     static List<String> findrDebugCapture(Function<Findr, Findr> fixture, WebElement element) {
         var findr = Findr.fromWebElement(null, element);
         var saved = Findr.getDebugHandler();
         final List<String> lines = new ArrayList<>();
         Findr.setDebugHandler(l -> {
-            //System.out.println("findrDebugCapture|" + l);
+            // System.out.println("findrDebugCapture|" + l);
             lines.add(l);
             return null;
         });
         try {
             fixture.apply(findr).eval_(w -> true).apply(element);
+            return lines;
+        } finally {
+            Findr.setDebugHandler(saved);
+        }
+    }
+
+    static List<String> listFindrDebugCapture(Function<Findr, Findr.ListFindr> fixture, WebElement element) {
+        var findr = Findr.fromWebElement(null, element);
+        var saved = Findr.getDebugHandler();
+        final List<String> lines = new ArrayList<>();
+        Findr.setDebugHandler(l -> {
+            System.out.println("listFindrDebugCapture|" + l);
+            lines.add(l);
+            return null;
+        });
+        try {
+            fixture.apply(findr).eval_(ws -> true).apply(element);
             return lines;
         } finally {
             Findr.setDebugHandler(saved);
@@ -453,6 +564,5 @@ public class MatchersTest {
             return null;
         }
     }
-
 
 }

@@ -1,6 +1,7 @@
 package com.pojosontheweb.selenium;
 
 import org.hamcrest.*;
+import org.hamcrest.core.IsCollectionContaining;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -608,7 +609,7 @@ public final class Findr {
             this.checkers = checkers;
         }
 
-        private static <T> Matcher<T> wrapAndTrap(final Matcher<T> predicate) {
+        private static <T> Matcher<T> wrapAndTrap(final Matcher<T> matcher) {
             return new BaseMatcher<>() {
                 @Override
                 public boolean matches(Object input) {
@@ -616,7 +617,7 @@ public final class Findr {
                         return false;
                     }
                     try {
-                        return predicate.matches(input);
+                        return matcher.matches(input);
                     } catch (WebDriverException e) {
                         return false;
                     }
@@ -624,17 +625,17 @@ public final class Findr {
 
                 @Override
                 public void describeTo(Description description) {
-                    predicate.describeTo(description);
+                    matcher.describeTo(description);
                 }
 
                 @Override
                 public void describeMismatch(Object item, Description description) {
-                    predicate.describeMismatch(item, description);
+                    matcher.describeMismatch(item, description);
                 }
             };
         }
 
-        private <T> T wrapWebDriverWaitList(final Function<WebDriver, T> callback) throws TimeoutException {
+        private <T> T wrapWebDriverWaitList(final Function<SearchContext, T> callback) throws TimeoutException {
             try {
                 return new WebDriverWait(driver, waitTimeout, sleep).until(callback);
             } catch (TimeoutException e) {
@@ -667,20 +668,20 @@ public final class Findr {
             return new ListFindr(by, composeMatchers(filters, wrap(predicate)), checkers);
         }
 
-        public ListFindr where(final Matcher<? super WebElement> predicate) {
+        public ListFindr where(final Matcher<? super WebElement> matcher) {
             if (checkers != null) {
                 throw new IllegalArgumentException(
                         "It's forbidden to call ListFindr.where() after a whereXXX() method has been called.");
             }
-            return new ListFindr(by, composeMatchers(filters, predicate), checkers);
+            return new ListFindr(by, composeMatchers(filters, matcher), checkers);
         }
 
-        static private <T> Matcher<T> composeMatchers(final Matcher<T> first, final Matcher<? super T> predicate) {
+        static private <T> Matcher<T> composeMatchers(final Matcher<T> first, final Matcher<? super T> matcher) {
             return new BaseMatcher<>() {
 
                 @Override
                 public boolean matches(Object input) {
-                    return (first == null || first.matches(input)) && wrapAndTrap(predicate).matches(input);
+                    return (first == null || first.matches(input)) && wrapAndTrap(matcher).matches(input);
                 }
 
                 @Override
@@ -689,7 +690,7 @@ public final class Findr {
                         first.describeTo(description);
                         description.appendText(" + ");
                     }
-                    predicate.describeTo(description);
+                    matcher.describeTo(description);
                 }
 
                 @Override
@@ -698,7 +699,7 @@ public final class Findr {
                         first.describeMismatch(item, description);
                         description.appendText(" + ");
                     }
-                    predicate.describeMismatch(item, description);
+                    matcher.describeMismatch(item, description);
                 }
             };
         }
@@ -769,7 +770,7 @@ public final class Findr {
          * @return a new ListFindr with updated chain
          */
         public ListFindr count(int elemCount) {
-            return new ListFindr(by, filters, composeMatchers(checkers, checkElemCount(elemCount)));
+            return whereList(checkElemCount(elemCount));
         }
 
         /**
@@ -781,13 +782,20 @@ public final class Findr {
          */
         public ListFindr whereAny(final Predicate<? super WebElement> predicate) {
             if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
-                return where(mp.matcher());
+                return whereAny(mp.matcher());
             }
-            return new ListFindr(by, filters, composeMatchers(checkers, checkAny(wrap(predicate))));
+            return whereAny(wrap(predicate));
         }
 
-        public ListFindr whereAny(final Matcher<? super WebElement> predicate) {
-            return new ListFindr(by, filters, composeMatchers(checkers, checkAny(predicate)));
+        /**
+         * Wait for the list findr so that at least one of its element match the
+         * specified matcher. Check is OK if list is empty.
+         *
+         * @param matcher the element matcher
+         * @return a new ListFindr with updated chain
+         */
+        public ListFindr whereAny(final Matcher<? super WebElement> matcher) {
+            return whereList(checkAny(matcher));
         }
 
         /**
@@ -801,11 +809,29 @@ public final class Findr {
             if (predicate instanceof Findrs.MatcherPredicate<? super WebElement> mp) {
                 return whereAll(mp.matcher());
             }
-            return new ListFindr(by, filters, composeMatchers(checkers, checkAll(wrap(predicate))));
+            return whereAll(wrap(predicate));
         }
 
-        public ListFindr whereAll(final Matcher<? super WebElement> predicate) {
-            return new ListFindr(by, filters, composeMatchers(checkers, checkAll(predicate)));
+        /**
+         * Wait for the list findr so that all of its element match the specified
+         * matcher. Check is OK if list is empty.
+         *
+         * @param matcher the element matcher
+         * @return a new ListFindr with updated chain
+         */
+        public ListFindr whereAll(final Matcher<? super WebElement> matcher) {
+            return whereList(checkAll(matcher));
+        }
+
+        /**
+         * Wait for the list findr so that the list of elements matches the specified
+         * matcher. Check is OK if list is empty.
+         *
+         * @param matcher the list matcher
+         * @return a new ListFindr with updated chain
+         */
+        public ListFindr whereList(final Matcher<Iterable<? super WebElement>> matcher) {
+            return new ListFindr(by, filters, composeMatchers(checkers, matcher));
         }
 
         private Matcher<WebElement> wrap(final Predicate<? super WebElement> predicate) {
@@ -826,44 +852,40 @@ public final class Findr {
             };
         }
 
-        private Matcher<List<WebElement>> checkAny(final Matcher<? super WebElement> predicate) {
-            return new BaseMatcher<List<WebElement>>() {
-
-                @Override
-                public boolean matches(Object item) {
-                    if (item instanceof List<?> elements) {
-                        return elements.stream().anyMatch(predicate::matches);
-                    }
-                    return false;
-                }
+        private Matcher<Iterable<? super WebElement>> checkAny(final Matcher<? super WebElement> matcher) {
+            return new IsCollectionContaining<WebElement>(matcher) {
 
                 @Override
                 public void describeTo(Description description) {
-                    description.appendText("any(").appendDescriptionOf(predicate).appendText(")");
+                    description.appendText("any(").appendDescriptionOf(matcher).appendText(")");
                 }
             };
         }
 
-        private Matcher<List<WebElement>> checkAll(final Matcher<? super WebElement> predicate) {
-            return new BaseMatcher<List<WebElement>>() {
+        private Matcher<Iterable<? super WebElement>> checkAll(final Matcher<? super WebElement> matcher) {
+            return new TypeSafeDiagnosingMatcher<Iterable<? super WebElement>>() {
 
                 @Override
-                public boolean matches(Object item) {
-                    if (item instanceof List<?> elements) {
-                        return elements.stream().allMatch(predicate::matches);
+                public boolean matchesSafely(Iterable<? super WebElement> collection, Description mismatchDescription) {
+                    for (Object t : collection) {
+                        if (!matcher.matches(t)) {
+                            mismatchDescription.appendText("an item ");
+                            matcher.describeMismatch(t, mismatchDescription);
+                            return false;
+                        }
                     }
-                    return false;
+                    return true;
                 }
 
                 @Override
                 public void describeTo(Description description) {
-                    description.appendText("all(").appendDescriptionOf(predicate).appendText(")");
+                    description.appendText("all(").appendDescriptionOf(matcher).appendText(")");
                 }
             };
         }
 
-        private Matcher<List<WebElement>> checkElemCount(final int expectedCount) {
-            return new BaseMatcher<List<WebElement>>() {
+        private Matcher<Iterable<? super WebElement>> checkElemCount(final int expectedCount) {
+            return new BaseMatcher<Iterable<? super WebElement>>() {
 
                 @Override
                 public boolean matches(Object item) {
@@ -911,7 +933,12 @@ public final class Findr {
          */
         public <T> T eval(final Function<List<WebElement>, T> callback) throws TimeoutException {
             logDebug("[Findr] ListFindr eval");
-            return wrapWebDriverWaitList(withoutWebDriverException(input -> {
+            return wrapWebDriverWaitList(withoutWebDriverException(eval_(callback)));
+        }
+
+        // for testing
+        <T> Function<SearchContext, T> eval_(final Function<List<WebElement>, T> callback) throws TimeoutException {
+            return input -> {
                 SearchContext c = f == null ? input : f.apply(input);
                 if (c == null) {
                     return null;
@@ -939,7 +966,7 @@ public final class Findr {
                     logDebug("[Findr]  => " + callback + " result : " + res + ", OK");
                 }
                 return res;
-            }));
+            };
         }
 
         /**
