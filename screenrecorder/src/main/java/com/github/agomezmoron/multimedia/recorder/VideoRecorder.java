@@ -55,32 +55,29 @@ public class VideoRecorder {
     /**
      * Status of the recorder.
      */
-    private static boolean recording = false;
-
-    /**
-     * When we started recording.
-     */
-    private static long startedAt = 0;
+    private boolean recording = false;
 
     /**
      * Associated frames.
      */
-    private static List<String> frames;
+    private List<String> frames;
 
     /**
      * Video name.
      */
-    private static String videoName = "output.mov";
+    private String videoName = "output.mov";
 
-    private static Thread currentThread;
+    private Thread currentThread;
 
-    private static List<VideoRecorderEventListener> listeners = new ArrayList<VideoRecorderEventListener>();
+    private List<VideoRecorderEventListener> listeners = new ArrayList<>();
+
+    private VideoRecorderConfiguration configuration;
 
 
     /**
      * Strategy to record using {@link Thread}.
      */
-    private static final Thread getRecordThread() {
+    private Thread getRecordThread() {
         return new Thread() {
             @Override
             public void run() {
@@ -90,23 +87,22 @@ public class VideoRecorder {
                     rt = new Robot();
                     do {
                         capture = new ScreenCapture(rt.createScreenCapture(new Rectangle(
-                                VideoRecorderConfiguration.getX(), VideoRecorderConfiguration.getY(),
-                                VideoRecorderConfiguration.getWidth(), VideoRecorderConfiguration.getHeight())));
+                                configuration.getX(), configuration.getY(),
+                                configuration.getWidth(), configuration.getHeight())));
 
-                        VideoRecorderEventObject videoRecorderEvObj = new VideoRecorderEventObject (this,capture);
+                        VideoRecorderEventObject videoRecorderEvObj = new VideoRecorderEventObject(this, capture);
 
                         //Exploring all the listeners
-                        for(VideoRecorderEventListener vr : listeners){
+                        for (VideoRecorderEventListener vr : listeners) {
 
-                        	//Creating the object that will be sent
-                        	VideoRecorderEventListener listener = (VideoRecorderEventListener) vr;
-                        	listener.frameAdded(videoRecorderEvObj);
+                            //Creating the object that will be sent
+                            vr.frameAdded(videoRecorderEvObj);
                         }
 
                         frames.add(VideoRecorderUtil.saveIntoDirectory(capture, new File(
-                                VideoRecorderConfiguration.getTempDirectory().getAbsolutePath() + File.separatorChar
+                                configuration.getTempDirectory().getAbsolutePath() + File.separatorChar
                                         + videoName.replace(".mov", ""))));
-                        Thread.sleep(VideoRecorderConfiguration.getCaptureInterval());
+                        Thread.sleep(configuration.getCaptureInterval());
                     } while (recording);
                 } catch (Exception e) {
 
@@ -120,16 +116,17 @@ public class VideoRecorder {
     /**
      * We don't allow to create objects for this class.
      */
-    private VideoRecorder() {
-
+    public VideoRecorder(VideoRecorderConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     /**
      * It stops the recording and creates the video.
+     *
      * @return a {@link String} with the path where the video was created or null if the video couldn't be created.
      * @throws MalformedURLException
      */
-    public static String stop() throws MalformedURLException {
+    public String stop() {
         String videoPathString = null;
         if (recording) {
             recording = false;
@@ -137,16 +134,16 @@ public class VideoRecorder {
                 long now = new Date().getTime();
                 while (frames.isEmpty()) {
                     try {
-                        Thread.sleep(VideoRecorderConfiguration.getCaptureInterval());
+                        Thread.sleep(configuration.getCaptureInterval());
                     } catch (InterruptedException e) {
-                        ;
+                        e.printStackTrace();
                     }
                 }
                 currentThread.interrupt();
             }
             videoPathString = createVideo();
-            if (!VideoRecorderConfiguration.wantToKeepFrames()) {
-                deleteDirectory(new File(VideoRecorderConfiguration.getTempDirectory().getAbsolutePath()
+            if (!configuration.wantToKeepFrames()) {
+                deleteDirectory(new File(configuration.getTempDirectory().getAbsolutePath()
                         + File.separatorChar + videoName.replace(".mov", "")));
             }
         }
@@ -155,12 +152,13 @@ public class VideoRecorder {
 
     /**
      * It starts recording (if it wasn't started before).
+     *
      * @param newVideoName with the output of the video.
      */
-    public static void start(String newVideoName) {
+    public void start(String newVideoName) {
         if (!recording) {
-            if (!VideoRecorderConfiguration.getTempDirectory().exists()) {
-                VideoRecorderConfiguration.getTempDirectory().mkdirs();
+            if (!configuration.getTempDirectory().exists()) {
+                configuration.getTempDirectory().mkdirs();
             }
             calculateScreenshotSize();
             videoName = newVideoName;
@@ -169,7 +167,10 @@ public class VideoRecorder {
             }
             recording = true;
             frames = new ArrayList<String>();
-            startedAt = new Date().getTime();
+            /**
+             * When we started recording.
+             */
+            long startedAt = new Date().getTime();
             currentThread = getRecordThread();
             currentThread.start();
         }
@@ -178,31 +179,32 @@ public class VideoRecorder {
     /**
      * It calculates the screenshot size before recording. If the useFullScreen was defined, the width, height or x
      */
-    private static void calculateScreenshotSize() {
+    private void calculateScreenshotSize() {
         // if fullScreen was set, all the configuration will be changed back.
-        if (VideoRecorderConfiguration.wantToUseFullScreen()) {
+        if (configuration.wantToUseFullScreen()) {
             Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-            VideoRecorderConfiguration.setWidth((int) size.getWidth());
-            VideoRecorderConfiguration.setHeight((int) size.getHeight());
-            VideoRecorderConfiguration.setCoordinates(0, 0);
+            configuration.setWidth((int) size.getWidth());
+            configuration.setHeight((int) size.getHeight());
+            configuration.setCoordinates(0, 0);
         } else {
             // we have to check if x+width <= Toolkit.getDefaultToolkit().getScreenSize().getWidth() and the same for
             // the height
-            if (VideoRecorderConfiguration.getX() + VideoRecorderConfiguration.getWidth() > Toolkit.getDefaultToolkit()
+            if (configuration.getX() + configuration.getWidth() > Toolkit.getDefaultToolkit()
                     .getScreenSize().getWidth()) {
-                VideoRecorderConfiguration.setWidth((int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth()
-                        - VideoRecorderConfiguration.getX()));
+                configuration.setWidth((int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth()
+                        - configuration.getX()));
             }
-            if (VideoRecorderConfiguration.getY() + VideoRecorderConfiguration.getHeight() > Toolkit.getDefaultToolkit()
+            if (configuration.getY() + configuration.getHeight() > Toolkit.getDefaultToolkit()
                     .getScreenSize().getHeight()) {
-                VideoRecorderConfiguration.setHeight((int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                        - VideoRecorderConfiguration.getY()));
+                configuration.setHeight((int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+                        - configuration.getY()));
             }
         }
     }
 
     /**
      * It deletes recursively a directory.
+     *
      * @param directory to be deleted.
      * @return true if the directory was deleted successfully.
      */
@@ -224,41 +226,32 @@ public class VideoRecorder {
 
     /**
      * It creates the video.
+     *
      * @return a {@link String} with the path where the video was created or null if the video couldn't be created.
      * @throws MalformedURLException
      */
-    private static String createVideo() throws MalformedURLException {
-        Vector<String> vector = new Vector<String>(frames);
+    private String createVideo() {
+        Vector<String> vector = new Vector<>(frames);
         String videoPathString = null;
         JpegImagesToMovie jpegImaveToMovie = new JpegImagesToMovie();
-        if (!VideoRecorderConfiguration.getVideoDirectory().exists()) {
-            VideoRecorderConfiguration.getVideoDirectory().mkdirs();
+        if (!configuration.getVideoDirectory().exists()) {
+            configuration.getVideoDirectory().mkdirs();
         }
         MediaLocator oml;
         String fileURL;
         if (Platform.isWindows()) {
-            fileURL = "file://" + VideoRecorderConfiguration.getVideoDirectory().getPath() + File.separatorChar + videoName;
+            fileURL = "file://" + configuration.getVideoDirectory().getPath() + File.separatorChar + videoName;
         } else {
-            fileURL = VideoRecorderConfiguration.getVideoDirectory().getAbsolutePath() + File.separatorChar + videoName;
+            fileURL = configuration.getVideoDirectory().getAbsolutePath() + File.separatorChar + videoName;
         }
         if ((oml = JpegImagesToMovie.createMediaLocator(fileURL)) == null) {
             System.exit(0);
         }
-        if (jpegImaveToMovie.doIt(VideoRecorderConfiguration.getWidth(), VideoRecorderConfiguration
-                .getHeight(), (1000 / VideoRecorderConfiguration.getCaptureInterval()), vector, oml)) {
-            videoPathString = VideoRecorderConfiguration.getVideoDirectory().getAbsolutePath() + File.separatorChar
+        if (jpegImaveToMovie.doIt(configuration.getWidth(), configuration.getHeight(), (1000 / configuration.getCaptureInterval()), vector, oml)) {
+            videoPathString = configuration.getVideoDirectory().getAbsolutePath() + File.separatorChar
                     + videoName;
         }
         return videoPathString;
     }
-
-
-	/**
-	 * It adds the listeners to the list
-	 * @param args
-	 */
-	public static void addVideoRecorderEventListener(VideoRecorderEventListener args){
-		listeners.add(args);
-	}
 
 }

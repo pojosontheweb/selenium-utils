@@ -15,48 +15,44 @@ import java.util.UUID;
  * Records the screen to a .mov file.
  */
 public class ScreenRecordr {
-
-    private File tmpDir = null;
     private String videoUuid = null;
 
+    private VideoRecorderConfiguration recorderConfiguration = new VideoRecorderConfiguration();
+
+    private VideoRecorder recorder;
+
     public ScreenRecordr() {
-        String tmpFullPath = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID();
-        tmpDir = new File(tmpFullPath);
-        tmpDir.mkdirs();
-        Findr.logDebug("[ScreenRecordr] screen recorder created, tmpDir = " + tmpFullPath);
+        Findr.logDebug("[ScreenRecordr] screen recorder created");
+    }
+
+    public void setRecorderConfiguration(VideoRecorderConfiguration recorderConfiguration) {
+        this.recorderConfiguration = recorderConfiguration;
     }
 
     public ScreenRecordr start() {
-        VideoRecorderConfiguration.setCaptureInterval(50); // 20 frames/sec
-        VideoRecorderConfiguration.wantToUseFullScreen(true);
-        VideoRecorderConfiguration.setVideoDirectory(tmpDir); // home
-        VideoRecorderConfiguration.setKeepFrames(false);
-        // you can also change the x,y using VideoRecorderConfiguration.setCoordinates(10,20);
+        if (recorder != null) {
+            recorder.stop();
+        }
         UUID uuid = UUID.randomUUID();
         videoUuid = uuid.toString();
-        VideoRecorder.start(videoUuid);
+        recorder = new VideoRecorder(recorderConfiguration);
+        recorder.start(videoUuid);
         return this;
     }
 
     public void stop() {
+        if (recorder == null) {
+            return;
+        }
         if (videoUuid==null) {
             return;
         }
-        String videoPath;
-        try {
-            videoPath = VideoRecorder.stop();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        String videoPath = recorder.stop();
         Findr.logDebug("[ScreenRecordr] stopped video recording. Video path = " + videoPath);
-        videoUuid = null;
     }
 
     public List<File> getVideoFiles() {
-        if (tmpDir == null) {
-            return List.of();
-        }
-        var files = tmpDir.listFiles();
+        File[] files = recorderConfiguration.getVideoDirectory().listFiles();
         if (files == null) {
             return null;
         }

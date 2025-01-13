@@ -69,8 +69,7 @@ import javax.media.protocol.PullBufferStream;
  */
 public class JpegImagesToMovie implements ControllerListener, DataSinkListener {
 
-    public boolean doIt(int width, int height, int frameRate, Vector inFiles, MediaLocator outML)
-            throws MalformedURLException {
+    public boolean doIt(int width, int height, int frameRate, Vector inFiles, MediaLocator outML) {
         ImageDataSource ids = new ImageDataSource(width, height, frameRate, inFiles);
 
         Processor p;
