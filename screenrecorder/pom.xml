@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.pojosontheweb</groupId>
+		<artifactId>selenium-utils</artifactId>
+		<version>3.1.1</version>
+	</parent>
+	<artifactId>screenrecorder</artifactId>
+	<name>Java screen recorder library</name>
+	<description>Screen recorder library to handle the video recording in Java</description>
+	<url>https://github.com/agomezmoron/screen-recorder</url>
+
+	<properties>
+		<jmf.version>2.1.1e</jmf.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>javax.media</groupId>
+			<artifactId>jmf</artifactId>
+			<version>${jmf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+	</dependencies>
+</project>
