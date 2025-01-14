@@ -84,6 +84,9 @@
                         <goals>
                             <goal>flatten</goal>
                         </goals>
+                        <configuration>
+                            <flattenMode>ossrh</flattenMode>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>flatten.clean</id>
