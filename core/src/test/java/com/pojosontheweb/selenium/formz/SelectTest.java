@@ -2,20 +2,17 @@ package com.pojosontheweb.selenium.formz;
 
 import com.pojosontheweb.selenium.Findr;
 import com.pojosontheweb.selenium.ManagedDriverJunit4TestBase;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 public class SelectTest extends ManagedDriverJunit4TestBase {
 
     @Test
     public void testSelect() {
-        getWebDriver().get("http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select");
-
-        // dismiss cookies
-//        findr().elem(By.id("accept-choices")).click();
-
-        getWebDriver().switchTo().frame("iframeResult");
+        WebDriver d = getWebDriver();
+        getWebDriver().get("http://localhost:8000");
+        Findr f = new Findr(d);
 
         // select helper test
         Findr fSelect = findr().elem(By.id("cars"));
