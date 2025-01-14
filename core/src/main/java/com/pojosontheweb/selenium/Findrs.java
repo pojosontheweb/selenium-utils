@@ -1,5 +1,10 @@
 package com.pojosontheweb.selenium;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.StringDescription;
 import org.openqa.selenium.WebElement;
 
 import java.util.Arrays;
@@ -13,6 +18,118 @@ import java.util.function.Predicate;
 public class Findrs {
 
     /**
+     * Map a web element before composing it with the given matcher.
+     *
+     * @param describe Describe the mapping
+     * @param fun      Map web element for matcher
+     * @param matcher  Compose with this matcher
+     * @return New composed matcher
+     */
+    public static <T> Matcher<WebElement> mapped(String describe, Function<WebElement, T> fun, Matcher<T> matcher) {
+        return new BaseMatcher<>() {
+
+            @Override
+            public boolean matches(Object item) {
+                if (item instanceof WebElement w) {
+                    return matcher.matches(fun.apply(w));
+                }
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(String.format("mapped(%s,", describe)).appendDescriptionOf(matcher)
+                        .appendText(")");
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                if (item instanceof WebElement w) {
+                    description.appendText("was ").appendValue(fun.apply(w));
+                } else {
+                    description.appendText("was null");
+                }
+            }
+        };
+    }
+
+    /**
+     * Map a list of web element before composing it with the given matcher.
+     *
+     * @param describe Describe the mapping
+     * @param fun      Map a web element list item for matcher
+     * @param matcher  Compose with this matcher
+     * @return New composed matcher for list findr
+     */
+    public static <T> Matcher<Iterable<? super WebElement>> mappedList(String describe, Function<WebElement, T> fun,
+            Matcher<Iterable<T>> matcher) {
+        return new BaseMatcher<>() {
+
+            @Override
+            public boolean matches(Object item) {
+                if (item instanceof List<?> ws) {
+                    return matcher.matches(mapped(ws));
+                }
+                return false;
+            }
+
+            private List<T> mapped(List<?> ws) {
+                return ws.stream().filter(WebElement.class::isInstance).map(WebElement.class::cast)
+                        .map(fun)
+                        .toList();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(String.format("mappedList(%s,", describe)).appendDescriptionOf(matcher)
+                        .appendText(")");
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                if (item instanceof List<?> ws) {
+                    description.appendText("was ").appendValueList("[", ",", "]", mapped(ws));
+                } else {
+                    description.appendText("was ?");
+                }
+            }
+        };
+    }
+
+    /**
+     * A regex matcher.
+     *
+     * @param regex The pattern to match
+     * @return New regex matcher
+     */
+    public static Matcher<String> matchesPattern(String regex) {
+        return new BaseMatcher<>() {
+
+            @Override
+            public boolean matches(Object item) {
+                if (item instanceof String s) {
+                    return s.matches(regex);
+                }
+                return false;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(String.format("/%s/", regex));
+            }
+        };
+    }
+
+    private static Predicate<WebElement> matchAttribute(String attrName, Matcher<String> matcher) {
+        return matcherPredicate(
+                mapped(String.format("getAttribute(%s)", attrName), w -> w.getAttribute(attrName), matcher));
+    }
+
+    private static Predicate<WebElement> matchText(Matcher<String> matcher) {
+        return matcherPredicate(mapped("getText", WebElement::getText, matcher));
+    }
+
+    /**
      * Create and return a new Predicate that matches an element's attribute value
      *
      * @param attrName      the name of the attribute
@@ -20,18 +137,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> attrEquals(final String attrName, final String expectedValue) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement webElement) {
-                String attrVal = webElement.getAttribute(attrName);
-                return attrVal != null && attrVal.equals(expectedValue);
-            }
-
-            @Override
-            public String toString() {
-                return "attrEquals(" + attrName + "," + expectedValue + ")";
-            }
-        };
+        return matchAttribute(attrName, CoreMatchers.equalTo(expectedValue));
     }
 
     /**
@@ -42,18 +148,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> attrStartsWith(final String attrName, final String expectedStartsWith) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement webElement) {
-                String attrVal = webElement.getAttribute(attrName);
-                return attrVal != null && attrVal.startsWith(expectedStartsWith);
-            }
-
-            @Override
-            public String toString() {
-                return "attrStartsWith(" + attrName + "," + expectedStartsWith + ")";
-            }
-        };
+        return matchAttribute(attrName, CoreMatchers.startsWith(expectedStartsWith));
     }
 
     /**
@@ -64,18 +159,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> attrEndsWith(final String attrName, final String expectedEndsWith) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement webElement) {
-                String attrVal = webElement.getAttribute(attrName);
-                return attrVal != null && attrVal.endsWith(expectedEndsWith);
-            }
-
-            @Override
-            public String toString() {
-                return "attrEndsWith(" + attrName + "," + expectedEndsWith + ")";
-            }
-        };
+        return matchAttribute(attrName, CoreMatchers.endsWith(expectedEndsWith));
     }
 
     /**
@@ -86,22 +170,8 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> hasClass(final String className) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement webElement) {
-                String cssClasses = webElement.getAttribute("class");
-                if (cssClasses == null) {
-                    return false;
-                }
-                List<String> tokens = Arrays.asList(cssClasses.split("\\s"));
-                return tokens.contains(className);
-            }
-
-            @Override
-            public String toString() {
-                return "hasClass(" + className + ")";
-            }
-        };
+        return matcherPredicate(mapped("class", w -> Arrays.asList(w.getAttribute("class").split("\\s")),
+                CoreMatchers.hasItem(className)));
     }
 
     /**
@@ -112,18 +182,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> textEquals(final String expected) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement webElement) {
-                String text = webElement.getText();
-                return text != null && text.equals(expected);
-            }
-
-            @Override
-            public String toString() {
-                return "textEquals(" + expected + ")";
-            }
-        };
+        return matchText(CoreMatchers.equalTo(expected));
     }
 
     /**
@@ -134,22 +193,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> textStartsWith(final String expectedStartsWith) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement input) {
-                String text = input.getText();
-                if (text == null) {
-                    return false;
-                }
-                return text.startsWith(expectedStartsWith);
-            }
-
-            @Override
-            public String toString() {
-                return "textStartsWith(" + expectedStartsWith + ")";
-
-            }
-        };
+        return matchText(CoreMatchers.startsWith(expectedStartsWith));
     }
 
     /**
@@ -160,22 +204,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> textContains(final String expectedContains) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement input) {
-                String text = input.getText();
-                if (text == null) {
-                    return false;
-                }
-                return text.contains(expectedContains);
-            }
-
-            @Override
-            public String toString() {
-                return "textContains(" + expectedContains + ")";
-
-            }
-        };
+        return matchText(CoreMatchers.containsString(expectedContains));
     }
 
     /**
@@ -186,22 +215,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> textEndsWith(final String expectedEndsWith) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement input) {
-                String text = input.getText();
-                if (text == null) {
-                    return false;
-                }
-                return text.endsWith(expectedEndsWith);
-            }
-
-            @Override
-            public String toString() {
-                return "textEndsWith(" + expectedEndsWith + ")";
-
-            }
-        };
+        return matchText(CoreMatchers.endsWith(expectedEndsWith));
     }
 
     /**
@@ -210,17 +224,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> isEnabled() {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement input) {
-                return input.isEnabled();
-            }
-
-            @Override
-            public String toString() {
-                return "isEnabled";
-            }
-        };
+        return matcherPredicate(mapped("isEnabled", WebElement::isEnabled, CoreMatchers.equalTo(true)));
     }
 
     /**
@@ -229,40 +233,17 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> isDisplayed() {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement input) {
-                return input.isDisplayed();
-            }
-
-            @Override
-            public String toString() {
-                return "isDisplayed";
-            }
-        };
+        return matcherPredicate(mapped("isDisplayed", WebElement::isDisplayed, CoreMatchers.equalTo(true)));
     }
 
     /**
-     * Create and return a new Predicate that checks if the element's text matches passed regexp.
+     * Create and return a new Predicate that checks if the element's text matches
+     * passed regexp.
      *
      * @return a new Predicate
      */
     public static Predicate<WebElement> textMatches(final String regexp) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement input) {
-                String text = input.getText();
-                if (text == null) {
-                    return false;
-                }
-                return text.matches(regexp);
-            }
-
-            @Override
-            public String toString() {
-                return "matches(" + regexp + ")";
-            }
-        };
+        return matchText(matchesPattern(regexp));
     }
 
     /**
@@ -273,18 +254,8 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> cssValue(final String propName, final String expectedValue) {
-        return new Predicate<WebElement>() {
-            @Override
-            public boolean test(WebElement webElement) {
-                String attrVal = webElement.getCssValue(propName);
-                return attrVal != null && attrVal.equals(expectedValue);
-            }
-
-            @Override
-            public String toString() {
-                return "cssValue(" + propName + "," + expectedValue + ")";
-            }
-        };
+        return matcherPredicate(mapped(String.format("getCssValue(%s)", propName), w -> w.getCssValue(propName),
+                CoreMatchers.equalTo(expectedValue)));
     }
 
     /**
@@ -294,7 +265,7 @@ public class Findrs {
      * @return a new Predicate
      */
     public static Predicate<WebElement> not(final Predicate<WebElement> in) {
-        return new Predicate<WebElement>() {
+        return new Predicate<>() {
             @Override
             public boolean test(WebElement input) {
                 return !in.test(input);
@@ -308,7 +279,7 @@ public class Findrs {
     }
 
     public static Function<WebElement, Boolean> click() {
-        return new Function<WebElement, Boolean>() {
+        return new Function<>() {
             @Override
             public Boolean apply(WebElement webElement) {
                 try {
@@ -328,7 +299,7 @@ public class Findrs {
     }
 
     public static Function<WebElement, Boolean> clear() {
-        return new Function<WebElement, Boolean>() {
+        return new Function<>() {
             @Override
             public Boolean apply(WebElement webElement) {
                 try {
@@ -347,7 +318,7 @@ public class Findrs {
     }
 
     public static Function<WebElement, Boolean> sendKeys(final CharSequence... keys) {
-        return new Function<WebElement, Boolean>() {
+        return new Function<>() {
             @Override
             public Boolean apply(WebElement webElement) {
                 try {
@@ -366,4 +337,20 @@ public class Findrs {
         };
     }
 
+    // for testing
+    static <T> Predicate<T> matcherPredicate(Matcher<T> matcher) {
+        return new MatcherPredicate<>(matcher);
+    }
+
+    record MatcherPredicate<T>(Matcher<T> matcher) implements Predicate<T> {
+
+        public boolean test(T w) {
+            return matcher.matches(w);
+        }
+
+        @Override
+        public String toString() {
+            return StringDescription.toString(matcher);
+        }
+    }
 }
