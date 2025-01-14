@@ -540,7 +540,7 @@ public class MatchersTest {
         var saved = Findr.getDebugHandler();
         final List<String> lines = new ArrayList<>();
         Findr.setDebugHandler(l -> {
-            System.out.println("listFindrDebugCapture|" + l);
+            // System.out.println("listFindrDebugCapture|" + l);
             lines.add(l);
             return null;
         });
