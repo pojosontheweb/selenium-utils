@@ -1,7 +1,15 @@
 package com.pojosontheweb.selenium;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -9,18 +17,8 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class MatchersTest {
 
@@ -419,6 +417,57 @@ public class MatchersTest {
     }
 
     @Test
+    public void listWhere() {
+        FakeWebElement nomatch = new FakeWebElement() {
+            @Override
+            public List<WebElement> findElements(By by) {
+                return List.of(new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "foo";
+                    }
+                }, new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "bar";
+                    }
+                });
+            }
+        };
+        var matcher = Findrs.textEquals("foo");
+        var lines = listFindrDebugCapture(findr -> findr.$$("").where(matcher), nomatch);
+        assertThat(lines,
+                CoreMatchers.hasItem(
+                        "[Findr]  > [By.cssSelector: ]* filter(mapped(getText,\"foo\")) : 2 -> 1"));
+    }
+
+    @Test
+    public void listTwoWheres() {
+        FakeWebElement nomatch = new FakeWebElement() {
+            @Override
+            public List<WebElement> findElements(By by) {
+                return List.of(new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "foo";
+                    }
+                }, new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "bar";
+                    }
+                });
+            }
+        };
+        var matcher = Findrs.textEquals("foo");
+        var matcher2 = Findrs.textEquals("gnu");
+        var lines = listFindrDebugCapture(findr -> findr.$$("").where(matcher).where(matcher2), nomatch);
+        assertThat(lines,
+                CoreMatchers.hasItem(
+                        "[Findr]  > [By.cssSelector: ]* filter(mapped(getText,\"foo\") + mapped(getText,\"gnu\")) : 2 -> 0"));
+    }
+
+    @Test
     public void listWhereList() {
         FakeWebElement nomatch = new FakeWebElement() {
             @Override
@@ -441,6 +490,32 @@ public class MatchersTest {
         assertThat(lines,
                 CoreMatchers.hasItem(
                         "[Findr]  ! checkList KO: mappedList(getText,(a collection containing \"foo\" and a collection containing \"gnu\")) was [\"foo\",\"bar\"]"));
+    }
+
+    @Test
+    public void listTwoWhereLists() {
+        FakeWebElement nomatch = new FakeWebElement() {
+            @Override
+            public List<WebElement> findElements(By by) {
+                return List.of(new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "foo";
+                    }
+                }, new FakeWebElement() {
+                    @Override
+                    public String getText() {
+                        return "bar";
+                    }
+                });
+            }
+        };
+        var matcher = Findrs.mappedList("getText", WebElement::getText, CoreMatchers.hasItems("foo", "gnu"));
+        var matcher2 = Findrs.mappedList("getText", WebElement::getText, CoreMatchers.hasItems("bar"));
+        var lines = listFindrDebugCapture(findr -> findr.$$("").whereList(matcher).whereList(matcher2), nomatch);
+        assertThat(lines,
+                CoreMatchers.hasItem(
+                        "[Findr]  ! checkList KO: mappedList(getText,(a collection containing \"foo\" and a collection containing \"gnu\")) + mappedList(getText,(a collection containing \"bar\")) was [\"foo\",\"bar\"] + was [\"foo\",\"bar\"]"));
     }
 
     static List<String> findrDebugCapture(Function<Findr, Findr> fixture, WebElement element) {
