@@ -610,30 +610,44 @@ public final class Findr {
         }
 
         private static <T> Matcher<T> wrapAndTrap(final Matcher<T> matcher) {
-            return new BaseMatcher<>() {
+            return new DelegateMatcher<>(matcher) {
                 @Override
                 public boolean matches(Object input) {
                     if (input == null) {
                         return false;
                     }
                     try {
-                        return matcher.matches(input);
+                        return super.matches(input);
                     } catch (WebDriverException e) {
                         return false;
                     }
                 }
-
-                @Override
-                public void describeTo(Description description) {
-                    matcher.describeTo(description);
-                }
-
-                @Override
-                public void describeMismatch(Object item, Description description) {
-                    matcher.describeMismatch(item, description);
-                }
             };
         }
+
+        static class DelegateMatcher<T> extends BaseMatcher<T> {
+
+            private final Matcher<? super T> delegate;
+
+            DelegateMatcher(Matcher<? super T> delegate) {
+                this.delegate = delegate;
+            }
+
+            @Override
+            public boolean matches(Object input) {
+                return delegate.matches(input);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                delegate.describeTo(description);
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                delegate.describeMismatch(item, description);
+            }
+        };
 
         private <T> T wrapWebDriverWaitList(final Function<SearchContext, T> callback) throws TimeoutException {
             try {
@@ -677,11 +691,11 @@ public final class Findr {
         }
 
         static private <T> Matcher<T> composeMatchers(final Matcher<T> first, final Matcher<? super T> matcher) {
-            return new BaseMatcher<>() {
+            return new DelegateMatcher<T>(wrapAndTrap(matcher)) {
 
                 @Override
                 public boolean matches(Object input) {
-                    return (first == null || first.matches(input)) && wrapAndTrap(matcher).matches(input);
+                    return (first == null || first.matches(input)) && super.matches(input);
                 }
 
                 @Override
@@ -690,7 +704,7 @@ public final class Findr {
                         first.describeTo(description);
                         description.appendText(" + ");
                     }
-                    matcher.describeTo(description);
+                    super.describeTo(description);
                 }
 
                 @Override
@@ -699,7 +713,7 @@ public final class Findr {
                         first.describeMismatch(item, description);
                         description.appendText(" + ");
                     }
-                    matcher.describeMismatch(item, description);
+                    super.describeMismatch(item, description);
                 }
             };
         }
@@ -863,6 +877,7 @@ public final class Findr {
         }
 
         private Matcher<Iterable<? super WebElement>> checkAll(final Matcher<? super WebElement> matcher) {
+            // cannot use Every<>, 'cause it has the type paremeters wrong
             return new TypeSafeDiagnosingMatcher<Iterable<? super WebElement>>() {
 
                 @Override
