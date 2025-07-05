@@ -17,6 +17,7 @@
         <webtests.findr.verbose>true</webtests.findr.verbose>
         <webtests.video.enabled>true</webtests.video.enabled>
         <webtests.video.failures.only>true</webtests.video.failures.only>
+        <webtests.video.use.selenium>false</webtests.video.use.selenium>
     </properties>
     <repositories>
         <repository>
@@ -61,6 +62,7 @@
                         <webtests.video.enabled>${webtests.video.enabled}</webtests.video.enabled>
                         <webtests.video.dir>${project.build.directory}/webtests-videos</webtests.video.dir>
                         <webtests.video.failures.only>${webtests.video.failures.only}</webtests.video.failures.only>
+                        <webtests.video.use.selenium>${webtests.video.use.selenium}</webtests.video.use.selenium>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
