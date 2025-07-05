@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Records the screen to a .mov file.
  */
-public class ScreenRecordr {
+public class ScreenRecordr implements VideoRecordr {
     private String videoUuid = null;
 
     private VideoRecorderConfiguration recorderConfiguration = new VideoRecorderConfiguration();
@@ -44,11 +44,16 @@ public class ScreenRecordr {
         if (recorder == null) {
             return;
         }
-        if (videoUuid==null) {
+        if (videoUuid == null) {
             return;
         }
         String videoPath = recorder.stop();
         Findr.logDebug("[ScreenRecordr] stopped video recording. Video path = " + videoPath);
+    }
+
+    @Override
+    public String getVideoFileExt() {
+        return ".mov";
     }
 
     public List<File> getVideoFiles() {
@@ -65,7 +70,7 @@ public class ScreenRecordr {
         Findr.logDebug("[ScreenRecordr] moving " + files.size() + " video files to " + destDir +
                 " with filePrefix=" + filePrefix);
         int totalCount = 1;
-        boolean needsCount = files.size()>1;
+        boolean needsCount = files.size() > 1;
         for (File f : files) {
             if (f.exists()) {
                 String fileName = filePrefix;
@@ -80,7 +85,7 @@ public class ScreenRecordr {
                 try {
                     Files.copy(f, vidFile);
                     Findr.logDebug("[ScreenRecordr] " + f.getAbsolutePath() + " => " + vidFile.getAbsolutePath());
-                } catch(IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 } finally {
                     f.delete();
@@ -89,7 +94,6 @@ public class ScreenRecordr {
         }
         return this;
     }
-
 
     public ScreenRecordr removeVideoFiles() {
         Findr.logDebug("[ScreenRecordr] removing video files");
