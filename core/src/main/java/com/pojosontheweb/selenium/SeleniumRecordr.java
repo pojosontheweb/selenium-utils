@@ -109,7 +109,7 @@ public class SeleniumRecordr implements VideoRecordr {
         var frameRate = 100 / captureInterval;
         var pattern = pngs.get(0).toPath().resolveSibling(CAPTURE_PATTERN);
         var args = List.of("ffmpeg",
-                // "-hide_banner", "-loglevel", "error",
+                "-hide_banner", "-loglevel", "error",
                 "-f", "image2", "-r", "" + frameRate,
                 "-i", pattern.toString(),
                 "-vcodec", "libx264", "-crf", "22", "-y", path.toString());
