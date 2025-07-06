@@ -118,10 +118,9 @@ public class SeleniumRecordr implements VideoRecordr {
             var p = new ProcessBuilder().redirectErrorStream(true).inheritIO().command(args).start();
             int status = p.waitFor();
             if (status != 0) {
-                throw new RuntimeException("ffmpeg failed " + status);
+                Findr.logDebug("ffmpeg failed " + status);
             }
         } catch (InterruptedException | IOException e) {
-            // e.printStackTrace();
             throw new RuntimeException(e);
         }
 
