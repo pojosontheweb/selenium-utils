@@ -26,6 +26,7 @@ public class SeleniumRecordr implements VideoRecordr {
     private Path videoDir = null;
     private final List<File> pngs = new Vector<>();
     private Thread recordingThread = null;
+    private long recordingAt;
 
     @Override
     public SeleniumRecordr start() {
@@ -37,6 +38,7 @@ public class SeleniumRecordr implements VideoRecordr {
             pngs.clear();
             recordingThread = createRecordingThread();
             recordingThread.start();
+            recordingAt = System.currentTimeMillis();
         }
         return this;
     }
@@ -54,7 +56,7 @@ public class SeleniumRecordr implements VideoRecordr {
                 }
                 recordingThread.interrupt();
             }
-            var vid = createVideo();
+            var vid = createVideo(System.currentTimeMillis() - recordingAt);
             videos.add(vid);
             pngs.forEach(File::delete);
         }
@@ -93,7 +95,7 @@ public class SeleniumRecordr implements VideoRecordr {
         };
     }
 
-    private File createVideo() {
+    private File createVideo(long durationMillis) {
         if (videoDir == null) {
             try {
                 videoDir = Files.createTempDirectory("SeleniumRecordr");
@@ -104,9 +106,8 @@ public class SeleniumRecordr implements VideoRecordr {
         var uuid = UUID.randomUUID();
         var path = videoDir.resolve(uuid.toString() + getVideoFileExt());
 
-        // TODO
-        // var frameRate = 1000 / captureInterval;
-        var frameRate = 100 / captureInterval;
+        var frameRate = durationMillis > 0 ? (pngs.size() / (durationMillis / 1000))
+                : (1000 / captureInterval);
         var pattern = pngs.get(0).toPath().resolveSibling(CAPTURE_PATTERN);
         var args = List.of("ffmpeg",
                 "-hide_banner", "-loglevel", "error",
