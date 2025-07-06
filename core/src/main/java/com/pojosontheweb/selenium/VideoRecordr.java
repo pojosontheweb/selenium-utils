@@ -17,6 +17,14 @@ public interface VideoRecordr {
     String getVideoFileExt();
 
     default VideoRecordr moveVideoFilesTo(File destDir, String filePrefix) {
+        return defaultMoveVideoFilesTo(destDir, filePrefix);
+    }
+
+    default VideoRecordr removeVideoFiles() {
+        return defaultRemoveVideoFiles();
+    }
+
+    default VideoRecordr defaultMoveVideoFilesTo(File destDir, String filePrefix) {
         stop();
         List<File> files = getVideoFiles();
         Findr.logDebug("[ScreenRecordr] moving " + files.size() + " video files to " + destDir +
@@ -47,7 +55,7 @@ public interface VideoRecordr {
         return this;
     }
 
-    default VideoRecordr removeVideoFiles() {
+    default VideoRecordr defaultRemoveVideoFiles() {
         Findr.logDebug("[ScreenRecordr] removing video files");
         stop();
         List<File> files = getVideoFiles();

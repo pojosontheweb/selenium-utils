@@ -45,6 +45,10 @@ public class SeleniumRecordr implements VideoRecordr {
 
     @Override
     public void stop() {
+        stop(true);
+    }
+
+    private void stop(boolean createVideo) {
         if (recordingThread != null) {
             if (recordingThread.isAlive()) {
                 while (pngs.isEmpty()) {
@@ -56,8 +60,10 @@ public class SeleniumRecordr implements VideoRecordr {
                 }
                 recordingThread.interrupt();
             }
-            var vid = createVideo(System.currentTimeMillis() - recordingAt);
-            videos.add(vid);
+            if (createVideo) {
+                var vid = createVideo(System.currentTimeMillis() - recordingAt);
+                videos.add(vid);
+            }
             pngs.forEach(File::delete);
         }
     }
@@ -125,5 +131,15 @@ public class SeleniumRecordr implements VideoRecordr {
         }
 
         return path.toFile();
+    }
+
+    public VideoRecordr moveVideoFilesTo(File destDir, String filePrefix) {
+        stop(true);
+        return defaultMoveVideoFilesTo(destDir, filePrefix);
+    }
+
+    public VideoRecordr removeVideoFiles() {
+        stop(false);
+        return defaultRemoveVideoFiles();
     }
 }
