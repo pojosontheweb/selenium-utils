@@ -1,20 +1,17 @@
 package com.pojosontheweb.selenium;
 
-import com.github.agomezmoron.multimedia.recorder.VideoRecorder;
-import com.github.agomezmoron.multimedia.recorder.configuration.VideoRecorderConfiguration;
-import com.google.common.io.Files;
-
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import com.github.agomezmoron.multimedia.recorder.VideoRecorder;
+import com.github.agomezmoron.multimedia.recorder.configuration.VideoRecorderConfiguration;
+
 /**
  * Records the screen to a .mov file.
  */
-public class ScreenRecordr implements VideoRecordr {
+public class ScreenRecordr extends VideoRecordr {
     private String videoUuid = null;
 
     private VideoRecorderConfiguration recorderConfiguration = new VideoRecorderConfiguration();
@@ -41,6 +38,10 @@ public class ScreenRecordr implements VideoRecordr {
     }
 
     public void stop() {
+        stop(true);
+    }
+
+    protected void stop(boolean createVideo) {
         if (recorder == null) {
             return;
         }

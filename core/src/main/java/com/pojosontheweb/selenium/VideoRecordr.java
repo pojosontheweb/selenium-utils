@@ -6,26 +6,18 @@ import java.util.List;
 
 import com.google.common.io.Files;
 
-public interface VideoRecordr {
+public abstract class VideoRecordr {
 
-    VideoRecordr start();
+    public abstract VideoRecordr start();
 
-    void stop();
+    protected abstract void stop(boolean createVideo);
 
-    List<File> getVideoFiles();
+    protected abstract List<File> getVideoFiles();
 
-    String getVideoFileExt();
+    protected abstract String getVideoFileExt();
 
-    default VideoRecordr moveVideoFilesTo(File destDir, String filePrefix) {
-        return defaultMoveVideoFilesTo(destDir, filePrefix);
-    }
-
-    default VideoRecordr removeVideoFiles() {
-        return defaultRemoveVideoFiles();
-    }
-
-    default VideoRecordr defaultMoveVideoFilesTo(File destDir, String filePrefix) {
-        stop();
+    public VideoRecordr moveVideoFilesTo(File destDir, String filePrefix) {
+        stop(true);
         List<File> files = getVideoFiles();
         Findr.logDebug("[ScreenRecordr] moving " + files.size() + " video files to " + destDir +
                 " with filePrefix=" + filePrefix);
@@ -55,9 +47,9 @@ public interface VideoRecordr {
         return this;
     }
 
-    default VideoRecordr defaultRemoveVideoFiles() {
+    public VideoRecordr removeVideoFiles() {
         Findr.logDebug("[ScreenRecordr] removing video files");
-        stop();
+        stop(false);
         List<File> files = getVideoFiles();
         for (File f : files) {
             f.delete();

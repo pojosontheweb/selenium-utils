@@ -11,7 +11,7 @@ import java.util.Vector;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
-public class SeleniumRecordr implements VideoRecordr {
+public class SeleniumRecordr extends VideoRecordr {
 
     private static final String CAPTURE_PATTERN = "capture-%05d.png";
 
@@ -31,7 +31,7 @@ public class SeleniumRecordr implements VideoRecordr {
     @Override
     public SeleniumRecordr start() {
         if (recordingThread != null) {
-            stop();
+            stop(false);
         }
         if (recordingThread == null) {
             videos.clear();
@@ -44,11 +44,7 @@ public class SeleniumRecordr implements VideoRecordr {
     }
 
     @Override
-    public void stop() {
-        stop(true);
-    }
-
-    private void stop(boolean createVideo) {
+    protected void stop(boolean createVideo) {
         if (recordingThread != null) {
             if (recordingThread.isAlive()) {
                 while (pngs.isEmpty()) {
@@ -60,6 +56,7 @@ public class SeleniumRecordr implements VideoRecordr {
                 }
                 recordingThread.interrupt();
             }
+            recordingThread = null;
             if (createVideo) {
                 var vid = createVideo(System.currentTimeMillis() - recordingAt);
                 videos.add(vid);
@@ -94,9 +91,7 @@ public class SeleniumRecordr implements VideoRecordr {
                 } catch (InterruptedException ignore) {
                 } catch (Exception e) {
                     e.getStackTrace();
-                } finally {
                 }
-                recordingThread = null;
             }
         };
     }
@@ -133,13 +128,4 @@ public class SeleniumRecordr implements VideoRecordr {
         return path.toFile();
     }
 
-    public VideoRecordr moveVideoFilesTo(File destDir, String filePrefix) {
-        stop(true);
-        return defaultMoveVideoFilesTo(destDir, filePrefix);
-    }
-
-    public VideoRecordr removeVideoFiles() {
-        stop(false);
-        return defaultRemoveVideoFiles();
-    }
 }
