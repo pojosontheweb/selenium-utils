@@ -50,7 +50,8 @@ public class GoogleRawTest {
     static void performTest(final WebDriver driver) {
 
         // get google
-        driver.get("http://www.google.com");
+        // driver.get("http://www.google.com");
+        driver.get("http://localhost:8000");
 
         MyActions myActions = new MyActions();
         Findr f = new Findr(driver).setActions(myActions);
@@ -64,6 +65,5 @@ public class GoogleRawTest {
         // assert we have clicked
         assertTrue("no clicks ???", myActions.clickCount > 0);
     }
-
 
 }
