@@ -20,5 +20,35 @@
         <option value=dacia">Dacia</option>
     </select>
 </div>
-</body>
+
+<h1>Nearly Google</h1>
+
+<form autocomplete="off" role="search" action="/search">
+    <textarea></textarea>
+</form>
+
+<h1>Results</h1>
+<div id="rso">
+    No Results
+</div>
+
+<script>
+  document.querySelector("form textarea").onkeypress = function(event) {
+    if (event.key == 'Enter') {
+      const typed = event.target.value
+
+      event.preventDefault()
+      const n = 6
+      const results = Array(n).fill("<h3>bla</h3>")
+      const i = Math.floor(Math.random() * n)
+
+      if (typed == 'selenium-utils github pojosontheweb') {
+        results[i] = `<h3>pojosontheweb/selenium-utils</h3>`
+      } else {
+        results[i] = `<h3>${typed}</h3>`
+      }
+      document.getElementById("rso").innerHTML = results.join("\n")
+    }    
+  };
+</script>
 </html>
