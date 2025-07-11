@@ -57,11 +57,11 @@ public class SeleniumRecordr extends VideoRecordr {
                 recordingThread.interrupt();
             }
             recordingThread = null;
-            if (createVideo) {
+            if (createVideo && !pngs.isEmpty()) {
                 var vid = createVideo(System.currentTimeMillis() - recordingAt);
                 videos.add(vid);
+                pngs.forEach(File::delete);
             }
-            pngs.forEach(File::delete);
         }
     }
 
