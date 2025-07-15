@@ -57,11 +57,11 @@ public class SeleniumRecordr extends VideoRecordr {
                 recordingThread.interrupt();
             }
             recordingThread = null;
-            if (createVideo && !pngs.isEmpty()) {
+            if (createVideo) {
                 var vid = createVideo(System.currentTimeMillis() - recordingAt);
                 videos.add(vid);
-                pngs.forEach(File::delete);
             }
+            pngs.forEach(File::delete);
         }
     }
 
@@ -76,13 +76,19 @@ public class SeleniumRecordr extends VideoRecordr {
     }
 
     private Thread createRecordingThread() {
+        try {
+            var uuid = UUID.randomUUID();
+            videoDir = Files.createTempDirectory("SeleniumRecordr" + uuid);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return new Thread() {
             @Override
             public void run() {
                 try {
                     do {
                         File tmp = takesScreenshot.getScreenshotAs(OutputType.FILE);
-                        var pngPath = tmp.toPath().resolveSibling(String.format(CAPTURE_PATTERN, pngs.size()));
+                        var pngPath = videoDir.resolve(String.format(CAPTURE_PATTERN, pngs.size()));
                         var png = Files.move(tmp.toPath(), pngPath);
                         png.toFile().deleteOnExit();
                         pngs.add(png.toFile());
@@ -97,19 +103,12 @@ public class SeleniumRecordr extends VideoRecordr {
     }
 
     private File createVideo(long durationMillis) {
-        if (videoDir == null) {
-            try {
-                videoDir = Files.createTempDirectory("SeleniumRecordr");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
         var uuid = UUID.randomUUID();
         var path = videoDir.resolve(uuid.toString() + getVideoFileExt());
 
         var frameRate = durationMillis > 0 ? (pngs.size() / (durationMillis / 1000))
                 : (1000 / captureInterval);
-        var pattern = pngs.get(0).toPath().resolveSibling(CAPTURE_PATTERN);
+        var pattern = videoDir.resolve(CAPTURE_PATTERN);
         var args = List.of("ffmpeg",
                 "-hide_banner", "-loglevel", "error",
                 "-f", "image2", "-r", "" + frameRate,
