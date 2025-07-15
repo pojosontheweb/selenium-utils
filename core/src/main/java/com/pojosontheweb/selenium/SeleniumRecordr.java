@@ -23,7 +23,7 @@ public class SeleniumRecordr extends VideoRecordr {
         this.takesScreenshot = takesScreenshot;
     }
 
-    private Path videoDir = null;
+    private Path videoTmpDir = null;
     private final List<File> pngs = new Vector<>();
     private Thread recordingThread = null;
     private long recordingAt;
@@ -78,7 +78,7 @@ public class SeleniumRecordr extends VideoRecordr {
     private Thread createRecordingThread() {
         try {
             var uuid = UUID.randomUUID();
-            videoDir = Files.createTempDirectory("SeleniumRecordr" + uuid);
+            videoTmpDir = Files.createTempDirectory("SeleniumRecordr" + uuid);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -88,7 +88,7 @@ public class SeleniumRecordr extends VideoRecordr {
                 try {
                     do {
                         File tmp = takesScreenshot.getScreenshotAs(OutputType.FILE);
-                        var pngPath = videoDir.resolve(String.format(CAPTURE_PATTERN, pngs.size()));
+                        var pngPath = videoTmpDir.resolve(String.format(CAPTURE_PATTERN, pngs.size()));
                         var png = Files.move(tmp.toPath(), pngPath);
                         png.toFile().deleteOnExit();
                         pngs.add(png.toFile());
@@ -104,11 +104,11 @@ public class SeleniumRecordr extends VideoRecordr {
 
     private File createVideo(long durationMillis) {
         var uuid = UUID.randomUUID();
-        var path = videoDir.resolve(uuid.toString() + getVideoFileExt());
+        var path = videoTmpDir.resolve(uuid.toString() + getVideoFileExt());
 
         var frameRate = durationMillis > 0 ? (pngs.size() / (durationMillis / 1000))
                 : (1000 / captureInterval);
-        var pattern = videoDir.resolve(CAPTURE_PATTERN);
+        var pattern = videoTmpDir.resolve(CAPTURE_PATTERN);
         var args = List.of("ffmpeg",
                 "-hide_banner", "-loglevel", "error",
                 "-f", "image2", "-r", "" + frameRate,
