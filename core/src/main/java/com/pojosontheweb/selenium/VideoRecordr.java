@@ -19,7 +19,7 @@ public abstract class VideoRecordr {
     public VideoRecordr moveVideoFilesTo(File destDir, String filePrefix) {
         stop(true);
         List<File> files = getVideoFiles();
-        Findr.logDebug("[ScreenRecordr] moving " + files.size() + " video files to " + destDir +
+        Findr.logDebug("[VideoRecordr] moving " + files.size() + " video files to " + destDir +
                 " with filePrefix=" + filePrefix);
         int totalCount = 1;
         boolean needsCount = files.size() > 1;
@@ -36,7 +36,7 @@ public abstract class VideoRecordr {
                 File vidFile = new File(destDir, fileName);
                 try {
                     Files.copy(f, vidFile);
-                    Findr.logDebug("[ScreenRecordr] " + f.getAbsolutePath() + " => " + vidFile.getAbsolutePath());
+                    Findr.logDebug("[VideoRecordr] " + f.getAbsolutePath() + " => " + vidFile.getAbsolutePath());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } finally {
@@ -48,12 +48,9 @@ public abstract class VideoRecordr {
     }
 
     public VideoRecordr removeVideoFiles() {
-        Findr.logDebug("[ScreenRecordr] removing video files");
+        Findr.logDebug("[VideoRecordr] removing video files");
         stop(false);
-        List<File> files = getVideoFiles();
-        for (File f : files) {
-            f.delete();
-        }
+        getVideoFiles().forEach(File::delete);
         return this;
     }
 
