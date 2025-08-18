@@ -32,6 +32,11 @@ jobs:
       - browser-tools/install-geckodriver
       - run:
           command: |
+            sudo apt-get update
+            sudo apt-get install ffmpeg
+          name: install FFMPG
+      - run:
+          command: |
             google-chrome --version
             chromedriver --version
             ps -efa | grep Xvfb
