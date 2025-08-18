@@ -1,7 +1,6 @@
 package com.pojosontheweb.selenium;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class Issue1Test extends ManagedDriverJunit4TestBase {

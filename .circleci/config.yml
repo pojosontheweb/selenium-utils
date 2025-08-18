@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.4.6
+  browser-tools: circleci/browser-tools@1.5.3
 
 defaults: &defaults
   working_directory: ~/repo
@@ -22,11 +22,11 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: cimg/openjdk:17.0-browsers
-#    environment:
-#      DISPLAY: :99
+    #    environment:
+    #      DISPLAY: :99
 
     steps:
-#      - run: sudo Xvfb :99 -screen 0 1920x1200x24 > /dev/null 2>&1 &
+      #      - run: sudo Xvfb :99 -screen 0 1920x1200x24 > /dev/null 2>&1 &
       - attach_workspace:
           at: ~/repo
       - browser-tools/install-chrome
