@@ -10,7 +10,7 @@ public class ShadowDomTest {
     @Test
     public void testChrome() {
         System.out.println("Testing with Chrome");
-        WebDriver d = DriverBuildr.chrome().setLocales("en,fr").build();
+        WebDriver d = DriverBuildr.chrome().build();
         try {
             performTest(d);
         } finally {
@@ -21,7 +21,7 @@ public class ShadowDomTest {
     @Test
     public void testFirefox() {
         System.out.println("Testing with Firefox");
-        WebDriver d = DriverBuildr.firefox().setLocales("en,fr").build();
+        WebDriver d = DriverBuildr.firefox().build();
         try {
             performTest(d);
         } finally {
