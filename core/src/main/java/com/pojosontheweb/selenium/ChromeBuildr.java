@@ -5,7 +5,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.File;
-import java.util.HashMap;
 
 /**
  * WebDriver builder for Chrome.
@@ -13,7 +12,6 @@ import java.util.HashMap;
 public class ChromeBuildr {
 
     private File driverPath;
-    private String locales;
 
     public static final String CHROMEDRIVER_PATH_SYSPROP_NAME = "webdriver.chrome.driver";
 
@@ -32,7 +30,7 @@ public class ChromeBuildr {
             }
         }
 
-        return new ChromeDriver(createChromeOptions(locales));
+        return new ChromeDriver(createChromeOptions());
     }
 
     /**
@@ -40,14 +38,9 @@ public class ChromeBuildr {
      * @param locales comma-separated locales
      * @return chrome options
      */
-    public static ChromeOptions createChromeOptions(String locales) {
+    public static ChromeOptions createChromeOptions() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("test-type");
-        if (locales !=null) {
-            HashMap<String, String> prefs = new HashMap<String, String>();
-            prefs.put("intl.accept_languages", locales);
-            options.setExperimentalOption("prefs", prefs);
-        }
         return options;
     }
 
@@ -61,13 +54,4 @@ public class ChromeBuildr {
         return this;
     }
 
-    /**
-     * Set locales to be used
-     * @param locales a comma-separated list of locales
-     * @return the builder, for chained calls
-     */
-    public ChromeBuildr setLocales(String locales) {
-        this.locales = locales;
-        return this;
-    }
 }

@@ -21,7 +21,6 @@ public class DriverBuildr {
     public static class SysPropsBuildr {
 
         static final String PROP_WEBTESTS_BROWSER = "webtests.browser";
-        static final String PROP_WEBTESTS_LOCALES = "webtests.locales";
 
         public WebDriver build() {
             // find requested browser in sys properties
@@ -36,21 +35,14 @@ public class DriverBuildr {
             if (browsr == null) {
                 throw new RuntimeException("Could not find browser ! " + PROP_WEBTESTS_BROWSER + "=" + browserName);
             }
-            String locale = System.getProperty(PROP_WEBTESTS_LOCALES);
             if (browsr.equals(Browsr.Chrome)) {
                 ChromeBuildr b = chrome();
-                if (locale != null) {
-                    b.setLocales(locale);
-                }
                 return b.build();
             } else if (browsr.equals(Browsr.Safari)) {
                 SafariBuildr b = safari();
                 return b.build();
             } else {
                 FirefoxBuildr b = firefox();
-                if (locale != null) {
-                    b.setLocales(locale);
-                }
                 return b.build();
             }
         }
