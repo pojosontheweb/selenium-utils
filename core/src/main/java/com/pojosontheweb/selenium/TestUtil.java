@@ -1,24 +1,29 @@
 package com.pojosontheweb.selenium;
 
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 
 /**
- * Helper for test cases. Maps on the lifecycle of a typical test case (setUp/test/tearDown)
+ * Helper for test cases. Maps on the lifecycle of a typical test case
+ * (setUp/test/tearDown)
  * and handles driver init and video recording.
- * Easily driven via sys props (the ones of the DriverBuildr and some here for the video).
+ * Easily driven via sys props (the ones of the DriverBuildr and some here for
+ * the video).
  */
 public class TestUtil {
 
     public static final String SYS_PROP_VIDEO_ENABLED = "webtests.video.enabled";
     public static final String SYS_PROP_VIDEO_FAILED_ONLY = "webtests.video.failures.only";
     public static final String SYS_PROP_VIDEO_DIR = "webtests.video.dir";
+    public static final String SYS_PROP_VIDEO_USE_SELENIUM = "webtests.video.use.selenium";
 
     private WebDriver webDriver;
     private boolean videoEnabled = isVideoEnabledFromSysProps();
     private String videoDir = getVideoDirFromSysProps();
     private boolean failuresOnly = isVideoFailuresOnlyFromSysProps();
+    private boolean useSelenium = isVideoUseSelenium();
 
     protected static boolean isVideoEnabledFromSysProps() {
         String videoEnabledProp = System.getProperty(SYS_PROP_VIDEO_ENABLED, "false");
@@ -32,6 +37,11 @@ public class TestUtil {
 
     protected static boolean isVideoFailuresOnlyFromSysProps() {
         String prop = System.getProperty(SYS_PROP_VIDEO_FAILED_ONLY, "true");
+        return "true".equals(prop.toLowerCase());
+    }
+
+    protected static boolean isVideoUseSelenium() {
+        String prop = System.getProperty(SYS_PROP_VIDEO_USE_SELENIUM, "false");
         return "true".equals(prop.toLowerCase());
     }
 
@@ -70,10 +80,10 @@ public class TestUtil {
         }
     }
 
-    private ScreenRecordr recordr = null;
+    private VideoRecordr recordr = null;
 
     public void removeVideoFiles() {
-        if (recordr!=null) {
+        if (recordr != null) {
             log("removing video files");
             recordr.removeVideoFiles();
             recordr = null;
@@ -82,7 +92,7 @@ public class TestUtil {
     }
 
     public void moveVideoFiles(String testName) {
-        if (recordr!=null) {
+        if (recordr != null) {
             log("moving video files to ", videoDir, " with prefix ", testName);
             recordr.moveVideoFilesTo(new File(videoDir), testName);
             recordr = null;
@@ -90,18 +100,21 @@ public class TestUtil {
     }
 
     public void setUp() {
-        // init recorder if needed
-        recordr = videoEnabled ? new ScreenRecordr() : null;
-
-        // start video recorder if video is enabled
-        if (recordr!=null) {
-            log("video is enabled, starting recorder");
-            recordr.start();
-        }
-
         // init web driver before each test
         webDriver = createWebDriver();
 
+        // start video recorder if video is enabled
+        if (videoEnabled) {
+            if (useSelenium && webDriver instanceof TakesScreenshot ts) {
+                log("video is enabled, starting recorder using Selenium webdriver");
+                recordr = new SeleniumRecordr(ts);
+                recordr.start();
+            } else {
+                log("video is enabled, starting recorder");
+                recordr = new ScreenRecordr();
+                recordr.start();
+            }
+        }
     }
 
     protected WebDriver createWebDriver() {
@@ -113,7 +126,7 @@ public class TestUtil {
         // TODO find better exception handling mechanism, this one
         // is pretty ugly !!!
         Exception closeException = null;
-        if (webDriver!=null) {
+        if (webDriver != null) {
             try {
                 webDriver.quit();
             } catch (Exception e) {
@@ -121,31 +134,29 @@ public class TestUtil {
             }
         }
         Exception recordrException = null;
-        if (recordr!=null) {
+        if (recordr != null) {
             // ref should have been nulled-out unless test is skipped
             // or whatever : destroy the files in any case !!!
             try {
                 recordr.removeVideoFiles();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 recordrException = e;
             }
         }
-        if (closeException!=null) {
+        if (closeException != null) {
             // re-throw
             throw new RuntimeException(closeException);
         }
-        if (recordrException!=null) {
+        if (recordrException != null) {
             // re-throw
             throw new RuntimeException(recordrException);
         }
     }
 
     public WebDriver getWebDriver() {
-        if (webDriver==null) {
+        if (webDriver == null) {
             throw new IllegalStateException("webDriver is null, forgot to call setUp() ?");
         }
         return webDriver;
     }
 }
-
-
