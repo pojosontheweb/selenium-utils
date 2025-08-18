@@ -7,7 +7,6 @@ public class GoogleManagedTest extends ManagedDriverJunit4TestBase {
 
     @Override
     protected WebDriver createWebDriver() {
-        System.setProperty("webtests.locales", "en,fr");
         System.setProperty("webtests.browser", "chrome");
         return super.createWebDriver();
     }

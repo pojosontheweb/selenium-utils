@@ -7,7 +7,6 @@ public class SysProps {
 
     public static class SPWebTests {
         public final String browser = DriverBuildr.SysPropsBuildr.PROP_WEBTESTS_BROWSER;
-        public final String locales = DriverBuildr.SysPropsBuildr.PROP_WEBTESTS_LOCALES;
         public final SPFindr findr = new SPFindr();
         public final SPVideo video = new SPVideo();
     }

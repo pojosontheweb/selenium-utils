@@ -9,7 +9,7 @@
         <version>6</version>
     </parent>
     <groupId>com.pojosontheweb</groupId>
-    <version>3.4.0</version>
+    <version>3.5.0</version>
     <artifactId>selenium-utils</artifactId>
     <packaging>pom</packaging>
     <name>Selenium Utils</name>
@@ -57,7 +57,7 @@
                     <version>2.16</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
+                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>1.6.0</version>
                 </plugin>

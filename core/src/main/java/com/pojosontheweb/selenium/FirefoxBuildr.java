@@ -9,7 +9,6 @@ public class FirefoxBuildr {
 
     private File path;
     private FirefoxProfile profile;
-    private String locales;
     private FirefoxBinary binary;
 
     public FirefoxBuildr setFirefoxPath(File path) {
@@ -27,15 +26,10 @@ public class FirefoxBuildr {
         return this;
     }
 
-    public FirefoxBuildr setLocales(String locales) {
-        this.locales = locales;
-        return this;
-    }
-
     public WebDriver build() {
         FirefoxOptions opts = new FirefoxOptions();
         if (profile==null) {
-            profile = createFirefoxProfile(locales);
+            profile = createFirefoxProfile();
         }
         opts.setProfile(profile);
         if (binary != null) {
@@ -45,13 +39,10 @@ public class FirefoxBuildr {
         return new FirefoxDriver(opts);
     }
 
-    public static FirefoxProfile createFirefoxProfile(String locales) {
+    public static FirefoxProfile createFirefoxProfile() {
         File tmpDir = new File(System.getProperty("java.io.tmpdir"), "wt-ffprofile");
         tmpDir.mkdirs();
         FirefoxProfile profile = new FirefoxProfile(tmpDir);
-        if (locales !=null) {
-            profile.setPreference("intl.accept_languages", locales);
-        }
         return profile;
     }
 }
