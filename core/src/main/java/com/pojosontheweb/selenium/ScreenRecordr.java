@@ -22,6 +22,11 @@ public class ScreenRecordr extends VideoRecordr {
         Findr.logDebug("[ScreenRecordr] screen recorder created");
     }
 
+    @Override
+    protected void setCaptureDelay(int captureDelay) {
+        this.recorderConfiguration.setCaptureInterval(captureDelay);
+    }
+
     public void setRecorderConfiguration(VideoRecorderConfiguration recorderConfiguration) {
         this.recorderConfiguration = recorderConfiguration;
     }

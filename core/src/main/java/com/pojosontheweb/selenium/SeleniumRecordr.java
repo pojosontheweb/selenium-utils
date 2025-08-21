@@ -16,11 +16,16 @@ public class SeleniumRecordr extends VideoRecordr {
     private static final String CAPTURE_PATTERN = "capture-%05d.png";
 
     private final TakesScreenshot takesScreenshot;
-    private final int captureDelay = 250; // millis
+    private int captureDelay = 250; // millis
     private final List<File> videos = new Vector<>();
 
     public SeleniumRecordr(TakesScreenshot takesScreenshot) {
         this.takesScreenshot = takesScreenshot;
+    }
+
+    @Override
+    protected void setCaptureDelay(int captureDelay) {
+        this.captureDelay = captureDelay;
     }
 
     private Path videoTmpDir = null;
