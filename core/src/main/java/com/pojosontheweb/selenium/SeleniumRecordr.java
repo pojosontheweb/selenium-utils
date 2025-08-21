@@ -16,7 +16,7 @@ public class SeleniumRecordr extends VideoRecordr {
     private static final String CAPTURE_PATTERN = "capture-%05d.png";
 
     private final TakesScreenshot takesScreenshot;
-    private final int captureInterval = 10; // millis
+    private final int captureDelay = 250; // millis
     private final List<File> videos = new Vector<>();
 
     public SeleniumRecordr(TakesScreenshot takesScreenshot) {
@@ -49,7 +49,7 @@ public class SeleniumRecordr extends VideoRecordr {
             if (recordingThread.isAlive()) {
                 while (pngs.isEmpty()) {
                     try {
-                        Thread.sleep(captureInterval);
+                        Thread.sleep(captureDelay);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -92,7 +92,7 @@ public class SeleniumRecordr extends VideoRecordr {
                         var png = Files.move(tmp.toPath(), pngPath);
                         png.toFile().deleteOnExit();
                         pngs.add(png.toFile());
-                        Thread.sleep(captureInterval);
+                        Thread.sleep(captureDelay);
                     } while (recordingThread != null);
                 } catch (InterruptedException ignore) {
                 } catch (Exception e) {
@@ -107,7 +107,7 @@ public class SeleniumRecordr extends VideoRecordr {
         var path = videoTmpDir.resolve(uuid.toString() + getVideoFileExt());
 
         var frameRate = durationMillis > 0 ? (pngs.size() / (durationMillis / 1000))
-                : (1000 / captureInterval);
+                : (1000 / captureDelay);
         var pattern = videoTmpDir.resolve(CAPTURE_PATTERN);
         var args = List.of("ffmpeg",
                 "-hide_banner", "-loglevel", "error",
