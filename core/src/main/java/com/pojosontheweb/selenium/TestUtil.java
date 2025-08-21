@@ -1,9 +1,9 @@
 package com.pojosontheweb.selenium;
 
+import java.io.File;
+
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-
-import java.io.File;
 
 /**
  * Helper for test cases. Maps on the lifecycle of a typical test case
@@ -18,6 +18,7 @@ public class TestUtil {
     public static final String SYS_PROP_VIDEO_FAILED_ONLY = "webtests.video.failures.only";
     public static final String SYS_PROP_VIDEO_DIR = "webtests.video.dir";
     public static final String SYS_PROP_VIDEO_USE_SELENIUM = "webtests.video.use.selenium";
+    public static final String SYS_PROP_VIDEO_CAPTURE_DELAY = "webtests.video.capture.delay";
 
     private WebDriver webDriver;
     private boolean videoEnabled = isVideoEnabledFromSysProps();
@@ -43,6 +44,18 @@ public class TestUtil {
     protected static boolean isVideoUseSelenium() {
         String prop = System.getProperty(SYS_PROP_VIDEO_USE_SELENIUM, "false");
         return "true".equals(prop.toLowerCase());
+    }
+
+    protected static Integer getVideoCaptureDelayMillis() {
+        String prop = System.getProperty(SYS_PROP_VIDEO_CAPTURE_DELAY, null);
+        if (prop != null) {
+            try {
+                return Integer.parseInt(prop);
+            } catch (NumberFormatException ignore) {
+                return null;
+            }
+        }
+        return null;
     }
 
     public boolean isVideoEnabled() {
@@ -112,8 +125,12 @@ public class TestUtil {
             } else {
                 log("video is enabled, starting recorder");
                 recordr = new ScreenRecordr();
-                recordr.start();
             }
+            var captureDelay = getVideoCaptureDelayMillis();
+            if (captureDelay != null) {
+                recordr.setCaptureDelay(captureDelay);
+            }
+            recordr.start();
         }
     }
 

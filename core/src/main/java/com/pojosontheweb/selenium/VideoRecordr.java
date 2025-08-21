@@ -8,6 +8,8 @@ import com.google.common.io.Files;
 
 public abstract class VideoRecordr {
 
+    protected abstract void setCaptureDelay(int captureDelay);
+
     public abstract VideoRecordr start();
 
     protected abstract void stop(boolean createVideo);
